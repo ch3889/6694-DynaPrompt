@@ -1,0 +1,46 @@
+# DynaPrompt Configuration
+# Main hyperparameters for the dynamic prompt guidance system
+
+model:
+  name: "stable-diffusion-v1-5"
+  checkpoint_path: "models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt"
+  config_path: "models/stable_diffusion_compvis/configs/stable-diffusion/v1-inference.yaml"
+
+sampling:
+  ddim_steps: 50
+  ddim_eta: 0.0
+  sampler: "ddim"  # Options: ddim, plms
+  scale: 7.5  # Classifier-free guidance scale
+  H: 512  # Image height
+  W: 512  # Image width
+  C: 4    # Latent channels
+  f: 8    # Downsampling factor
+
+feedback:
+  enabled: true
+  clip_model: "ViT-B/32"  # Options: ViT-B/32, ViT-L/14
+  feedback_frequency: 10  # Apply feedback every N steps
+  feedback_start_step: 10  # Start feedback after this step
+  feedback_end_step: 45    # Stop feedback before this step
+
+prompt_update:
+  update_alpha: 0.3  # Learning rate for prompt updates (0.0-1.0)
+  update_method: "weighted"  # Options: weighted, additive, multiplicative
+  token_threshold: 0.5  # Minimum similarity threshold to trigger update
+  normalize: true  # Normalize embeddings after update
+
+clip_feedback:
+  per_token_similarity: true  # Compute similarity per token
+  use_attention_pooling: false  # Use attention-based pooling
+  temperature: 0.07  # Temperature for CLIP similarity
+
+logging:
+  save_intermediate_images: true
+  save_frequency: 10  # Save every N steps
+  log_similarities: true
+  verbose: true
+
+output:
+  output_dir: "data/images/generated/dynaprompt"
+  save_format: "png"
+  save_metadata: true

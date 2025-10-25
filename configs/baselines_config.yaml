@@ -1,0 +1,63 @@
+# Baseline Configurations
+
+# Static Prompt (Vanilla SD)
+static_prompt:
+  name: "static_prompt"
+  description: "Vanilla Stable Diffusion with fixed prompt"
+  ddim_steps: 50
+  scale: 7.5
+  sampler: "ddim"
+  output_dir: "data/images/generated/static"
+
+# Dynamic Classifier-Free Guidance
+dynamic_cfg:
+  name: "dynamic_cfg"
+  description: "Adaptive CFG schedule"
+  ddim_steps: 50
+  sampler: "ddim"
+
+  # CFG schedule options
+  schedule_type: "cosine"  # Options: linear, cosine, exponential, adaptive
+
+  # Linear schedule: scale_start -> scale_end
+  scale_start: 10.0
+  scale_end: 5.0
+
+  # Cosine schedule parameters
+  cosine_min: 5.0
+  cosine_max: 10.0
+
+  # Adaptive CFG (based on intermediate image quality)
+  adaptive:
+    enabled: false
+    clip_model: "ViT-B/32"
+    adjustment_factor: 0.1
+
+  output_dir: "data/images/generated/dynamic_cfg"
+
+# Prompt Rewrite (Post-hoc retry)
+prompt_rewrite:
+  name: "prompt_rewrite"
+  description: "Generate, check CLIP score, regenerate if low"
+  ddim_steps: 50
+  scale: 7.5
+  sampler: "ddim"
+
+  # Retry parameters
+  clip_threshold: 0.25  # Minimum CLIP score to accept
+  max_retries: 3
+  clip_model: "ViT-B/32"
+
+  # Prompt modification strategy
+  retry_strategy: "resample"  # Options: resample, increase_cfg, add_emphasis
+
+  output_dir: "data/images/generated/prompt_rewrite"
+
+# Shared parameters for all baselines
+shared:
+  H: 512
+  W: 512
+  C: 4
+  f: 8
+  n_samples: 1
+  seed: 42

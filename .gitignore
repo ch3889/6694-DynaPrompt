@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+conda_env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# VSCode
+.vscode/
+
+# Model Weights (Large files - don't commit!)
+*.ckpt
+*.pt
+*.pth
+*.safetensors
+*.bin
+models/stable_diffusion_compvis/stable-diffusion/
+models/stable_diffusion_diffusers/models/
+
+# Generated Images
+data/images/generated/**/*.png
+data/images/generated/**/*.jpg
+data/images/generated/**/*.jpeg
+results/samples/**/*.png
+results/samples/**/*.jpg
+
+# COCO Dataset (too large)
+data/coco/val2017/
+data/coco/train2017/
+data/coco/annotations/
+*.zip
+
+# Logs
+*.log
+logs/
+wandb/
+runs/
+
+# Results (large files)
+results/**/*.csv
+results/**/*.json
+results/metrics/*.pkl
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Cache
+.cache/
+*.cache
+
+# Environment variables
+.env
+.env.local
