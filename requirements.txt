@@ -27,8 +27,8 @@ lpips>=0.1.4
 pytorch-fid>=0.3.0
 clean-fid>=0.1.35
 
-# BLIP-2 for Compositional Accuracy
-salesforce-lavis>=1.0.0
+# BLIP-2 for Compositional Accuracy (Optional - install separately when needed)
+# salesforce-lavis>=1.0.0  # Has dependency conflicts, install manually later
 
 # Image Processing
 opencv-python>=4.8.0
