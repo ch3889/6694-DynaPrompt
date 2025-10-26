@@ -10,6 +10,7 @@ pytorch-lightning>=2.0.0
 einops>=0.6.1
 transformers>=4.30.0
 safetensors>=0.3.1
+invisible-watermark>=0.2.0
 
 # Stable Diffusion - HuggingFace Diffusers
 diffusers>=0.25.0

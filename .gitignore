@@ -25,6 +25,7 @@ MANIFEST
 
 # Virtual Environment
 venv/
+dyna-venv/
 env/
 ENV/
 env.bak/
@@ -47,8 +48,18 @@ conda_env/
 *.pth
 *.safetensors
 *.bin
-models/stable_diffusion_compvis/stable-diffusion/
+
+# CompVis Stable Diffusion (downloaded model weights & checkpoints)
+models/stable_diffusion_compvis/*.ckpt
+models/stable_diffusion_compvis/*.safetensors
+models/stable_diffusion_compvis/v1-*
+models/stable_diffusion_compvis/models/
+models/stable_diffusion_compvis/outputs/
+
+# HuggingFace cached models
 models/stable_diffusion_diffusers/models/
+*/.cache/
+*/huggingface/
 
 # Generated Images
 data/images/generated/**/*.png

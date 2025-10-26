@@ -1,0 +1,3 @@
+[submodule "models/stable_diffusion_compvis"]
+	path = models/stable_diffusion_compvis
+	url = https://github.com/CompVis/stable-diffusion.git

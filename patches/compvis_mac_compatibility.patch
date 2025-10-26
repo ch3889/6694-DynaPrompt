@@ -1,0 +1,84 @@
+# CompVis Stable Diffusion - Mac (MPS) + CUDA Compatibility Patch
+# Apply this patch after cloning the CompVis repo
+
+## Changes Made:
+1. txt2img.py - Support MPS/CUDA/CPU device selection
+2. ldm/models/diffusion/ddim.py - Fix hardcoded CUDA, support MPS float32
+3. ldm/modules/encoders/modules.py - Dynamic device detection for CLIP encoder
+
+## To Apply:
+After cloning CompVis SD, manually apply these changes:
+
+### 1. scripts/txt2img.py - Line 51
+Change:
+    pl_sd = torch.load(ckpt, map_location="cpu")
+To:
+    pl_sd = torch.load(ckpt, map_location="cpu", weights_only=False)
+
+### 2. scripts/txt2img.py - Lines 64-74
+Replace:
+    model.cuda()
+    model.eval()
+    return model
+With:
+    # Use MPS (Apple Silicon) if available, otherwise CPU
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+        model = model.to(device)
+    elif torch.cuda.is_available():
+        model.cuda()
+    else:
+        # Use CPU if no GPU available
+        pass
+    model.eval()
+    return model
+
+### 3. scripts/txt2img.py - Lines 256-265
+Replace:
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    model = model.to(device)
+With:
+    # Select best available device: MPS (Apple Silicon) > CUDA > CPU
+    if torch.backends.mps.is_available():
+        device = torch.device("mps")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+    else:
+        device = torch.device("cpu")
+
+    print(f"Using device: {device}")
+    model = model.to(device)
+
+### 4. ldm/models/diffusion/ddim.py - Lines 19-28
+Replace:
+    def register_buffer(self, name, attr):
+        if type(attr) == torch.Tensor:
+            if attr.device != torch.device("cuda"):
+                attr = attr.to(torch.device("cuda"))
+        setattr(self, name, attr)
+With:
+    def register_buffer(self, name, attr):
+        if type(attr) == torch.Tensor:
+            # Use the model's device instead of hardcoded CUDA
+            model_device = next(self.model.parameters()).device
+            if attr.device != model_device:
+                # MPS doesn't support float64, convert to float32
+                if model_device.type == 'mps' and attr.dtype == torch.float64:
+                    attr = attr.float()
+                attr = attr.to(model_device)
+        setattr(self, name, attr)
+
+### 5. ldm/modules/encoders/modules.py - Lines 155-157
+Replace:
+    tokens = batch_encoding["input_ids"].to(self.device)
+With:
+    # Use the actual device of the transformer instead of self.device to support MPS/CPU
+    device = next(self.transformer.parameters()).device
+    tokens = batch_encoding["input_ids"].to(device)
+
+## Testing:
+After applying patches:
+export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+python scripts/txt2img.py --prompt "test" --ckpt v1-5-pruned-emaonly.ckpt --n_samples 1
+
+Should see "Using device: mps" on Mac or "Using device: cuda" on GCP
