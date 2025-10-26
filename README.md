@@ -219,20 +219,6 @@ DynaPrompt differs by providing **external, model-agnostic feedback** rather tha
 
 ---
 
-## License
-
-MIT License - See [LICENSE](LICENSE) for details
-
----
-
-## Contact
-
-- Charles Hou: ch3889@columbia.edu
-- Max Kim: zk2295@columbia.edu
-- Swapnil Banerjee: sb5041@columbia.edu
-
----
-
 ## Acknowledgments
 
 - [CompVis Stable Diffusion](https://github.com/CompVis/stable-diffusion)
