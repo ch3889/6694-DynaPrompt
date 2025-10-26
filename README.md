@@ -219,21 +219,6 @@ DynaPrompt differs by providing **external, model-agnostic feedback** rather tha
 
 ---
 
-## Citation
-
-If you use this work, please cite:
-
-```bibtex
-@misc{dynaprompt2025,
-  title={DynaPrompt: Dynamic Prompt Guidance for Text-to-Image Diffusion Models},
-  author={Hou, Charles Chaoyu and Kim, Max Zishock and Banerjee, Swapnil},
-  year={2025},
-  institution={Columbia University}
-}
-```
-
----
-
 ## License
 
 MIT License - See [LICENSE](LICENSE) for details
