@@ -1,0 +1,182 @@
+[
+  {
+    "prompt": "A blue cat sitting on a red chair with a yellow ball",
+    "prompt_dir": "001_A blue cat sitting on a red chair with a yellow ball",
+    "num_images": 2,
+    "avg_similarity": 0.358642578125,
+    "max_similarity": 0.3896484375,
+    "min_similarity": 0.32763671875,
+    "all_scores": [
+      0.32763671875,
+      0.3896484375
+    ]
+  },
+  {
+    "prompt": "A golden retriever playing with a red ball in a snowy park",
+    "prompt_dir": "002_A golden retriever playing with a red ball in a snowy park",
+    "num_images": 2,
+    "avg_similarity": 0.3817138671875,
+    "max_similarity": 0.388671875,
+    "min_similarity": 0.374755859375,
+    "all_scores": [
+      0.388671875,
+      0.374755859375
+    ]
+  },
+  {
+    "prompt": "A green apple next to a blue bowl on a wooden table",
+    "prompt_dir": "003_A green apple next to a blue bowl on a wooden table",
+    "num_images": 2,
+    "avg_similarity": 0.331787109375,
+    "max_similarity": 0.344970703125,
+    "min_similarity": 0.318603515625,
+    "all_scores": [
+      0.344970703125,
+      0.318603515625
+    ]
+  },
+  {
+    "prompt": "A purple elephant wearing a pink hat",
+    "prompt_dir": "004_A purple elephant wearing a pink hat",
+    "num_images": 2,
+    "avg_similarity": 0.316162109375,
+    "max_similarity": 0.32861328125,
+    "min_similarity": 0.3037109375,
+    "all_scores": [
+      0.3037109375,
+      0.32861328125
+    ]
+  },
+  {
+    "prompt": "A silver car parked next to a golden bicycle",
+    "prompt_dir": "005_A silver car parked next to a golden bicycle",
+    "num_images": 2,
+    "avg_similarity": 0.25341796875,
+    "max_similarity": 0.2646484375,
+    "min_similarity": 0.2421875,
+    "all_scores": [
+      0.2646484375,
+      0.2421875
+    ]
+  },
+  {
+    "prompt": "A white dog with brown spots sitting under an orange umbrella",
+    "prompt_dir": "006_A white dog with brown spots sitting under an orange umbrella",
+    "num_images": 2,
+    "avg_similarity": 0.39306640625,
+    "max_similarity": 0.395263671875,
+    "min_similarity": 0.390869140625,
+    "all_scores": [
+      0.395263671875,
+      0.390869140625
+    ]
+  },
+  {
+    "prompt": "A cat on top of a laptop next to a coffee cup on a desk",
+    "prompt_dir": "007_A cat on top of a laptop next to a coffee cup on a desk",
+    "num_images": 2,
+    "avg_similarity": 0.34716796875,
+    "max_similarity": 0.3564453125,
+    "min_similarity": 0.337890625,
+    "all_scores": [
+      0.3564453125,
+      0.337890625
+    ]
+  },
+  {
+    "prompt": "A bird perched on a fence with mountains in the background",
+    "prompt_dir": "008_A bird perched on a fence with mountains in the background",
+    "num_images": 2,
+    "avg_similarity": 0.3690185546875,
+    "max_similarity": 0.380615234375,
+    "min_similarity": 0.357421875,
+    "all_scores": [
+      0.380615234375,
+      0.357421875
+    ]
+  },
+  {
+    "prompt": "A teddy bear sitting on a bed with a book and glasses nearby",
+    "prompt_dir": "009_A teddy bear sitting on a bed with a book and glasses nearby",
+    "num_images": 2,
+    "avg_similarity": 0.3524169921875,
+    "max_similarity": 0.35595703125,
+    "min_similarity": 0.348876953125,
+    "all_scores": [
+      0.348876953125,
+      0.35595703125
+    ]
+  },
+  {
+    "prompt": "A small red bird eating seeds from a blue feeder in a garden",
+    "prompt_dir": "010_A small red bird eating seeds from a blue feeder in a garden",
+    "num_images": 2,
+    "avg_similarity": 0.329345703125,
+    "max_similarity": 0.334228515625,
+    "min_similarity": 0.324462890625,
+    "all_scores": [
+      0.334228515625,
+      0.324462890625
+    ]
+  },
+  {
+    "prompt": "A wooden boat with white sails floating on a calm blue lake at sunset",
+    "prompt_dir": "011_A wooden boat with white sails floating on a calm blue lake at sunset",
+    "num_images": 2,
+    "avg_similarity": 0.32958984375,
+    "max_similarity": 0.331298828125,
+    "min_similarity": 0.327880859375,
+    "all_scores": [
+      0.327880859375,
+      0.331298828125
+    ]
+  },
+  {
+    "prompt": "A black and white cow grazing in a green field under cloudy sky",
+    "prompt_dir": "012_A black and white cow grazing in a green field under cloudy sky",
+    "num_images": 2,
+    "avg_similarity": 0.3306884765625,
+    "max_similarity": 0.3349609375,
+    "min_similarity": 0.326416015625,
+    "all_scores": [
+      0.3349609375,
+      0.326416015625
+    ]
+  },
+  {
+    "prompt": "Three colorful balloons - one red, one blue, one yellow - floating in the sky",
+    "prompt_dir": "013_Three colorful balloons - one red_ one blue_ one yellow - floating in the sky",
+    "num_images": 2,
+    "avg_similarity": 0.3319091796875,
+    "max_similarity": 0.34521484375,
+    "min_similarity": 0.318603515625,
+    "all_scores": [
+      0.318603515625,
+      0.34521484375
+    ]
+  },
+  {
+    "prompt": "A striped cat and a spotted dog playing together in a park",
+    "prompt_dir": "014_A striped cat and a spotted dog playing together in a park",
+    "num_images": 2,
+    "avg_similarity": 0.3592529296875,
+    "max_similarity": 0.368408203125,
+    "min_similarity": 0.35009765625,
+    "all_scores": [
+      0.35009765625,
+      0.368408203125
+    ]
+  },
+  {
+    "prompt": "Two cups on a table - one filled with coffee, one filled with tea",
+    "prompt_dir": "015_Two cups on a table - one filled with coffee_ one filled with tea",
+    "num_images": 2,
+    "avg_similarity": 0.27587890625,
+    "max_similarity": 0.278076171875,
+    "min_similarity": 0.273681640625,
+    "all_scores": [
+      0.278076171875,
+      0.273681640625
+    ]
+  }
+]

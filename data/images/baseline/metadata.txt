@@ -1,0 +1,68 @@
+Generation timestamp: Sun Nov  2 21:05:03 UTC 2025
+Checkpoint: /home/cursedfox/6694-DynaPrompt/models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt
+Steps: 50
+Seed: 42
+Samples per prompt: 1
+
+==================================================================
+
+Prompt 1: A blue cat sitting on a red chair with a yellow ball
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/001_A blue cat sitting on a red chair with a yellow ball
+Status: Success
+
+Prompt 2: A golden retriever playing with a red ball in a snowy park
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/002_A golden retriever playing with a red ball in a snowy park
+Status: Success
+
+Prompt 3: A green apple next to a blue bowl on a wooden table
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/003_A green apple next to a blue bowl on a wooden table
+Status: Success
+
+Prompt 4: A purple elephant wearing a pink hat
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/004_A purple elephant wearing a pink hat
+Status: Success
+
+Prompt 5: A silver car parked next to a golden bicycle
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/005_A silver car parked next to a golden bicycle
+Status: Success
+
+Prompt 6: A white dog with brown spots sitting under an orange umbrella
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/006_A white dog with brown spots sitting under an orange umbrella
+Status: Success
+
+Prompt 7: A cat on top of a laptop next to a coffee cup on a desk
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/007_A cat on top of a laptop next to a coffee cup on a desk
+Status: Success
+
+Prompt 8: A bird perched on a fence with mountains in the background
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/008_A bird perched on a fence with mountains in the background
+Status: Success
+
+Prompt 9: A teddy bear sitting on a bed with a book and glasses nearby
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/009_A teddy bear sitting on a bed with a book and glasses nearby
+Status: Success
+
+Prompt 10: A small red bird eating seeds from a blue feeder in a garden
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/010_A small red bird eating seeds from a blue feeder in a garden
+Status: Success
+
+Prompt 11: A wooden boat with white sails floating on a calm blue lake at sunset
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/011_A wooden boat with white sails floating on a calm blue lake at sunset
+Status: Success
+
+Prompt 12: A black and white cow grazing in a green field under cloudy sky
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/012_A black and white cow grazing in a green field under cloudy sky
+Status: Success
+
+Prompt 13: Three colorful balloons - one red, one blue, one yellow - floating in the sky
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/013_Three colorful balloons - one red_ one blue_ one yellow - floating in the sky
+Status: Success
+
+Prompt 14: A striped cat and a spotted dog playing together in a park
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/014_A striped cat and a spotted dog playing together in a park
+Status: Success
+
+Prompt 15: Two cups on a table - one filled with coffee, one filled with tea
+Output: /home/cursedfox/6694-DynaPrompt/data/images/baseline/015_Two cups on a table - one filled with coffee_ one filled with tea
+Status: Success
+
