@@ -1,0 +1,7 @@
+Prompt: a silver car parked next to a golden bicycle
+Seed: 42
+Steps: 50
+Refinement steps: 20
+Learning rate: 20.0
+Feedback interval: 3
+Active steps: 0-20 (gradient-based refinement)

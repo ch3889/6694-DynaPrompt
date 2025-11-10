@@ -1,0 +1,7 @@
+Prompt: a silver car parked next to a golden bicycle
+Initial seed: 42
+Steps: 50
+Check step: 15
+Attention threshold: 0.05
+Max retries: 1
+Boost factor: 2.5

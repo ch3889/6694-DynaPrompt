@@ -1,0 +1,3 @@
+Prompt: a silver car parked next to a golden bicycle
+Seed: 643603
+Steps: 50
