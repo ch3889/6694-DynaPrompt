@@ -1,0 +1,34 @@
+# DynaPrompt Requirements for GPU (CUDA 11.8)
+# Install with: pip install -r requirements_gpu.txt
+
+# PyTorch with CUDA (install via conda recommended)
+# conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
+# Transformers and diffusion models
+transformers==4.35.0
+diffusers==4.24.0
+accelerate==0.25.0
+
+# Stable Diffusion dependencies
+omegaconf==2.3.0
+einops==0.7.0
+pytorch-lightning==2.1.0
+
+# Image processing
+kornia==0.7.0
+pillow==10.1.0
+
+# Metrics
+torchmetrics==1.2.0
+
+# Utilities
+numpy==1.24.3
+tqdm
+matplotlib
+
+# Optional: for HuggingFace downloads
+huggingface-hub
+
+# Optional: for Jupyter notebook on VM
+# jupyter
+# ipykernel

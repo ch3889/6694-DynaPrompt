@@ -139,9 +139,22 @@ class DynaPrompt:
     def measure_generation_time(self, start_time, end_time):
         return end_time - start_time
 
-    def update_prompt_embedding(self, prompt_embedding, feedback_score, alpha=0.3):
-        # Weighted update: increase emphasis on missing concepts
-        updated_embedding = prompt_embedding + alpha * feedback_score
+    def update_prompt_embedding(self, prompt_embedding, feedback_gradient, alpha=0.1):
+        """
+        Update prompt embedding using gradient-like feedback
+        
+        Args:
+            prompt_embedding: Current embedding (1, seq_len, dim)
+            feedback_gradient: Gradient tensor same shape as embedding
+            alpha: Update strength (smaller = more conservative)
+        """
+        # Normalize gradient to prevent explosion
+        gradient_norm = torch.norm(feedback_gradient)
+        if gradient_norm > 0:
+            feedback_gradient = feedback_gradient / gradient_norm
+        
+        # Conservative update with small alpha
+        updated_embedding = prompt_embedding + alpha * feedback_gradient
         return updated_embedding
 
     def feedback_loop(self, prompt, current_embedding, generated_image, step):
@@ -160,15 +173,40 @@ class DynaPrompt:
         # Compute CLIP score for semantic alignment
         clipscore = self.compute_clipscore(generated_image, prompt)
         
-        # Compute feedback signal (difference from ideal score of 1.0)
-        feedback_signal = 1.0 - clipscore
+        # Compute text-image features for gradient-based feedback
+        with torch.no_grad():
+            # Get CLIP text embedding for the prompt
+            inputs = self.clip_processor(text=[prompt], return_tensors="pt", padding=True).to(self.device)
+            text_features = self.clip_model.get_text_features(**inputs)
+            
+            # Get CLIP image features
+            image_inputs = self.clip_processor(images=generated_image, return_tensors="pt", do_rescale=False).to(self.device)
+            image_features = self.clip_model.get_image_features(**image_inputs)
+            
+            # Compute alignment direction (push text toward image semantics)
+            alignment_direction = image_features - text_features
+            
+            # Create pseudo-gradient by projecting onto embedding space
+            # Match dimensions: CLIP features (512) -> SD embedding (768)
+            if alignment_direction.shape[-1] != current_embedding.shape[-1]:
+                # Project CLIP features to SD embedding dimension
+                projection = torch.nn.functional.pad(
+                    alignment_direction, 
+                    (0, current_embedding.shape[-1] - alignment_direction.shape[-1])
+                )
+                feedback_gradient = projection.unsqueeze(1).expand_as(current_embedding)
+            else:
+                feedback_gradient = alignment_direction.unsqueeze(1).expand_as(current_embedding)
+            
+            # Scale by alignment score (stronger feedback when misaligned)
+            feedback_scale = (1.0 - torch.clamp(torch.tensor(clipscore / 100.0), 0, 1)).item()
+            feedback_gradient = feedback_gradient * feedback_scale
         
-        # Update embedding based on feedback
-        # For now, use a simple gradient-based update (can be enhanced)
+        # Update embedding based on feedback with conservative alpha
         updated_embedding = self.update_prompt_embedding(
             current_embedding, 
-            feedback_signal,
-            alpha=0.3  # Can be configurable
+            feedback_gradient,
+            alpha=0.05  # Very conservative to avoid corruption
         )
         
         # Calculate embedding shift magnitude
