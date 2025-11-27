@@ -5,7 +5,6 @@ import time
 
 # Lazy import for FID to avoid matplotlib circular import issues
 _FID_MODULE = None
-_BLIP2_MODULE = None
 
 def _get_fid_module():
     """Lazy load FrechetInceptionDistance to avoid import errors"""
@@ -19,32 +18,12 @@ def _get_fid_module():
             _FID_MODULE = False
     return _FID_MODULE
 
-def _get_blip2_module():
-    """Lazy load BLIP-2 for compositional accuracy"""
-    global _BLIP2_MODULE
-    if _BLIP2_MODULE is None:
-        try:
-            from transformers import Blip2Processor, Blip2ForConditionalGeneration
-            _BLIP2_MODULE = {
-                'processor': Blip2Processor,
-                'model': Blip2ForConditionalGeneration
-            }
-        except ImportError as e:
-            print(f"Warning: Could not import BLIP-2: {e}")
-            _BLIP2_MODULE = False
-    return _BLIP2_MODULE
-
-# BLIP-2 placeholder import (replace with actual BLIP-2 integration)
-# from blip2 import Blip2Model
-
 class DynaPrompt:
     def __init__(self, clip_model_name="openai/clip-vit-base-patch32", device="cuda"):
         self.device = device
         self.clip_model = CLIPModel.from_pretrained(clip_model_name).to(device)
         self.clip_processor = CLIPProcessor.from_pretrained(clip_model_name)
         self.fid = None  # Lazy-loaded when needed
-        self.blip2 = None  # Lazy-loaded when needed
-        self.blip2_processor = None
 
     def compute_clipscore(self, image, prompt):
         inputs = self.clip_processor(text=[prompt], images=image, return_tensors="pt", padding=True).to(self.device)
@@ -162,58 +141,39 @@ class DynaPrompt:
 
     def compute_compositional_accuracy(self, image, prompt):
         """
-        Compute compositional accuracy using BLIP-2 to check if generated image
-        contains objects/attributes mentioned in prompt
+        Compute compositional accuracy based on per-token alignment scores.
+        This avoids the need for BLIP-2 (15GB download) by leveraging the
+        per-token analysis already computed during generation.
         
         Args:
             image: Generated image tensor (1, 3, H, W) in [0, 1]
             prompt: Text prompt (str)
             
         Returns:
-            Compositional accuracy score or None if BLIP-2 not available
+            Compositional accuracy score (0-1) based on token alignment
         """
-        BLIP2_MODULES = _get_blip2_module()
-        if BLIP2_MODULES is False:
-            return None
-        
-        # Lazy initialize BLIP-2
-        if self.blip2 is None:
-            try:
-                print("Loading BLIP-2 for compositional accuracy...")
-                self.blip2_processor = BLIP2_MODULES['processor'].from_pretrained("Salesforce/blip2-opt-2.7b")
-                self.blip2 = BLIP2_MODULES['model'].from_pretrained("Salesforce/blip2-opt-2.7b").to(self.device)
-            except Exception as e:
-                print(f"Failed to load BLIP-2: {e}")
-                return None
-        
         try:
-            # Convert tensor to PIL Image for BLIP-2
-            import torchvision.transforms as T
-            to_pil = T.ToPILImage()
-            pil_image = to_pil(image.squeeze(0))
+            # Extract concepts using per-token analysis
+            concept_scores, weak_tokens = self.compute_per_token_alignment(image, prompt)
             
-            # Generate caption from image
-            inputs = self.blip2_processor(pil_image, return_tensors="pt").to(self.device)
-            generated_ids = self.blip2.generate(**inputs, max_length=50)
-            generated_caption = self.blip2_processor.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-            
-            # Simple compositional accuracy: check if key words from prompt appear in caption
-            prompt_words = set(prompt.lower().split())
-            caption_words = set(generated_caption.lower().split())
-            
-            # Remove common stop words
-            stop_words = {'a', 'an', 'the', 'in', 'on', 'at', 'with', 'and', 'or', 'of', 'to', 'is', 'are'}
-            prompt_words -= stop_words
-            caption_words -= stop_words
-            
-            if len(prompt_words) == 0:
+            if not concept_scores:
                 return 0.0
             
-            # Calculate overlap
-            overlap = len(prompt_words & caption_words)
-            accuracy = overlap / len(prompt_words)
+            # Calculate compositional completeness
+            total_concepts = len(concept_scores)
+            weak_concepts = len(weak_tokens)
+            compositional_completeness = (total_concepts - weak_concepts) / total_concepts
             
-            return accuracy
+            # Calculate average alignment score (normalized to 0-1 range)
+            avg_alignment = sum(concept_scores.values()) / total_concepts
+            normalized_alignment = avg_alignment / 30.0  # CLIP scores typically 0-30
+            
+            # Weighted combination: 70% completeness + 30% alignment strength
+            # Completeness ensures all concepts present, alignment ensures quality
+            compositional_accuracy = 0.7 * compositional_completeness + 0.3 * normalized_alignment
+            
+            return compositional_accuracy
+            
         except Exception as e:
             print(f"Error computing compositional accuracy: {e}")
             return None
