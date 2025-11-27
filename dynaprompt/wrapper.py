@@ -168,11 +168,20 @@ class DynaPromptPipeline:
                 metrics_history.append({
                     'step': i,
                     'clip_score': feedback_result['clip_score'],
-                    'embedding_shift': feedback_result.get('embedding_shift', 0.0)
+                    'embedding_shift': feedback_result.get('embedding_shift', 0.0),
+                    'weak_tokens': feedback_result.get('weak_tokens', []),
+                    'token_analysis': feedback_result.get('token_analysis', None)
                 })
                 
-                # Update progress bar
-                iterator.set_postfix({'CLIP': f"{feedback_result['clip_score']:.3f}"})
+                # Update progress bar with weak tokens info
+                weak_tokens_str = ', '.join(feedback_result.get('weak_tokens', [])[:3])  # Show first 3
+                if weak_tokens_str:
+                    iterator.set_postfix({
+                        'CLIP': f"{feedback_result['clip_score']:.3f}",
+                        'Weak': weak_tokens_str[:30]  # Truncate if too long
+                    })
+                else:
+                    iterator.set_postfix({'CLIP': f"{feedback_result['clip_score']:.3f}"})
             
             # Store embedding trajectory
             if i % 10 == 0:
@@ -189,8 +198,11 @@ class DynaPromptPipeline:
             e_t = e_t_uncond + cfg_scale * (e_t - e_t_uncond)
             
             # DDIM step
-            latents, _ = sampler.p_sample_ddim(
-                latents, c, ts, index=index,
+            latents, pred_x0 = sampler.p_sample_ddim(
+                x=latents,
+                c=c,
+                t=ts,
+                index=index,
                 unconditional_guidance_scale=cfg_scale,
                 unconditional_conditioning=uc,
                 use_original_steps=False
@@ -232,6 +244,14 @@ class DynaPromptPipeline:
             print(f"  FID Score: {results['fid_score']:.3f}")
         if results['compositional_accuracy'] is not None:
             print(f"  Compositional Accuracy: {results['compositional_accuracy']:.3f}")
+        
+        # Print weak tokens analysis
+        if metrics_history:
+            all_weak_tokens = set()
+            for entry in metrics_history:
+                all_weak_tokens.update(entry.get('weak_tokens', []))
+            if all_weak_tokens:
+                print(f"  Underrepresented concepts detected: {', '.join(sorted(all_weak_tokens)[:5])}")
         
         return results
 
