@@ -154,7 +154,9 @@ class DynaPrompt:
         """
         try:
             # Extract concepts using per-token analysis
-            concept_scores, weak_tokens = self.compute_per_token_alignment(image, prompt)
+            analysis_result = self.compute_per_token_alignment(image, prompt)
+            concept_scores = analysis_result['token_scores']
+            weak_tokens = analysis_result['weak_tokens']
             
             if not concept_scores:
                 return 0.0
