@@ -18,13 +18,13 @@ sampling:
 
 feedback:
   enabled: true
-  clip_model: "ViT-B/32"  # Options: ViT-B/32, ViT-L/14
-  feedback_frequency: 5  # Apply feedback more frequently
-  feedback_start_step: 5  # Start feedback earlier
-  feedback_end_step: 40    # Stop feedback before final refinement
+  clip_model: "openai/clip-vit-large-patch14"  # Upgraded to larger CLIP for better semantic understanding
+  feedback_frequency: 3  # Apply feedback more frequently (every 3 steps)
+  feedback_start_step: 3  # Start feedback earlier
+  feedback_end_step: 45    # Continue feedback longer
 
 prompt_update:
-  update_alpha: 0.05  # Learning rate for prompt updates (conservative to prevent corruption)
+  update_alpha: 0.15  # Learning rate for prompt updates (increased for stronger effect)
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update

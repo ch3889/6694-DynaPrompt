@@ -323,7 +323,7 @@ class DynaPrompt:
         global_updated = self.update_prompt_embedding(
             current_embedding, 
             feedback_gradient,
-            alpha=0.05  # Very conservative to avoid corruption
+            alpha=0.15  # Increased from 0.05 for stronger feedback
         )
         
         # Strategy 2: Selective token re-weighting (for missing concepts)
@@ -333,7 +333,7 @@ class DynaPrompt:
                 global_updated,
                 weak_tokens,
                 prompt,
-                boost_factor=1.3  # 30% boost for weak tokens
+                boost_factor=2.0  # 100% boost for weak tokens (increased from 1.3)
             )
         else:
             updated_embedding = global_updated
