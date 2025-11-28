@@ -11,16 +11,27 @@ from dynaprompt_dit.sampler import DiTDynaPromptSampler, DiTComponents
 
 
 # Placeholder tokenizer/text encoder compatible interface
-@dataclass
 class DummyTokenizer:
-    model_max_length: int = 77
-    pad_token_id: int = 0
-    def __call__(self, text_list, **kwargs):
-        # Simulate HF-like output
-        input_ids = torch.randint(1, 100, (len(text_list), self.model_max_length))
+    def __init__(self):
+        self.model_max_length = 77
+        self.pad_token_id = 0
+    
+    def __call__(self, text, **kwargs):
+        # Handle both list and string inputs
+        if isinstance(text, list):
+            batch_size = len(text)
+        else:
+            batch_size = 1
+            text = [text]
+        
+        # Check if this is for word tokenization (no padding kwarg or add_special_tokens only)
+        if 'add_special_tokens' in kwargs and len(kwargs) == 1:
+            # Simple word tokenization
+            return {"input_ids": [ord(c) % 100 for c in text[0]]}
+        
+        # HF-like tokenizer call with padding
+        input_ids = torch.randint(1, 100, (batch_size, self.model_max_length))
         return type("DummyOut", (), {"input_ids": input_ids, "to": lambda self, d: self})()
-    def __call__(self, text, add_special_tokens=False):
-        return {"input_ids": [ord(c) % 100 for c in text]}
 
 class DummyTextEncoder:
     def __call__(self, input_ids):
