@@ -30,7 +30,7 @@ REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
 SD_ROOT="$REPO_ROOT/models/stable_diffusion_compvis"
 SD_REPO="$SD_ROOT/stable-diffusion"
 
-export PYTHONPATH="$SD_REPO:$REPO_ROOT:$PYTHONPATH"
+export PYTHONPATH="${SD_REPO}:${REPO_ROOT}:${PYTHONPATH-}"
 echo "PYTHONPATH set to include: $SD_REPO and $REPO_ROOT"
 
 echo "=== DynaPrompt New Runner ==="
@@ -43,8 +43,13 @@ echo "================================"
 
 # Ensure venv exists
 if [ ! -d ".venv" ]; then
-  echo "Creating Python 3.10 virtualenv..."
-  python3.10 -m venv .venv
+  echo "Creating Python virtualenv (preferring 3.10)..."
+  if command -v python3.10 >/dev/null 2>&1; then
+    python3.10 -m venv .venv
+  else
+    echo "python3.10 not found; falling back to system python3"
+    python3 -m venv .venv
+  fi
 fi
 
 source .venv/bin/activate
