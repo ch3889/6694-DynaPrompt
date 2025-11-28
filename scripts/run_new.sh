@@ -24,6 +24,15 @@ THRESHOLD=${THRESHOLD:-0.05}
 BOOST=${BOOST:-6.0}
 OUTDIR=${OUTDIR:-data/images/dynaprompt_new}
 
+# Resolve repository root (directory containing this script assumed to be scripts/)
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
+SD_ROOT="$REPO_ROOT/models/stable_diffusion_compvis"
+SD_REPO="$SD_ROOT/stable-diffusion"
+
+export PYTHONPATH="$SD_REPO:$REPO_ROOT:$PYTHONPATH"
+echo "PYTHONPATH set to include: $SD_REPO and $REPO_ROOT"
+
 echo "=== DynaPrompt New Runner ==="
 echo "Prompt: $PROMPT"
 echo "Steps: $STEPS | CFG: $CFG | Seed: $SEED"
@@ -51,7 +60,7 @@ if [ ! -d "models/stable_diffusion_compvis/stable-diffusion" ] || [ ! -f "models
 fi
 
 # Run the fresh sampler
-python scripts/test_dynaprompt_new.py \
+python "$REPO_ROOT/scripts/test_dynaprompt_new.py" \
   --prompt "$PROMPT" \
   --steps $STEPS \
   --cfg $CFG \

@@ -19,8 +19,14 @@ SD_REPO = SD_ROOT / 'stable-diffusion'
 sys.path.insert(0, str(SD_REPO))
 sys.path.insert(0, str(WORKSPACE))
 
-from ldm.util import instantiate_from_config
-from ldm.models.diffusion.ddim import DDIMSampler
+try:
+    from ldm.util import instantiate_from_config
+    from ldm.models.diffusion.ddim import DDIMSampler
+except ModuleNotFoundError as e:
+    print("[ERROR] Could not import 'ldm'. Ensure the CompVis repo is cloned under 'models/stable_diffusion_compvis/stable-diffusion' and PYTHONPATH is set.")
+    print("Attempted path:", SD_REPO)
+    print("Add to PYTHONPATH: export PYTHONPATH=$PWD/models/stable_diffusion_compvis/stable-diffusion:$PYTHONPATH")
+    raise
 from dynaprompt_new.sampler import DynapromptNewSampler
 
 
