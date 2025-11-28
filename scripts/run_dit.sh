@@ -1,11 +1,11 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 # Convenience runner for the Diffusion Transformer (DiT) dynaprompt sampler.
 # ENV VARS (override by exporting before running or inline):
 #   PROMPT  - Text prompt (default below)
 #   STEPS   - Diffusion steps (default 20)
 #   CFG     - Guidance scale (default 4.0)
 
-set -e
+set -euo pipefail
 
 # Defaults (can be overridden via exported env or inline before the command)
 PROMPT=${PROMPT:-${1:-"A striped cat and a spotted dog playing together in a park"}}

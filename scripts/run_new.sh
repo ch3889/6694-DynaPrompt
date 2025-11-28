@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 # Convenience wrapper to set up venv (if missing) and run the fresh sampler.
 # ENV VARS (override by exporting before running or inline):
 #   PROMPT        - Text prompt (default below)
@@ -11,7 +11,7 @@
 #   BOOST         - Base boost factor (default 6.0)
 #   OUTDIR        - Output directory (default data/images/dynaprompt_new)
 
-set -e
+set -euo pipefail
 
 # Defaults (can be overridden via exported env or inline before the command)
 PROMPT=${PROMPT:-${1:-"A blue cat sitting on a red chair with a yellow ball"}}
