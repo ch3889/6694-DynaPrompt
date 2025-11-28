@@ -19,6 +19,22 @@ SD_REPO = SD_ROOT / 'stable-diffusion'
 sys.path.insert(0, str(SD_REPO))
 sys.path.insert(0, str(WORKSPACE))
 
+# Inject PyTorch Lightning 2.x compatibility shim for older imports
+try:
+    import types
+    import pytorch_lightning
+    from pytorch_lightning.utilities import rank_zero as _rank_zero
+    # Create a shim module to satisfy legacy imports: pytorch_lightning.utilities.distributed
+    _shim = types.ModuleType("distributed")
+    _shim.rank_zero_info = getattr(_rank_zero, "rank_zero_info", None)
+    _shim.rank_zero_warn = getattr(_rank_zero, "rank_zero_warn", None)
+    _shim.rank_zero_only = getattr(_rank_zero, "rank_zero_only", None)
+    import pytorch_lightning.utilities as _pl_utils
+    _pl_utils.distributed = _shim
+    print(f"[Lightning Shim] Injected compatibility for utilities.distributed (PL {pytorch_lightning.__version__})")
+except Exception as e:
+    print("[Lightning Shim] Injection skipped:", e)
+
 try:
     from ldm.util import instantiate_from_config
     from ldm.models.diffusion.ddim import DDIMSampler
