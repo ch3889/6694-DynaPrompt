@@ -9,8 +9,11 @@ import torch
 from pathlib import Path
 
 # Add paths
-sys.path.insert(0, '/home/cursedfox/6694-DynaPrompt/models/stable_diffusion_compvis')
-sys.path.insert(0, '/home/cursedfox/6694-DynaPrompt')
+from pathlib import Path
+WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
+SD_PATH = WORKSPACE_ROOT / 'models' / 'stable_diffusion_compvis'
+sys.path.insert(0, str(SD_PATH / 'stable-diffusion'))
+sys.path.insert(0, str(WORKSPACE_ROOT))
 
 from omegaconf import OmegaConf
 from ldm.util import instantiate_from_config
@@ -22,8 +25,7 @@ import numpy as np
 
 def load_model():
     """Load Stable Diffusion model."""
-    SD_PATH = Path("/home/cursedfox/6694-DynaPrompt/models/stable_diffusion_compvis")
-    config_path = SD_PATH / "configs" / "stable-diffusion" / "v1-inference.yaml"
+    config_path = SD_PATH / "stable-diffusion" / "configs" / "stable-diffusion" / "v1-inference.yaml"
     ckpt_path = SD_PATH / "v1-5-pruned-emaonly.ckpt"
 
     print(f"Loading model from {ckpt_path}")

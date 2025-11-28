@@ -44,3 +44,12 @@ output:
   output_dir: "data/images/generated/dynaprompt"
   save_format: "png"
   save_metadata: true
+
+attention_boosting:
+  enabled: true
+  check_step: 5            # Early detection step (V7 default)
+  attention_threshold: 0.05
+  max_retries: 10          # Try seeds before boosting
+  boost_factor: 7.5        # Base multiplier (adaptive up to ~22.5)
+  start_step_ratio: 0.0    # Start boosting from beginning
+  end_step_ratio: 0.5      # Stop midway to avoid artifacts

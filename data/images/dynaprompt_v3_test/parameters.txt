@@ -1,6 +1,0 @@
-Prompt: a silver car parked next to a golden bicycle
-Seed: 42
-Steps: 50
-Boost factor: 2.5
-Feedback interval: 3
-Active steps: 0-20 (early intervention)
