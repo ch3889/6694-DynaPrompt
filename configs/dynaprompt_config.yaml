@@ -29,6 +29,16 @@ prompt_update:
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
 
+# Hybrid configuration (combines zk2295 + ch3889)
+clip:
+  model_name: "openai/clip-vit-base-patch32"  # CLIP model for embedding feedback
+
+attention:
+  boost_factor: 1.3  # Attention amplification factor (ch3889)
+  threshold: 0.05     # Attention threshold for weak token detection
+  start_step: 0       # Start attention boosting from step 0 (early intervention)
+  end_step: 20        # End at step 20 (structure formation phase)
+
 clip_feedback:
   per_token_similarity: true  # Compute similarity per token
   use_attention_pooling: false  # Use attention-based pooling
