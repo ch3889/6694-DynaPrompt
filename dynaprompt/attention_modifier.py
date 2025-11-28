@@ -7,6 +7,20 @@ cross-attention layers and amplifying attention to underrepresented tokens.
 Based on the Attend-and-Excite approach.
 """
 
+# Fix pytorch_lightning compatibility issue FIRST
+try:
+    import pytorch_lightning
+except ImportError:
+    pass
+else:
+    if not hasattr(pytorch_lightning, 'utilities') or not hasattr(pytorch_lightning.utilities, 'distributed'):
+        import pytorch_lightning.utilities
+        class _DistributedShim:
+            @staticmethod
+            def rank_zero_only(fn):
+                return fn
+        pytorch_lightning.utilities.distributed = _DistributedShim()
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
