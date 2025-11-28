@@ -48,7 +48,19 @@ def compare_methods(prompt, seed=42, steps=50):
     print("METHOD 1: BASELINE (No Feedback)")
     print("="*60)
     
-    sd = load_sd_model(device=device)
+    # Try to find checkpoint (different paths on different systems)
+    import os
+    possible_paths = [
+        'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
+        'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
+    ]
+    ckpt_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            ckpt_path = path
+            break
+    
+    sd = load_sd_model(ckpt_path=ckpt_path, device=device)
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
@@ -107,7 +119,7 @@ def compare_methods(prompt, seed=42, steps=50):
     print("METHOD 2: HYBRID (Embedding + Attention Feedback)")
     print("="*60)
     
-    hybrid_pipeline = HybridDynaPrompt(device=device)
+    hybrid_pipeline = HybridDynaPrompt(ckpt_path=ckpt_path, device=device)
     hybrid_result = hybrid_pipeline.generate(
         prompt=prompt,
         steps=steps,
