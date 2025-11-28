@@ -190,6 +190,9 @@ class HybridDynaPrompt:
         import time
         start_time = time.time()
         
+        # Reset adaptive reweighting stats for this generation
+        self.reweighter.reset()
+        
         # Encode prompt
         c = self.sd.encode_text([prompt])
         uc = self.sd.encode_text([""])
@@ -256,12 +259,9 @@ class HybridDynaPrompt:
                     # Get step-dependent scaling
                     step_weights = self.reweighter.get_step_dependent_weights(i, total_steps)
                     
-                    # Override dynaprompt's alpha temporarily
-                    original_alpha = self.dynaprompt.update_alpha if hasattr(self.dynaprompt, 'update_alpha') else 0.08
-                    if hasattr(self.dynaprompt, 'update_alpha'):
-                        self.dynaprompt.update_alpha = step_weights['scaled_alpha']
-                    
                     # Apply zk2295 feedback: global + selective with adaptive alpha
+                    # Note: DynaPrompt uses hardcoded alpha=0.08 in feedback_loop
+                    # The adaptive alpha is tracked for analysis but not applied here
                     feedback_result = self.dynaprompt.feedback_loop(
                         prompt=prompt,
                         current_embedding=c,
@@ -272,10 +272,6 @@ class HybridDynaPrompt:
                     
                     # Extract updated embedding and metrics
                     c = feedback_result['updated_embedding']
-                    
-                    # Restore original alpha
-                    if hasattr(self.dynaprompt, 'update_alpha'):
-                        self.dynaprompt.update_alpha = original_alpha
                     
                     # Store metrics with adaptive weights
                     metrics = {
@@ -289,7 +285,9 @@ class HybridDynaPrompt:
                     }
                     metrics_history.append(metrics)
                     embedding_trajectory.append(c.clone().cpu())
-                    weak_tokens_history.append(list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens)
+                    # Store weak token names as list
+                    weak_tokens_list = list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens
+                    weak_tokens_history.append(weak_tokens_list)
                     
                     # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback and weak_tokens:
