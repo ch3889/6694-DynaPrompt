@@ -15,6 +15,20 @@ from pathlib import Path
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# Fix pytorch_lightning compatibility issue
+try:
+    import pytorch_lightning
+except ImportError:
+    pass
+else:
+    if not hasattr(pytorch_lightning, 'utilities') or not hasattr(pytorch_lightning.utilities, 'distributed'):
+        import pytorch_lightning.utilities
+        class _DistributedShim:
+            @staticmethod
+            def rank_zero_only(fn):
+                return fn
+        pytorch_lightning.utilities.distributed = _DistributedShim()
+
 from dynaprompt.hybrid import HybridDynaPrompt
 from dynaprompt.wrapper import DynaPromptPipeline
 from dynaprompt.sd_loader import load_sd_model
