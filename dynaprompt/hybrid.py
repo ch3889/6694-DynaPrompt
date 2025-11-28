@@ -82,7 +82,7 @@ class HybridDynaPrompt:
         # Initialize Phase 2: Attention boosting (ch3889)
         print("Initializing attention boosting system (ch3889)...")
         self.attention_modifier = AttentionModifier(
-            tokenizer=self.sd.cond_stage_model.tokenizer,
+            tokenizer=self.sd.model.cond_stage_model.tokenizer,
             boost_factor=self.config.get('attention', {}).get('boost_factor', 1.3),
             threshold=self.config.get('attention', {}).get('threshold', 0.05),
             start_step=self.config.get('attention', {}).get('start_step', 0),
@@ -229,7 +229,7 @@ class HybridDynaPrompt:
                 analysis = self.dynaprompt.compute_per_token_alignment(
                     intermediate_image,
                     prompt,
-                    sd_tokenizer=self.sd.cond_stage_model.tokenizer
+                    sd_tokenizer=self.sd.model.cond_stage_model.tokenizer
                 )
                 
                 weak_tokens = analysis.get('weak_tokens', {})
@@ -254,7 +254,7 @@ class HybridDynaPrompt:
                     if attention_feedback:
                         # Map weak concepts to token positions
                         token_indices = self.map_concepts_to_token_positions(
-                            weak_tokens, prompt, self.sd.cond_stage_model.tokenizer
+                            weak_tokens, prompt, self.sd.model.cond_stage_model.tokenizer
                         )
                         
                         if token_indices:
@@ -306,10 +306,10 @@ class HybridDynaPrompt:
         final_clipscore = self.dynaprompt.compute_clipscore(image, prompt)
         
         final_analysis = self.dynaprompt.compute_per_token_alignment(
-            image, prompt, self.sd.cond_stage_model.tokenizer
+            image, prompt, self.sd.model.cond_stage_model.tokenizer
         )
         final_compositional = self.dynaprompt.compute_compositional_accuracy(
-            image, prompt, self.sd.cond_stage_model.tokenizer
+            image, prompt, self.sd.model.cond_stage_model.tokenizer
         )
         
         generation_time = time.time() - start_time
