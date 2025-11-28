@@ -353,7 +353,7 @@ class HybridDynaPrompt:
             image, prompt, self.sd.model.cond_stage_model.tokenizer
         )
         final_compositional = self.dynaprompt.compute_compositional_accuracy(
-            image, prompt, self.sd.model.cond_stage_model.tokenizer
+            image, prompt
         )
         
         generation_time = time.time() - start_time

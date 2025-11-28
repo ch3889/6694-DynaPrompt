@@ -114,7 +114,7 @@ def compare_methods(prompt, seed=42, steps=50):
     evaluator = DynaPrompt(device=device)
     baseline_clip = evaluator.compute_clipscore(baseline_image, prompt)
     baseline_comp = evaluator.compute_compositional_accuracy(
-        baseline_image, prompt, sd.model.cond_stage_model.tokenizer
+        baseline_image, prompt
     )
     
     results['baseline'] = {
