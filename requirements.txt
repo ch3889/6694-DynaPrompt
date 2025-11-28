@@ -6,7 +6,7 @@ pillow>=9.5.0
 
 # Stable Diffusion - CompVis
 omegaconf>=2.3.0
-pytorch-lightning>=2.0.0
+
 einops>=0.6.1
 transformers>=4.30.0
 safetensors>=0.3.1
