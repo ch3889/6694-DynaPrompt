@@ -39,6 +39,16 @@ attention:
   start_step: 0       # Start attention boosting from step 0 (early intervention)
   end_step: 20        # End at step 20 (structure formation phase)
 
+# Adaptive reweighting configuration
+adaptive_reweighting:
+  enabled: true       # Enable adaptive weight adjustment
+  momentum: 0.9       # Smoothing factor (0-1) to prevent oscillation
+  adaptation_rate: 0.1  # How aggressively to adapt weights (0-1)
+  min_alpha: 0.01     # Minimum alpha for embedding updates
+  max_alpha: 0.3      # Maximum alpha for embedding updates
+  min_boost: 1.1      # Minimum attention boost factor
+  max_boost: 2.0      # Maximum attention boost factor
+
 clip_feedback:
   per_token_similarity: true  # Compute similarity per token
   use_attention_pooling: false  # Use attention-based pooling

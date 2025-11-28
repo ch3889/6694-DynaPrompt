@@ -34,6 +34,7 @@ from tqdm import tqdm
 from .core import DynaPrompt
 from .sd_loader import load_sd_model
 from .attention_modifier import AttentionModifier
+from .adaptive_reweighting import AdaptiveReweighter
 
 class HybridDynaPrompt:
     """
@@ -92,6 +93,16 @@ class HybridDynaPrompt:
         # Patch U-Net attention layers for Phase 2
         print("Patching U-Net attention layers...")
         self.attention_modifier.patch_attention_layers(self.sd.model.diffusion_model)
+        
+        # Initialize adaptive reweighting
+        print("Initializing adaptive reweighting system...")
+        reweight_config = self.config.get('adaptive_reweighting', {})
+        self.reweighter = AdaptiveReweighter(
+            initial_alpha=self.config.get('prompt_update', {}).get('update_alpha', 0.08),
+            initial_boost=self.config.get('attention', {}).get('boost_factor', 1.3),
+            momentum=reweight_config.get('momentum', 0.9),
+            adaptation_rate=reweight_config.get('adaptation_rate', 0.1)
+        )
         
         print("✓ Hybrid DynaPrompt initialized successfully!")
     
@@ -235,7 +246,22 @@ class HybridDynaPrompt:
                 weak_tokens = analysis.get('weak_tokens', {})
                 
                 if weak_tokens:
-                    # Apply zk2295 feedback: global + selective
+                    # Get current CLIP score for adaptive reweighting
+                    current_clip = self.dynaprompt.compute_clipscore(intermediate_image, prompt)
+                    previous_clip = metrics_history[-1]['clipscore'] if metrics_history else None
+                    
+                    # Adaptively update alpha based on CLIP score improvement
+                    adaptive_alpha = self.reweighter.update_alpha(current_clip, previous_clip)
+                    
+                    # Get step-dependent scaling
+                    step_weights = self.reweighter.get_step_dependent_weights(i, total_steps)
+                    
+                    # Override dynaprompt's alpha temporarily
+                    original_alpha = self.dynaprompt.update_alpha if hasattr(self.dynaprompt, 'update_alpha') else 0.08
+                    if hasattr(self.dynaprompt, 'update_alpha'):
+                        self.dynaprompt.update_alpha = step_weights['scaled_alpha']
+                    
+                    # Apply zk2295 feedback: global + selective with adaptive alpha
                     c, metrics = self.dynaprompt.feedback_loop(
                         prompt=prompt,
                         current_embedding=c,
@@ -244,14 +270,31 @@ class HybridDynaPrompt:
                         use_per_token=True
                     )
                     
-                    # Store metrics
+                    # Restore original alpha
+                    if hasattr(self.dynaprompt, 'update_alpha'):
+                        self.dynaprompt.update_alpha = original_alpha
+                    
+                    # Store metrics with adaptive weights
                     metrics['step'] = i
+                    metrics['adaptive_alpha'] = adaptive_alpha
+                    metrics['scaled_alpha'] = step_weights['scaled_alpha']
+                    metrics['alpha_scale'] = step_weights['alpha_scale']
                     metrics_history.append(metrics)
                     embedding_trajectory.append(c.clone().cpu())
                     weak_tokens_history.append(weak_tokens)
                     
                     # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback:
+                        # Adaptively update boost factor
+                        avg_attention = analysis.get('average_similarity', None)
+                        adaptive_boost = self.reweighter.update_boost_factor(
+                            weak_token_count=len(weak_tokens),
+                            avg_attention=avg_attention
+                        )
+                        
+                        # Update attention modifier with adaptive boost
+                        self.attention_modifier.boost_factor = step_weights['scaled_boost']
+                        
                         # Map weak concepts to token positions
                         token_indices = self.map_concepts_to_token_positions(
                             weak_tokens, prompt, self.sd.model.cond_stage_model.tokenizer
@@ -263,8 +306,9 @@ class HybridDynaPrompt:
                             self.attention_modifier.enable()
                             
                             iterator.set_postfix({
-                                'phase1': f'✓ {len(weak_tokens)} weak',
-                                'phase2': f'✓ boost {len(token_indices)} tokens'
+                                'phase1': f'✓ α={step_weights["scaled_alpha"]:.3f}',
+                                'phase2': f'✓ β={step_weights["scaled_boost"]:.2f}',
+                                'weak': len(weak_tokens)
                             })
                         else:
                             self.attention_modifier.disable()
@@ -314,6 +358,9 @@ class HybridDynaPrompt:
         
         generation_time = time.time() - start_time
         
+        # Get adaptive reweighting statistics
+        reweight_stats = self.reweighter.get_statistics()
+        
         print(f"\n{'='*60}")
         print(f"HYBRID GENERATION COMPLETE")
         print(f"{'='*60}")
@@ -324,6 +371,11 @@ class HybridDynaPrompt:
         if weak_tokens_history:
             total_weak = sum(len(wt) for wt in weak_tokens_history)
             print(f"Total Weak Tokens Detected: {total_weak}")
+        print(f"\nAdaptive Reweighting Stats:")
+        print(f"  Final Alpha: {reweight_stats['current_alpha']:.4f}")
+        print(f"  Final Boost: {reweight_stats['current_boost']:.2f}")
+        print(f"  Avg Alpha: {reweight_stats['avg_alpha']:.4f}")
+        print(f"  Avg Boost: {reweight_stats['avg_boost']:.2f}")
         print(f"{'='*60}\n")
         
         return {
@@ -334,6 +386,7 @@ class HybridDynaPrompt:
             'metrics_history': metrics_history,
             'embedding_trajectory': embedding_trajectory,
             'weak_tokens_history': weak_tokens_history,
+            'adaptive_stats': reweight_stats,
             'generation_time': generation_time,
             'prompt': prompt,
             'config': {
