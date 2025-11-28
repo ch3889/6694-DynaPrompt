@@ -262,7 +262,7 @@ class HybridDynaPrompt:
                         self.dynaprompt.update_alpha = step_weights['scaled_alpha']
                     
                     # Apply zk2295 feedback: global + selective with adaptive alpha
-                    c, metrics = self.dynaprompt.feedback_loop(
+                    feedback_result = self.dynaprompt.feedback_loop(
                         prompt=prompt,
                         current_embedding=c,
                         generated_image=intermediate_image,
@@ -270,21 +270,29 @@ class HybridDynaPrompt:
                         use_per_token=True
                     )
                     
+                    # Extract updated embedding and metrics
+                    c = feedback_result['updated_embedding']
+                    
                     # Restore original alpha
                     if hasattr(self.dynaprompt, 'update_alpha'):
                         self.dynaprompt.update_alpha = original_alpha
                     
                     # Store metrics with adaptive weights
-                    metrics['step'] = i
-                    metrics['adaptive_alpha'] = adaptive_alpha
-                    metrics['scaled_alpha'] = step_weights['scaled_alpha']
-                    metrics['alpha_scale'] = step_weights['alpha_scale']
+                    metrics = {
+                        'step': i,
+                        'clipscore': feedback_result['clip_score'],
+                        'embedding_shift': feedback_result['embedding_shift'],
+                        'weak_tokens': feedback_result['weak_tokens'],
+                        'adaptive_alpha': adaptive_alpha,
+                        'scaled_alpha': step_weights['scaled_alpha'],
+                        'alpha_scale': step_weights['alpha_scale']
+                    }
                     metrics_history.append(metrics)
                     embedding_trajectory.append(c.clone().cpu())
-                    weak_tokens_history.append(weak_tokens)
+                    weak_tokens_history.append(list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens)
                     
                     # === PHASE 2: Attention Boosting (ch3889) ===
-                    if attention_feedback:
+                    if attention_feedback and weak_tokens:
                         # Adaptively update boost factor
                         avg_attention = analysis.get('average_similarity', None)
                         adaptive_boost = self.reweighter.update_boost_factor(
