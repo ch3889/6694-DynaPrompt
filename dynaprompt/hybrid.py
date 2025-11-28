@@ -92,7 +92,7 @@ class HybridDynaPrompt:
         
         # Patch U-Net attention layers for Phase 2
         print("Patching U-Net attention layers...")
-        self.attention_modifier.patch_attention_layers(self.sd.model.diffusion_model)
+        self.attention_modifier.patch_attention_layers(self.sd.model.model)
         
         # Initialize adaptive reweighting
         print("Initializing adaptive reweighting system...")
