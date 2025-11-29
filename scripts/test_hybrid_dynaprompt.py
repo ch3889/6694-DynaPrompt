@@ -37,7 +37,7 @@ import json
 from datetime import datetime
 
 
-def compare_methods(prompt, seed=42, steps=50):
+def compare_methods(prompt, seed=42, steps=50, sd_model=None, hybrid_pipeline=None):
     """
     Compare baseline and hybrid approaches
     
@@ -45,6 +45,8 @@ def compare_methods(prompt, seed=42, steps=50):
         prompt: Text prompt to test
         seed: Random seed for reproducibility
         steps: Number of denoising steps
+        sd_model: Pre-loaded SD model (optional, will load if None)
+        hybrid_pipeline: Pre-loaded hybrid pipeline (optional, will load if None)
         
     Returns:
         dict with results from both methods
@@ -62,19 +64,21 @@ def compare_methods(prompt, seed=42, steps=50):
     print("METHOD 1: BASELINE (No Feedback)")
     print("="*60)
     
-    # Try to find checkpoint (different paths on different systems)
-    import os
-    possible_paths = [
-        'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
-        'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
-    ]
-    ckpt_path = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            ckpt_path = path
-            break
+    # Load model only if not provided
+    if sd_model is None:
+        import os
+        possible_paths = [
+            'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
+            'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
+        ]
+        ckpt_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                ckpt_path = path
+                break
+        sd_model = load_sd_model(ckpt_path=ckpt_path, device=device)
     
-    sd = load_sd_model(ckpt_path=ckpt_path, device=device)
+    sd = sd_model
     torch.manual_seed(seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
@@ -133,7 +137,20 @@ def compare_methods(prompt, seed=42, steps=50):
     print("METHOD 2: HYBRID (Embedding + Attention Feedback)")
     print("="*60)
     
-    hybrid_pipeline = HybridDynaPrompt(ckpt_path=ckpt_path, device=device)
+    # Load hybrid pipeline only if not provided
+    if hybrid_pipeline is None:
+        import os
+        possible_paths = [
+            'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
+            'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
+        ]
+        ckpt_path = None
+        for path in possible_paths:
+            if os.path.exists(path):
+                ckpt_path = path
+                break
+        hybrid_pipeline = HybridDynaPrompt(ckpt_path=ckpt_path, device=device)
+    
     hybrid_result = hybrid_pipeline.generate(
         prompt=prompt,
         steps=steps,
@@ -252,6 +269,31 @@ def main():
     print("Comparing: Baseline vs Hybrid")
     print("="*80)
     
+    # Load models once
+    print("\n" + "="*60)
+    print("INITIALIZING MODELS (one-time setup)")
+    print("="*60)
+    
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    import os
+    possible_paths = [
+        'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
+        'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
+    ]
+    ckpt_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            ckpt_path = path
+            break
+    
+    print("\nLoading Stable Diffusion for baseline...")
+    sd_model = load_sd_model(ckpt_path=ckpt_path, device=device)
+    
+    print("\nLoading Hybrid DynaPrompt pipeline...")
+    hybrid_pipeline = HybridDynaPrompt(ckpt_path=ckpt_path, device=device)
+    
+    print("\n✓ Models loaded successfully!\n")
+    
     all_results = {}
     
     for i, prompt in enumerate(test_prompts, 1):
@@ -259,7 +301,9 @@ def main():
         print(f"TEST {i}/{len(test_prompts)}")
         print(f"{'#'*80}")
         
-        results = compare_methods(prompt, seed=42, steps=50)
+        results = compare_methods(prompt, seed=42, steps=50, 
+                                 sd_model=sd_model, 
+                                 hybrid_pipeline=hybrid_pipeline)
         visualize_comparison(results, prompt)
         all_results[prompt] = results
         
