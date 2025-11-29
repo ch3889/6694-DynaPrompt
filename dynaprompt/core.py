@@ -323,7 +323,7 @@ class DynaPrompt:
         # Strategy 1: Global gradient-based update (for overall alignment)
         # Use provided alpha or default to stronger value
         if alpha is None:
-            alpha = 0.15  # Default to stronger feedback
+            alpha = 0.25  # Default to much stronger feedback
         
         global_updated = self.update_prompt_embedding(
             current_embedding, 
@@ -338,7 +338,7 @@ class DynaPrompt:
                 global_updated,
                 weak_tokens,
                 prompt,
-                boost_factor=1.5  # 50% boost for weak tokens - balanced
+                boost_factor=2.5  # Much stronger boost for weak tokens
             )
         else:
             updated_embedding = global_updated
