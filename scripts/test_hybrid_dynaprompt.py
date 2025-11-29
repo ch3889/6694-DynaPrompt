@@ -172,12 +172,22 @@ def visualize_comparison(results, prompt, save_dir='outputs/hybrid_comparison'):
     """
     os.makedirs(save_dir, exist_ok=True)
     
-    # Create grid of images
-    images = [
-        results['baseline']['image'],
-        results['hybrid']['image']
-    ]
+    # Prepare images for grid (ensure correct shape and type)
+    images = []
+    for method_name in ['baseline', 'hybrid']:
+        img = results[method_name]['image']
+        
+        # Ensure image is in correct shape: (C, H, W)
+        if img.dim() == 4:  # (B, C, H, W)
+            img = img.squeeze(0)  # Remove batch dimension
+        
+        # Ensure it's a float tensor in [0, 1]
+        if img.max() > 1.0:
+            img = img / 255.0
+        
+        images.append(img)
     
+    # Stack images for grid
     grid = make_grid(images, nrow=2, padding=10, pad_value=1.0)
     
     # Save grid
