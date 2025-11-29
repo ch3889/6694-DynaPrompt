@@ -1,7 +1,9 @@
 # DynaPrompt: Dynamic Prompt Guidance for Text-to-Image Diffusion Models
 
-**EECS 6694 Deep Learning Project**
-**Team Members:** Charles Chaoyu Hou (ch3889), Max Zishock Kim (zk2295), Swapnil Banerjee (sb5041)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ch3889/6694-DynaPrompt/blob/swap-colab/notebooks/DynaPrompt_Colab_Setup.ipynb)
+
+**EECS 6694 Deep Learning Project**  
+**Team Members:** Charles Chaoyu Hou (ch3889), Max Zishock Kim (zk2295), Swapnil Banerjee (sb5041)  
 **Presentation Date:** December 2, 2025
 
 ---
