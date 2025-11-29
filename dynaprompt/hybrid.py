@@ -259,15 +259,14 @@ class HybridDynaPrompt:
                     # Get step-dependent scaling
                     step_weights = self.reweighter.get_step_dependent_weights(i, total_steps)
                     
-                    # Apply zk2295 feedback: global + selective with adaptive alpha
-                    # Note: DynaPrompt uses hardcoded alpha=0.08 in feedback_loop
-                    # The adaptive alpha is tracked for analysis but not applied here
+                    # Apply zk2295 feedback with adaptive alpha
                     feedback_result = self.dynaprompt.feedback_loop(
                         prompt=prompt,
                         current_embedding=c,
                         generated_image=intermediate_image,
                         step=i,
-                        use_per_token=True
+                        use_per_token=True,
+                        alpha=step_weights['scaled_alpha']  # Pass adaptive alpha
                     )
                     
                     # Extract updated embedding and metrics

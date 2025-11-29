@@ -78,19 +78,19 @@ class AdaptiveReweighter:
         if previous_clip is not None:
             improvement = current_clip - previous_clip
             
-            # Adaptive adjustment based on improvement
+            # Adaptive adjustment based on improvement - favor growth
             if improvement > 0.01:  # Good improvement
-                # Increase alpha slightly (reward effective updates)
-                alpha_adjustment = self.adaptation_rate * 0.1
+                # Increase alpha to reinforce
+                alpha_adjustment = self.adaptation_rate * 0.2
             elif improvement > 0:  # Slight improvement
-                # Keep alpha stable
+                # Still increase slightly
+                alpha_adjustment = self.adaptation_rate * 0.1
+            elif improvement > -0.005:  # Very slight degradation (noise)
+                # Keep stable, don't penalize
                 alpha_adjustment = 0
-            elif improvement > -0.01:  # Slight degradation
-                # Reduce alpha moderately
-                alpha_adjustment = -self.adaptation_rate * 0.05
             else:  # Significant degradation
-                # Reduce alpha more aggressively
-                alpha_adjustment = -self.adaptation_rate * 0.15
+                # Reduce moderately
+                alpha_adjustment = -self.adaptation_rate * 0.1
             
             # Apply momentum smoothing
             new_alpha = self.alpha + alpha_adjustment
@@ -129,19 +129,19 @@ class AdaptiveReweighter:
         # Calculate weak token ratio
         weak_ratio = weak_token_count / total_tokens if total_tokens > 0 else 0
         
-        # Base adjustment on weak token prevalence
-        if weak_ratio > 0.3:  # Many weak tokens (>30%)
-            # Need strong boosting
-            target_boost = self.max_boost * 0.9
-        elif weak_ratio > 0.15:  # Moderate weak tokens (15-30%)
+        # Base adjustment on weak token prevalence - be aggressive
+        if weak_ratio > 0.2:  # Many weak tokens (>20%)
+            # Maximum boosting
+            target_boost = self.max_boost
+        elif weak_ratio > 0.1:  # Moderate weak tokens (10-20%)
+            # Strong boosting
+            target_boost = self.max_boost * 0.8
+        elif weak_ratio > 0.05:  # Few weak tokens (5-10%)
             # Moderate boosting
-            target_boost = (self.min_boost + self.max_boost) / 2
-        elif weak_ratio > 0.05:  # Few weak tokens (5-15%)
-            # Light boosting
-            target_boost = self.min_boost * 1.2
+            target_boost = self.max_boost * 0.6
         else:  # Very few weak tokens (<5%)
-            # Minimal boosting
-            target_boost = self.min_boost
+            # Still maintain decent boost
+            target_boost = self.max_boost * 0.5
         
         # Further adjust based on average attention if provided
         if avg_attention is not None:
@@ -182,16 +182,16 @@ class AdaptiveReweighter:
         
         if progress < 0.3:  # Early phase (0-30%)
             # Strong feedback for structure formation
+            alpha_scale = 1.3
+            boost_scale = 1.5
+        elif progress < 0.7:  # Middle phase (30-70%)
+            # Sustained feedback for refinement
             alpha_scale = 1.2
             boost_scale = 1.3
-        elif progress < 0.7:  # Middle phase (30-70%)
-            # Moderate feedback for refinement
+        else:  # Late phase (70-100%)
+            # Maintain feedback strength for quality
             alpha_scale = 1.0
             boost_scale = 1.0
-        else:  # Late phase (70-100%)
-            # Reduced feedback to avoid artifacts
-            alpha_scale = 0.7
-            boost_scale = 0.6
         
         return {
             'alpha_scale': alpha_scale,

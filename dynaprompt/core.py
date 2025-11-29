@@ -265,7 +265,7 @@ class DynaPrompt:
         
         return updated_embedding
 
-    def feedback_loop(self, prompt, current_embedding, generated_image, step, use_per_token=True):
+    def feedback_loop(self, prompt, current_embedding, generated_image, step, use_per_token=True, alpha=None):
         """
         Main DynaPrompt feedback loop - computes semantic alignment and updates embeddings
         
@@ -275,6 +275,7 @@ class DynaPrompt:
             generated_image: Current generated image (1, 3, H, W) in [0, 1]
             step: Current denoising step (int)
             use_per_token: Whether to use per-token analysis (default True)
+            alpha: Update strength (default 0.15, can be overridden for adaptive control)
             
         Returns:
             dict with 'updated_embedding', 'clip_score', 'embedding_shift', 'weak_tokens'
@@ -320,10 +321,14 @@ class DynaPrompt:
             feedback_gradient = feedback_gradient * feedback_scale
         
         # Strategy 1: Global gradient-based update (for overall alignment)
+        # Use provided alpha or default to stronger value
+        if alpha is None:
+            alpha = 0.15  # Default to stronger feedback
+        
         global_updated = self.update_prompt_embedding(
             current_embedding, 
             feedback_gradient,
-            alpha=0.08  # Moderate feedback - stronger than 0.05 but stable
+            alpha=alpha
         )
         
         # Strategy 2: Selective token re-weighting (for missing concepts)

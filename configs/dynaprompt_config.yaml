@@ -24,7 +24,7 @@ feedback:
   feedback_end_step: 42    # Continue until step 42
 
 prompt_update:
-  update_alpha: 0.08  # Moderate learning rate - balanced strength
+  update_alpha: 0.15  # Stronger learning rate for better feedback
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
@@ -34,7 +34,7 @@ clip:
   model_name: "openai/clip-vit-base-patch32"  # CLIP model for embedding feedback
 
 attention:
-  boost_factor: 1.3  # Attention amplification factor (ch3889)
+  boost_factor: 2.0  # Attention amplification factor (ch3889)
   threshold: 0.05     # Attention threshold for weak token detection
   start_step: 0       # Start attention boosting from step 0 (early intervention)
   end_step: 20        # End at step 20 (structure formation phase)
@@ -42,12 +42,12 @@ attention:
 # Adaptive reweighting configuration
 adaptive_reweighting:
   enabled: true       # Enable adaptive weight adjustment
-  momentum: 0.9       # Smoothing factor (0-1) to prevent oscillation
-  adaptation_rate: 0.1  # How aggressively to adapt weights (0-1)
-  min_alpha: 0.01     # Minimum alpha for embedding updates
-  max_alpha: 0.3      # Maximum alpha for embedding updates
-  min_boost: 1.1      # Minimum attention boost factor
-  max_boost: 2.0      # Maximum attention boost factor
+  momentum: 0.7       # Lower momentum for faster adaptation
+  adaptation_rate: 0.15  # More aggressive adaptation
+  min_alpha: 0.10     # Higher minimum alpha
+  max_alpha: 0.5      # Higher maximum alpha
+  min_boost: 1.5      # Higher minimum boost
+  max_boost: 3.0      # Higher maximum boost
 
 clip_feedback:
   per_token_similarity: true  # Compute similarity per token
