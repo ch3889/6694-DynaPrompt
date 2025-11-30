@@ -25,38 +25,44 @@ Stable Diffusion exhibits **semantic neglect** [Feng et al., 2023] — strong pr
 
 ---
 
-#### **Solution**: Riemannian Gradient Optimization on CLIP Manifold
+#### **Solution**: Iterative CLIP-Guided Embedding Feedback (DynaPrompt)
 
-**Key Insight**: Treat text embeddings as points on a differentiable manifold, optimize via projected gradient descent.
+**Key Insight**: Dynamically adjust text embeddings during generation using CLIP similarity as a feedback signal.
 
-**Mathematical Framework**:
+**DynaPrompt Algorithm** (ZK2295 Method):
 
-1. **Objective Function** (Information Theory [Cover & Thomas, 2006]):
-   $$\mathcal{L}_{\text{global}}(c, \hat{x}_t) = -\log p(\hat{x}_t | c) \approx -\text{sim}_{\text{CLIP}}(E_{\text{img}}(\hat{x}_t), E_{\text{text}}(c))$$
+1. **Decode Intermediate Image** at timestep $t$:
+   $$\hat{x}_t = \text{VAE-Decode}(z_t)$$
    
-   Maximizing CLIP similarity = minimizing cross-entropy between image and text distributions.
+2. **Compute Per-Token CLIP Scores** to identify weak concepts:
+   $$d_i = \text{sim}_{\text{CLIP}}(\hat{x}_t, w_i) \quad \forall w_i \in \text{prompt}$$
+   
+   Weak tokens: $\mathcal{W} = \{w_i : d_i < \text{threshold}\}$
 
-2. **Embedding Update Rule** (Gradient Descent with Manifold Projection):
-   $$c_{t+1} = \Pi_{\mathcal{M}}\left(c_t + \alpha \cdot \mathcal{P}(\nabla_c \mathcal{L}) \cdot \phi(t) \right)$$
+3. **Update Text Embedding** with two strategies:
+   
+   **A. Global Alignment** (gradient-based push):
+   $$c_{t+1} = c_t + \alpha \cdot \mathcal{P}(E_{\text{img}}(\hat{x}_t) - E_{\text{text}}(c_t))$$
    
    Where:
-   - $\Pi_{\mathcal{M}}$: Projection onto SD embedding manifold (via normalization)
-   - $\mathcal{P}: \mathbb{R}^{512} \to \mathbb{R}^{768}$: CLIP → SD space (zero-padding)
-   - $\phi(t) = \max_{i \in \text{weak}} \psi(t/T, w_i)$: Stage-based emphasis
-   - $\alpha = 0.12$: Learning rate (empirically optimal)
-
-3. **Selective Token Re-weighting** (Adaptive Boost):
-   $$\beta_i(d_i) = \begin{cases}
-   1.0 & \text{if } d_i \geq 20 \\
-   1.0 + 1.5 \cdot \frac{20 - d_i}{20} & \text{otherwise}
-   \end{cases}$$
+   - $\mathcal{P}: \mathbb{R}^{512} \to \mathbb{R}^{768}$: CLIP → SD embedding projection (zero-padding)
+   - $\alpha = 0.08$: Learning rate (conservative)
    
-   Inspired by AdaGrad [Duchi et al., 2011] — adaptive per-parameter learning rates.
+   **B. Selective Token Boosting** (adaptive re-weighting):
+   $$c_i \leftarrow c_i \cdot \beta_i, \quad \beta_i = \begin{cases}
+   1.0 + 1.5 \cdot \frac{20 - d_i}{20} & \text{if } w_i \in \mathcal{W} \\
+   1.0 & \text{otherwise}
+   \end{cases}$$
 
-**Critical Difference from Prior Work**:
-- Prompt-to-Prompt [Hertz et al., 2023]: Edits attention maps (post-hoc, no semantic change)
-- Attend-and-Excite [Chefer et al., 2023]: Backprop through U-Net (expensive, 45% overhead)
-- **ZK2295**: Pre-U-Net embedding optimization (7% overhead, semantic improvement)
+4. **Continue Denoising** with updated embedding $c_{t+1}$
+
+**Critical Differences from Prior Work**:
+- **Prompt-to-Prompt** [Hertz et al., 2023]: Edits attention maps (post-hoc, no semantic change)
+- **Attend-and-Excite** [Chefer et al., 2023]: Backprop through U-Net (expensive, 45% overhead)
+- **DynaPrompt (ZK2295)**: Pre-U-Net embedding optimization (7% overhead, direct semantic improvement)
+
+**Why Not Riemannian Optimization?**
+While embeddings lie on a manifold, explicit manifold projection adds complexity without empirical gains. Simple normalization suffices.
 
 ---
 

@@ -177,7 +177,7 @@ class HybridDynaPrompt:
         
         return token_scores
     
-    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.8):
+    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.2):
         """Compute adaptive boost factor based on token's CLIP score
         
         Args:
@@ -185,25 +185,22 @@ class HybridDynaPrompt:
             base_boost: Base boost factor from config
             
         Returns:
-            Adaptive boost factor (1.0 - 4.0)
+            Adaptive boost factor (1.0 - 1.6)
         """
-        # Adaptive boost based on how missing the token is:
-        # - Completely missing (score < 5): 4.0x boost
-        # - Very weak (score 5-10): 3.0x boost  
-        # - Weak (score 10-15): 2.5x boost
-        # - Present but faint (score 15-20): 1.5x boost
-        # - Already strong (score > 20): 1.0x (no boost)
+        # Adaptive boost based on how missing the token is (very gentle range):
+        # - Completely missing (score < 5): 1.6x boost
+        # - Very weak (score 5-10): 1.3x boost  
+        # - Weak (score 10-15): 1.15x boost
+        # - Present (score >= 15): 1.0x (no boost)
         
         if token_clip_score < 5:
-            return 4.0  # Completely missing - aggressive boost
+            return 1.6  # Completely missing - gentle boost
         elif token_clip_score < 10:
-            return 3.0  # Very weak - strong boost
+            return 1.3  # Very weak - minimal boost
         elif token_clip_score < 15:
-            return 2.5  # Weak - moderate boost
-        elif token_clip_score < 20:
-            return 1.5  # Present but faint - light boost
+            return 1.15  # Weak - tiny boost
         else:
-            return 1.0  # Already strong - no boost needed
+            return 1.0  # Already present - no boost needed
     
     def decompose_prompt_by_stage(self, prompt, current_step, total_steps):
         """Decompose prompt into stages for progressive concept building
@@ -233,7 +230,7 @@ class HybridDynaPrompt:
         objects = ['hat', 'vase', 'flower', 'ball', 'apple', 'banana', 'carrot', 'umbrella']
         spatial = ['wearing', 'next', 'arranged', 'row', 'behind', 'front', 'sitting', 'playing']
         
-        # Compute emphasis weights based on stage
+        # Compute emphasis weights based on stage (VERY GENTLE - max 1.3x)
         emphasis = {}
         
         for i, word in enumerate(words):
@@ -241,33 +238,33 @@ class HybridDynaPrompt:
             
             if progress < 0.33:  # Stage 1: Focus on subjects
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 2.0  # Strong emphasis
+                    emphasis[i] = 1.3  # Minimal emphasis
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 0.5  # Suppress attributes early
+                    emphasis[i] = 0.9  # Minimal suppression
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 0.3  # Suppress objects early
+                    emphasis[i] = 0.9  # Minimal suppression
                 else:
                     emphasis[i] = 1.0
                     
             elif progress < 0.66:  # Stage 2: Add attributes
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 1.2  # Maintain subjects
+                    emphasis[i] = 1.0  # No change
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 2.0  # Strong emphasis on attributes
+                    emphasis[i] = 1.3  # Minimal emphasis
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 0.8  # Light emphasis on objects
+                    emphasis[i] = 1.0  # No change
                 else:
                     emphasis[i] = 1.0
                     
             else:  # Stage 3: Add objects and spatial
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 1.0  # Maintain subjects
+                    emphasis[i] = 1.0  # No change
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 1.2  # Maintain attributes
+                    emphasis[i] = 1.0  # No change
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 2.0  # Strong emphasis on objects
+                    emphasis[i] = 1.3  # Minimal emphasis
                 elif any(spat in clean_word for spat in spatial):
-                    emphasis[i] = 1.8  # Emphasize spatial relationships
+                    emphasis[i] = 1.2  # Minimal emphasis
                 else:
                     emphasis[i] = 1.0
         
@@ -316,7 +313,7 @@ class HybridDynaPrompt:
         seen_keys = set()
         for concept in concepts:
             score = token_clip_scores.get(concept, 0)
-            if score < 20:  # Missing or weak (raised threshold to catch more)
+            if score < 15:  # Only very missing tokens (conservative threshold)
                 # Split phrase into words
                 words = concept.lower().split()
                 for word in words:
@@ -353,32 +350,49 @@ class HybridDynaPrompt:
         
         weak_indices = []
         
-        # CRITICAL tokens that SD frequently misses (very selective)
-        critical_patterns = [
-            # Colors - most important for attributes
-            'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'white', 'golden',
-            # Sizes/descriptors - often ignored
-            'tiny', 'small', 'large', 'huge', 'fluffy',
-            # Materials - frequently missed
-            'wooden', 'metal', 'glass',
-            # Specific objects that need emphasis
-            'hat', 'vase', 'flower', 'apple', 'banana', 'carrot', 'table',
-            # Spatial/action modifiers
-            'wearing', 'next', 'arranged', 'row'
+        # HIGH PRIORITY: Tokens SD commonly misses (very selective)
+        high_priority = [
+            'red', 'blue', 'yellow', 'orange', 'purple', 'pink',  # Specific colors
+            'tiny', 'small',  # Size modifiers
+            'hat', 'vase', 'flower',  # Small objects
+            'wearing', 'arranged'  # Actions
+        ]
+        
+        # MEDIUM PRIORITY: Context-dependent tokens (boost only if multiple present)
+        medium_priority = [
+            'green', 'white', 'golden',  # Common colors
+            'fluffy', 'wooden',  # Materials/textures
+            'apple', 'banana', 'carrot',  # Food items
+            'next', 'row'  # Spatial
         ]
         
         print("\nToken analysis:")
+        high_priority_count = 0
+        medium_priority_count = 0
+        
         for idx, token in enumerate(text_tokens[1:-1], start=1):  # Skip BOS/EOS
             token_str = token.replace('</w>', '').lower()
             
-            # Only boost if token exactly matches critical pattern
-            for pattern in critical_patterns:
-                if pattern == token_str or token_str.startswith(pattern):
-                    weak_indices.append(idx)
-                    print(f"  Token {idx}: '{token_str}' -> BOOST")
-                    break
+            # Check high priority tokens - always boost
+            if any(pattern == token_str or token_str.startswith(pattern) for pattern in high_priority):
+                weak_indices.append(idx)
+                high_priority_count += 1
+                print(f"  Token {idx}: '{token_str}' -> HIGH PRIORITY BOOST")
+            # Check medium priority - track but don't boost yet
+            elif any(pattern == token_str or token_str.startswith(pattern) for pattern in medium_priority):
+                medium_priority_count += 1
+        
+        # Only boost medium priority if we have 3+ of them (compositionally complex prompt)
+        if medium_priority_count >= 3:
+            for idx, token in enumerate(text_tokens[1:-1], start=1):
+                token_str = token.replace('</w>', '').lower()
+                if any(pattern == token_str or token_str.startswith(pattern) for pattern in medium_priority):
+                    if idx not in weak_indices:
+                        weak_indices.append(idx)
+                        print(f"  Token {idx}: '{token_str}' -> MEDIUM PRIORITY BOOST")
         
         print(f"\n→ Selected {len(weak_indices)} critical tokens for boosting")
+        print(f"   (High priority: {high_priority_count}, Medium priority: {medium_priority_count})")
         return weak_indices
     
     def generate(
@@ -512,7 +526,8 @@ class HybridDynaPrompt:
                     print(f"\n  [Step {i}/{total_steps}] {stage_name}, Emphasis: {max_emphasis:.2f}x")
                     
                     # Use zk2295's CLIP gradient feedback with STAGE-ADJUSTED alpha
-                    base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.15)
+                    base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.08)
+                    base_boost = self.config.get('attention', {}).get('boost_factor', 1.2)
                     adjusted_alpha = base_alpha * max_emphasis  # Scale by stage emphasis
                     
                     print(f"    Alpha: {base_alpha:.3f} * {max_emphasis:.2f} = {adjusted_alpha:.3f}")
@@ -523,7 +538,8 @@ class HybridDynaPrompt:
                         generated_image=intermediate_image,
                         step=i,
                         use_per_token=True,
-                        alpha=adjusted_alpha
+                        alpha=adjusted_alpha,
+                        boost_factor=base_boost  # Pass boost_factor from config
                     )
                     
                     # Update embedding with CLIP guidance
@@ -562,8 +578,8 @@ class HybridDynaPrompt:
                             if negative_prompt:
                                 # Encode negative prompt and strengthen unconditional guidance
                                 uc_negative = self.sd.encode_text([negative_prompt])
-                                # STRONGER blending: 0.5 original + 0.5 negative (equal weight)
-                                uc = 0.5 * uc + 0.5 * uc_negative
+                                # GENTLE blending: 0.8 original + 0.2 negative (subtle guidance)
+                                uc = 0.8 * uc + 0.2 * uc_negative
                     
                     # Always log negative prompt status (even if empty)
                     metrics_history[-1]['negative_prompt'] = negative_prompt if negative_prompt else "(none)"

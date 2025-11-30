@@ -265,7 +265,7 @@ class DynaPrompt:
         
         return updated_embedding
 
-    def feedback_loop(self, prompt, current_embedding, generated_image, step, use_per_token=True, alpha=None):
+    def feedback_loop(self, prompt, current_embedding, generated_image, step, use_per_token=True, alpha=None, boost_factor=None):
         """
         Main DynaPrompt feedback loop - computes semantic alignment and updates embeddings
         
@@ -275,7 +275,8 @@ class DynaPrompt:
             generated_image: Current generated image (1, 3, H, W) in [0, 1]
             step: Current denoising step (int)
             use_per_token: Whether to use per-token analysis (default True)
-            alpha: Update strength (default 0.15, can be overridden for adaptive control)
+            alpha: Update strength (default 0.08, can be overridden for adaptive control)
+            boost_factor: Token boost multiplier (default 1.3)
             
         Returns:
             dict with 'updated_embedding', 'clip_score', 'embedding_shift', 'weak_tokens'
@@ -321,9 +322,9 @@ class DynaPrompt:
             feedback_gradient = feedback_gradient * feedback_scale
         
         # Strategy 1: Global gradient-based update (for overall alignment)
-        # Use provided alpha or default to moderate value
+        # Use provided alpha or default to conservative value
         if alpha is None:
-            alpha = 0.12  # Default to stronger feedback for proactive approach
+            alpha = 0.08  # Default to conservative feedback
         
         global_updated = self.update_prompt_embedding(
             current_embedding, 
@@ -334,11 +335,15 @@ class DynaPrompt:
         # Strategy 2: Selective token re-weighting (for missing concepts)
         if use_per_token and weak_tokens:
             # Apply selective boost to underrepresented tokens
+            # Use provided boost_factor or default to conservative value
+            if boost_factor is None:
+                boost_factor = 1.3  # Default conservative boost
+            
             updated_embedding = self.selective_token_reweight(
                 global_updated,
                 weak_tokens,
                 prompt,
-                boost_factor=1.8  # Stronger boost for weak tokens
+                boost_factor=boost_factor
             )
         else:
             updated_embedding = global_updated
