@@ -246,10 +246,10 @@ def compare_baseline_vs_hybrid(prompt, steps=30, seed=42, output_dir='outputs/ba
 def main():
     """Run comparisons on test prompts"""
     
-    # Test prompts - challenging compositional cases
+    # Test prompts - more challenging compositional cases
     test_prompts = [
-        "a red cube and a blue sphere",
-        "a golden retriever playing with a red ball"
+        "a fluffy white cat wearing a tiny red hat sitting next to a blue flower vase",
+        "a wooden table with a green apple, yellow banana, and orange carrot arranged in a row"
     ]
     
     print("\n" + "="*80)

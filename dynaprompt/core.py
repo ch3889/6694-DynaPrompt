@@ -321,9 +321,9 @@ class DynaPrompt:
             feedback_gradient = feedback_gradient * feedback_scale
         
         # Strategy 1: Global gradient-based update (for overall alignment)
-        # Use provided alpha or default to gentle value
+        # Use provided alpha or default to moderate value
         if alpha is None:
-            alpha = 0.05  # Default to gentle feedback - don't fight SD
+            alpha = 0.08  # Default to moderate feedback - balanced approach
         
         global_updated = self.update_prompt_embedding(
             current_embedding, 
@@ -338,7 +338,7 @@ class DynaPrompt:
                 global_updated,
                 weak_tokens,
                 prompt,
-                boost_factor=1.3  # Gentle boost - subtle correction
+                boost_factor=1.4  # Moderate boost - balanced correction
             )
         else:
             updated_embedding = global_updated

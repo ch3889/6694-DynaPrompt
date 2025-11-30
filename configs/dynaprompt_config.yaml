@@ -19,12 +19,12 @@ sampling:
 feedback:
   enabled: true
   clip_model: "openai/clip-vit-base-patch32"  # Use base model for stability
-  feedback_frequency: 5  # Less frequent - only when needed
-  feedback_start_step: 10  # Start after structure forms
-  feedback_end_step: 25    # End before refinement phase
+  feedback_frequency: 5  # Moderate frequency
+  feedback_start_step: 8  # Start slightly earlier
+  feedback_end_step: 28    # Continue slightly longer
 
 prompt_update:
-  update_alpha: 0.05  # Gentle nudge - don't fight the pretrained model
+  update_alpha: 0.08  # Moderate strength - balanced approach
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
@@ -34,20 +34,20 @@ clip:
   model_name: "openai/clip-vit-base-patch32"  # CLIP model for embedding feedback
 
 attention:
-  boost_factor: 1.5  # Subtle boost - just enough to help
-  threshold: 0.08     # Higher threshold - only truly weak tokens
-  start_step: 10      # Start after structure forms
-  end_step: 25        # End before refinement
+  boost_factor: 1.6  # Moderate boost - noticeable but not overwhelming
+  threshold: 0.06     # Moderate threshold - catch more weak tokens
+  start_step: 8       # Start slightly earlier
+  end_step: 28        # Continue slightly longer
 
 # Adaptive reweighting configuration
 adaptive_reweighting:
   enabled: true       # Enable adaptive weight adjustment
-  momentum: 0.8       # Higher momentum - slower, steadier adaptation
-  adaptation_rate: 0.05  # Slower adaptation - be conservative
-  min_alpha: 0.02     # Very gentle minimum
-  max_alpha: 0.10     # Keep it gentle even at max
-  min_boost: 1.1      # Subtle minimum boost
-  max_boost: 1.8      # Moderate maximum boost
+  momentum: 0.75      # Balanced momentum
+  adaptation_rate: 0.08  # Moderate adaptation speed
+  min_alpha: 0.04     # Moderate minimum
+  max_alpha: 0.15     # Moderate maximum - not too weak, not too strong
+  min_boost: 1.2      # Moderate minimum boost
+  max_boost: 2.0      # Moderate maximum boost
 
 clip_feedback:
   per_token_similarity: true  # Compute similarity per token

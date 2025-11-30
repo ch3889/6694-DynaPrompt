@@ -253,13 +253,8 @@ class HybridDynaPrompt:
                     current_clip = self.dynaprompt.compute_clipscore(intermediate_image, prompt)
                     previous_clip = metrics_history[-1]['clipscore'] if metrics_history else None
                     
-                    # ONLY apply feedback if CLIP score is actually low (below 22)
-                    # This prevents over-correction when generation is already good
-                    if current_clip >= 22.0 and len(weak_tokens) <= 2:
-                        # Generation is already good, skip feedback
-                        continue
-                    
                     # Adaptively update alpha based on CLIP score improvement
+                    # Let adaptive reweighting handle when to strengthen/weaken feedback
                     adaptive_alpha = self.reweighter.update_alpha(current_clip, previous_clip)
                     
                     # Get step-dependent scaling
