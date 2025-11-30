@@ -238,33 +238,33 @@ class HybridDynaPrompt:
             
             if progress < 0.33:  # Stage 1: Focus on subjects
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 1.3  # Minimal emphasis
+                    emphasis[i] = 2.0  # Strong emphasis on current stage
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 0.9  # Minimal suppression
+                    emphasis[i] = 0.8  # Suppress non-stage concepts
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 0.9  # Minimal suppression
+                    emphasis[i] = 0.8  # Suppress non-stage concepts
                 else:
                     emphasis[i] = 1.0
                     
             elif progress < 0.66:  # Stage 2: Add attributes
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 1.0  # No change
+                    emphasis[i] = 1.0  # Maintain established subjects
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 1.3  # Minimal emphasis
+                    emphasis[i] = 2.0  # Strong emphasis on current stage
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 1.0  # No change
+                    emphasis[i] = 0.8  # Suppress not-yet-focused
                 else:
                     emphasis[i] = 1.0
                     
             else:  # Stage 3: Add objects and spatial
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 1.0  # No change
+                    emphasis[i] = 1.0  # Maintain subjects
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 1.0  # No change
+                    emphasis[i] = 1.0  # Maintain attributes
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 1.3  # Minimal emphasis
+                    emphasis[i] = 2.0  # Strong emphasis on objects
                 elif any(spat in clean_word for spat in spatial):
-                    emphasis[i] = 1.2  # Minimal emphasis
+                    emphasis[i] = 1.8  # Strong emphasis on spatial
                 else:
                     emphasis[i] = 1.0
         
@@ -507,8 +507,8 @@ class HybridDynaPrompt:
                     stage_emphasis = self.decompose_prompt_by_stage(prompt, i, total_steps)
                     
                     # Use MAXIMUM emphasis of focused tokens (not average which dilutes)
-                    # Only consider tokens with emphasis >= 1.5 (actively boosted)
-                    boosted_values = [v for v in stage_emphasis.values() if v >= 1.5]
+                    # Only consider tokens with emphasis >= 1.2 (actively boosted)
+                    boosted_values = [v for v in stage_emphasis.values() if v >= 1.2]
                     if boosted_values:
                         max_emphasis = max(boosted_values)
                     else:
@@ -527,7 +527,7 @@ class HybridDynaPrompt:
                     
                     # Use zk2295's CLIP gradient feedback with STAGE-ADJUSTED alpha
                     base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.08)
-                    base_boost = self.config.get('attention', {}).get('boost_factor', 1.2)
+                    base_boost = self.config.get('attention', {}).get('boost_factor', 1.3)
                     adjusted_alpha = base_alpha * max_emphasis  # Scale by stage emphasis
                     
                     print(f"    Alpha: {base_alpha:.3f} * {max_emphasis:.2f} = {adjusted_alpha:.3f}")
