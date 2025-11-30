@@ -19,9 +19,9 @@ sampling:
 feedback:
   enabled: true
   clip_model: "openai/clip-vit-base-patch32"  # Use base model for stability
-  feedback_frequency: 5  # Moderate frequency
-  feedback_start_step: 8  # Start slightly earlier
-  feedback_end_step: 28    # Continue slightly longer
+  feedback_frequency: 3  # More frequent - every 3 steps
+  feedback_start_step: 0  # Start from the beginning
+  feedback_end_step: 35   # Continue most of generation
 
 prompt_update:
   update_alpha: 0.08  # Moderate strength - balanced approach
@@ -42,12 +42,12 @@ attention:
 # Adaptive reweighting configuration
 adaptive_reweighting:
   enabled: true       # Enable adaptive weight adjustment
-  momentum: 0.75      # Balanced momentum
-  adaptation_rate: 0.08  # Moderate adaptation speed
-  min_alpha: 0.04     # Moderate minimum
-  max_alpha: 0.15     # Moderate maximum - not too weak, not too strong
-  min_boost: 1.2      # Moderate minimum boost
-  max_boost: 2.0      # Moderate maximum boost
+  momentum: 0.7       # Moderate momentum for responsiveness
+  adaptation_rate: 0.10  # Moderate adaptation speed
+  min_alpha: 0.06     # Higher minimum for proactive approach
+  max_alpha: 0.20     # Higher maximum for strong corrections
+  min_boost: 1.3      # Higher minimum boost
+  max_boost: 2.5      # Higher maximum boost
 
 clip_feedback:
   per_token_similarity: true  # Compute similarity per token

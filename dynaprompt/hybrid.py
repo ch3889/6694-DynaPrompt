@@ -142,6 +142,48 @@ class HybridDynaPrompt:
         
         return token_indices
     
+    def pre_analyze_prompt(self, prompt):
+        """Pre-analyze prompt to identify potentially weak tokens before generation
+        
+        Uses heuristics based on:
+        1. Token rarity (rare tokens tend to be underrepresented)
+        2. Token position (later tokens often get less attention)
+        3. Modifier tokens (colors, sizes, materials)
+        
+        Args:
+            prompt: Text prompt string
+            
+        Returns:
+            List of token indices that are likely to be weak
+        """
+        # Tokenize prompt
+        tokens = self.sd.model.cond_stage_model.tokenizer.encode(prompt)
+        text_tokens = self.sd.model.cond_stage_model.tokenizer.convert_ids_to_tokens(tokens)
+        
+        weak_indices = []
+        
+        # Known weak token patterns (colors, sizes, materials, counting)
+        weak_patterns = [
+            'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'white', 'black', 'brown',
+            'tiny', 'small', 'large', 'huge', 'fluffy', 'wooden', 'metal', 'glass',
+            'wearing', 'holding', 'sitting', 'standing', 'next', 'arranged',
+            'one', 'two', 'three', 'four', 'five', 'hat', 'vase', 'table',
+            'apple', 'banana', 'carrot', 'flower'
+        ]
+        
+        for idx, token in enumerate(text_tokens[1:-1], start=1):  # Skip BOS/EOS
+            token_str = token.replace('</w>', '').lower()
+            
+            # Check if token matches weak patterns
+            if any(pattern in token_str for pattern in weak_patterns):
+                weak_indices.append(idx)
+            # Boost tokens in second half of prompt (tend to get less attention)
+            elif idx > len(text_tokens) // 2:
+                weak_indices.append(idx)
+        
+        print(f"Pre-analysis identified {len(weak_indices)} potentially weak tokens")
+        return weak_indices
+    
     def generate(
         self,
         prompt,
@@ -215,6 +257,15 @@ class HybridDynaPrompt:
         metrics_history = []
         embedding_trajectory = []
         weak_tokens_history = []
+        
+        # PRE-GENERATION ANALYSIS: Identify weak tokens upfront
+        pre_weak_indices = []
+        if attention_feedback:
+            print("\nPre-analyzing prompt for potentially weak tokens...")
+            pre_weak_indices = self.pre_analyze_prompt(prompt)
+            if pre_weak_indices:
+                print(f"Enabling proactive attention boost for {len(pre_weak_indices)} tokens from step 0")
+                self.attention_modifier.set_underrepresented_indices(pre_weak_indices)
         
         # Denoising loop
         timesteps = sampler.ddim_timesteps
