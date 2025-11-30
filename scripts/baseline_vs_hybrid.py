@@ -170,11 +170,12 @@ def compare_baseline_vs_hybrid(prompt, steps=30, seed=42, output_dir='outputs/ba
     print(f"  Hybrid:   {results['hybrid']['compositional_accuracy']:.4f}")
     print(f"  Δ Change: {comp_improvement:+.4f} ({comp_improvement/results['baseline']['compositional_accuracy']*100:+.2f}%)")
     
-    print(f"\nAdaptive Reweighting:")
-    print(f"  Final Alpha: {results['hybrid']['adaptive_stats']['current_alpha']:.4f}")
-    print(f"  Final Boost: {results['hybrid']['adaptive_stats']['current_boost']:.2f}")
-    print(f"  Avg Alpha:   {results['hybrid']['adaptive_stats']['avg_alpha']:.4f}")
-    print(f"  Avg Boost:   {results['hybrid']['adaptive_stats']['avg_boost']:.2f}")
+    print(f"\nHybrid Configuration:")
+    stats = results['hybrid']['adaptive_stats']
+    if stats.get('pre_boost_applied'):
+        print(f"  Pre-boosted: {stats['num_boosted_tokens']} tokens by {stats['boost_strength']*100:.0f}%")
+    if stats.get('attention_active'):
+        print(f"  Attention: Active during generation")
     
     # === SAVE RESULTS ===
     os.makedirs(output_dir, exist_ok=True)

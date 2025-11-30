@@ -236,9 +236,33 @@ class HybridDynaPrompt:
         self.reweighter.reset()
         
         # Encode prompt
-        c = self.sd.encode_text([prompt])
+        c_original = self.sd.encode_text([prompt])
         uc = self.sd.encode_text([""])
-        c_original = c.clone()
+        
+        # PRE-BOOST: Apply one-time embedding boost for weak tokens
+        if embedding_feedback:
+            print("\nApplying pre-generation embedding boost for weak tokens...")
+            pre_weak_indices = self.pre_analyze_prompt(prompt)
+            if pre_weak_indices:
+                # Get tokenizer
+                tokenizer = self.sd.model.cond_stage_model.tokenizer
+                tokens = tokenizer.encode(prompt)
+                
+                # Boost embedding dimensions for weak token positions
+                c_boosted = c_original.clone()
+                boost_strength = self.config.get('prompt_update', {}).get('update_alpha', 0.12)
+                
+                for idx in pre_weak_indices:
+                    if idx < c_boosted.shape[1]:  # Safety check
+                        # Amplify this token's embedding
+                        c_boosted[0, idx] *= (1.0 + boost_strength)
+                
+                print(f"Boosted {len(pre_weak_indices)} weak token embeddings by {boost_strength*100:.0f}%")
+                c = c_boosted
+            else:
+                c = c_original.clone()
+        else:
+            c = c_original.clone()
         
         # Create sampler
         sampler = self.sd.create_sampler(sampler_type)
@@ -279,104 +303,15 @@ class HybridDynaPrompt:
             index = total_steps - i - 1
             ts = torch.full((1,), step, device=self.device, dtype=torch.long)
             
-            # === PHASE 1: Embedding Feedback (zk2295) ===
-            if (embedding_feedback and 
-                i % feedback_freq == 0 and 
-                feedback_start <= i < feedback_end):
-                
-                with torch.no_grad():
-                    # Decode intermediate latent
-                    latents_scaled = 1 / 0.18215 * latents
-                    intermediate_image = self.sd.model.first_stage_model.decode(latents_scaled)
-                    intermediate_image = torch.clamp((intermediate_image + 1.0) / 2.0, min=0.0, max=1.0)
-                
-                # Get per-token alignment analysis
-                analysis = self.dynaprompt.compute_per_token_alignment(
-                    intermediate_image,
-                    prompt,
-                    sd_tokenizer=self.sd.model.cond_stage_model.tokenizer
-                )
-                
-                weak_tokens = analysis.get('weak_tokens', {})
-                
-                if weak_tokens:
-                    # Get current CLIP score for adaptive reweighting
-                    current_clip = self.dynaprompt.compute_clipscore(intermediate_image, prompt)
-                    previous_clip = metrics_history[-1]['clipscore'] if metrics_history else None
-                    
-                    # Adaptively update alpha based on CLIP score improvement
-                    # Let adaptive reweighting handle when to strengthen/weaken feedback
-                    adaptive_alpha = self.reweighter.update_alpha(current_clip, previous_clip)
-                    
-                    # Get step-dependent scaling
-                    step_weights = self.reweighter.get_step_dependent_weights(i, total_steps)
-                    
-                    # Apply zk2295 feedback with adaptive alpha
-                    feedback_result = self.dynaprompt.feedback_loop(
-                        prompt=prompt,
-                        current_embedding=c,
-                        generated_image=intermediate_image,
-                        step=i,
-                        use_per_token=True,
-                        alpha=step_weights['scaled_alpha']  # Pass adaptive alpha
-                    )
-                    
-                    # Extract updated embedding and metrics
-                    c = feedback_result['updated_embedding']
-                    
-                    # Store metrics with adaptive weights
-                    metrics = {
-                        'step': i,
-                        'clipscore': feedback_result['clip_score'],
-                        'embedding_shift': feedback_result['embedding_shift'],
-                        'weak_tokens': feedback_result['weak_tokens'],
-                        'adaptive_alpha': adaptive_alpha,
-                        'scaled_alpha': step_weights['scaled_alpha'],
-                        'alpha_scale': step_weights['alpha_scale']
-                    }
-                    metrics_history.append(metrics)
-                    embedding_trajectory.append(c.clone().cpu())
-                    # Store weak token names as list
-                    weak_tokens_list = list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens
-                    weak_tokens_history.append(weak_tokens_list)
-                    
-                    # === PHASE 2: Attention Boosting (ch3889) ===
-                    if attention_feedback and weak_tokens:
-                        # Adaptively update boost factor
-                        avg_attention = analysis.get('average_similarity', None)
-                        adaptive_boost = self.reweighter.update_boost_factor(
-                            weak_token_count=len(weak_tokens),
-                            avg_attention=avg_attention
-                        )
-                        
-                        # Update attention modifier with adaptive boost
-                        self.attention_modifier.boost_factor = step_weights['scaled_boost']
-                        
-                        # Map weak concepts to token positions
-                        token_indices = self.map_concepts_to_token_positions(
-                            weak_tokens, prompt, self.sd.model.cond_stage_model.tokenizer
-                        )
-                        
-                        if token_indices:
-                            # Enable attention boosting for these tokens
-                            self.attention_modifier.set_underrepresented_indices(token_indices)
-                            self.attention_modifier.enable()
-                            
-                            iterator.set_postfix({
-                                'phase1': f'✓ α={step_weights["scaled_alpha"]:.3f}',
-                                'phase2': f'✓ β={step_weights["scaled_boost"]:.2f}',
-                                'weak': len(weak_tokens)
-                            })
-                        else:
-                            self.attention_modifier.disable()
-                    else:
-                        iterator.set_postfix({
-                            'phase1': f'✓ {len(weak_tokens)} weak',
-                            'phase2': '✗ disabled'
-                        })
-                else:
-                    self.attention_modifier.disable()
-                    iterator.set_postfix({'feedback': 'none needed'})
+            # === ATTENTION BOOSTING ONLY (ch3889) ===
+            # Note: Embedding boost was applied once at start
+            # During generation, only attention modulation is active
+            if attention_feedback:
+                # Check if we should update attention targets based on current progress
+                if i % feedback_freq == 0 and feedback_start <= i < feedback_end:
+                    # Optionally: decode and re-analyze to update attention targets
+                    # For now: use pre-identified weak tokens throughout
+                    pass
             
             # Check if attention boosting should be active at this step
             if attention_feedback and not self.attention_modifier.should_modify(i):
@@ -415,8 +350,13 @@ class HybridDynaPrompt:
         
         generation_time = time.time() - start_time
         
-        # Get adaptive reweighting statistics
-        reweight_stats = self.reweighter.get_statistics()
+        # Since we use single pre-boost, create summary stats
+        boost_stats = {
+            'pre_boost_applied': embedding_feedback,
+            'num_boosted_tokens': len(pre_weak_indices) if embedding_feedback and pre_weak_indices else 0,
+            'boost_strength': self.config.get('prompt_update', {}).get('update_alpha', 0.12),
+            'attention_active': attention_feedback
+        }
         
         print(f"\n{'='*60}")
         print(f"HYBRID GENERATION COMPLETE")
@@ -424,15 +364,10 @@ class HybridDynaPrompt:
         print(f"Time: {generation_time:.2f}s")
         print(f"Final CLIP Score: {final_clipscore:.4f}")
         print(f"Compositional Accuracy: {final_compositional:.4f}")
-        print(f"Feedback Applications: {len(metrics_history)}")
-        if weak_tokens_history:
-            total_weak = sum(len(wt) for wt in weak_tokens_history)
-            print(f"Total Weak Tokens Detected: {total_weak}")
-        print(f"\nAdaptive Reweighting Stats:")
-        print(f"  Final Alpha: {reweight_stats['current_alpha']:.4f}")
-        print(f"  Final Boost: {reweight_stats['current_boost']:.2f}")
-        print(f"  Avg Alpha: {reweight_stats['avg_alpha']:.4f}")
-        print(f"  Avg Boost: {reweight_stats['avg_boost']:.2f}")
+        if boost_stats['pre_boost_applied']:
+            print(f"Pre-boosted {boost_stats['num_boosted_tokens']} tokens by {boost_stats['boost_strength']*100:.0f}%")
+        if boost_stats['attention_active']:
+            print(f"Attention boosting active during generation")
         print(f"{'='*60}\n")
         
         return {
@@ -443,7 +378,7 @@ class HybridDynaPrompt:
             'metrics_history': metrics_history,
             'embedding_trajectory': embedding_trajectory,
             'weak_tokens_history': weak_tokens_history,
-            'adaptive_stats': reweight_stats,
+            'adaptive_stats': boost_stats,
             'generation_time': generation_time,
             'prompt': prompt,
             'config': {
