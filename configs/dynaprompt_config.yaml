@@ -19,12 +19,12 @@ sampling:
 feedback:
   enabled: true
   clip_model: "openai/clip-vit-base-patch32"
-  feedback_frequency: 3  # Every 3 steps (more frequent corrections)
+  feedback_frequency: 4  # Every 4 steps (balanced - not too aggressive)
   feedback_start_step: 5  # Start at step 5
-  feedback_end_step: 40   # End at step 40 (extended range)
+  feedback_end_step: 35   # End at step 35 (focused on structure phase)
 
 prompt_update:
-  update_alpha: 0.14  # Stronger embedding updates (0.14 * 2.0 = 0.28 max)
+  update_alpha: 0.13  # Balanced embedding updates (0.13 * 2.0 = 0.26 max)
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
