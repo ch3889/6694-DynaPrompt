@@ -116,6 +116,15 @@ class AttentionModifier:
         self.underrepresented_indices = []
         self.hooks = []
         self.enabled = True
+        self.adaptive_boosts = {}  # Store per-token adaptive boost factors
+
+    def set_adaptive_boosts(self, adaptive_boosts):
+        """Set per-token adaptive boost factors
+        
+        Args:
+            adaptive_boosts: Dict mapping token index to boost factor
+        """
+        self.adaptive_boosts = adaptive_boosts
 
     def register_hooks(self, unet):
         """
@@ -248,24 +257,23 @@ class AttentionModifier:
         # For each underrepresented token index, boost its attention adaptively
         for token_idx in self.underrepresented_indices:
             if token_idx < modified_attn.shape[-1]:
-                # Calculate current attention for this token (average across spatial dims)
-                current_attn = modified_attn[:, :, token_idx].mean().item()
-
-                # Adaptive boost: Lower attention ΓåÆ Higher boost factor
-                # If attention is 0.001, boost by 10x
-                # If attention is 0.01, boost by 5x
-                # If attention is 0.02, boost by 3x (base factor)
-                if current_attn < 0.001:
-                    adaptive_factor = self.boost_factor * 3.0  # Very aggressive
-                elif current_attn < 0.005:
-                    adaptive_factor = self.boost_factor * 2.0  # Aggressive
-                elif current_attn < 0.01:
-                    adaptive_factor = self.boost_factor * 1.5  # Moderate
+                # Get adaptive boost for this specific token
+                if token_idx in self.adaptive_boosts:
+                    adaptive_factor = self.adaptive_boosts[token_idx]
                 else:
-                    adaptive_factor = self.boost_factor  # Base
-
+                    # Fallback to base boost if no adaptive boost set
+                    adaptive_factor = self.boost_factor
+                
+                # Calculate current attention for this token
+                current_attn = modified_attn[:, :, token_idx].mean().item()
+                
+                # Apply additional scaling for very low attention
+                # If attention is extremely low, boost even more
+                if current_attn < 0.001:
+                    adaptive_factor *= 1.5  # Extra boost for nearly invisible tokens
+                
                 # Cap maximum boost to prevent numerical instability
-                adaptive_factor = min(adaptive_factor, 15.0)
+                adaptive_factor = min(adaptive_factor, 6.0)
 
                 # Increase attention to this token
                 modified_attn[:, :, token_idx] *= adaptive_factor

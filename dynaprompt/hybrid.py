@@ -148,6 +148,63 @@ class HybridDynaPrompt:
         
         return token_indices
     
+    def compute_token_clip_scores(self, image, prompt, weak_tokens):
+        """Compute CLIP score for each weak token to determine boost strength
+        
+        Args:
+            image: Current generated image
+            prompt: Text prompt
+            weak_tokens: Dict or list of weak token concepts
+            
+        Returns:
+            Dict mapping token concept to CLIP score
+        """
+        token_scores = {}
+        
+        # Handle both dict and list formats
+        if isinstance(weak_tokens, dict):
+            concepts = list(weak_tokens.keys())
+        else:
+            concepts = weak_tokens
+        
+        # Compute CLIP score for each weak token
+        for concept in concepts:
+            try:
+                score = self.dynaprompt.compute_clipscore(image, concept)
+                token_scores[concept] = score
+            except:
+                token_scores[concept] = 0.0
+        
+        return token_scores
+    
+    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.8):
+        """Compute adaptive boost factor based on token's CLIP score
+        
+        Args:
+            token_clip_score: CLIP score for this specific token (0-30 range)
+            base_boost: Base boost factor from config
+            
+        Returns:
+            Adaptive boost factor (1.0 - 4.0)
+        """
+        # Adaptive boost based on how missing the token is:
+        # - Completely missing (score < 5): 4.0x boost
+        # - Very weak (score 5-10): 3.0x boost  
+        # - Weak (score 10-15): 2.5x boost
+        # - Present but faint (score 15-20): 1.5x boost
+        # - Already strong (score > 20): 1.0x (no boost)
+        
+        if token_clip_score < 5:
+            return 4.0  # Completely missing - aggressive boost
+        elif token_clip_score < 10:
+            return 3.0  # Very weak - strong boost
+        elif token_clip_score < 15:
+            return 2.5  # Weak - moderate boost
+        elif token_clip_score < 20:
+            return 1.5  # Present but faint - light boost
+        else:
+            return 1.0  # Already strong - no boost needed
+    
     def pre_analyze_prompt(self, prompt):
         """Pre-analyze prompt to identify potentially weak tokens before generation
         
@@ -327,15 +384,51 @@ class HybridDynaPrompt:
                     
                     # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback and weak_tokens:
+                        # Compute per-token CLIP scores for adaptive boosting
+                        token_clip_scores = self.compute_token_clip_scores(
+                            intermediate_image, prompt, weak_tokens
+                        )
+                        
                         # Map weak tokens to indices
                         token_indices = self.map_concepts_to_token_positions(
                             weak_tokens, prompt, self.sd.model.cond_stage_model.tokenizer
                         )
                         
                         if token_indices:
-                            # Enable attention boosting for weak tokens
+                            # ADAPTIVE: Set per-token boost factors based on CLIP scores
+                            # Build mapping of token index to adaptive boost
+                            adaptive_boosts = {}
+                            base_boost = self.config.get('attention', {}).get('boost_factor', 1.8)
+                            
+                            # Get concepts for each token index
+                            if isinstance(weak_tokens, dict):
+                                concepts = list(weak_tokens.keys())
+                            else:
+                                concepts = weak_tokens
+                            
+                            for concept in concepts:
+                                clip_score = token_clip_scores.get(concept, 0.0)
+                                adaptive_boost = self.compute_adaptive_boost_factor(clip_score, base_boost)
+                                
+                                # Find token indices for this concept
+                                concept_indices = self.map_concepts_to_token_positions(
+                                    {concept: 0} if isinstance(weak_tokens, dict) else [concept],
+                                    prompt, 
+                                    self.sd.model.cond_stage_model.tokenizer
+                                )
+                                
+                                # Store adaptive boost for these indices
+                                for idx in concept_indices:
+                                    adaptive_boosts[idx] = adaptive_boost
+                            
+                            # Set token-specific boost factors in attention modifier
                             self.attention_modifier.set_underrepresented_indices(token_indices)
+                            self.attention_modifier.set_adaptive_boosts(adaptive_boosts)
                             self.attention_modifier.enable()
+                            
+                            # Store for metrics
+                            metrics_history[-1]['adaptive_boosts'] = adaptive_boosts
+                            metrics_history[-1]['token_clip_scores'] = token_clip_scores
                         else:
                             self.attention_modifier.disable()
                     else:
