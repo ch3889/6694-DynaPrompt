@@ -316,7 +316,7 @@ class HybridDynaPrompt:
         seen_keys = set()
         for concept in concepts:
             score = token_clip_scores.get(concept, 0)
-            if score < 15:  # Missing or very weak
+            if score < 20:  # Missing or weak (raised threshold to catch more)
                 # Split phrase into words
                 words = concept.lower().split()
                 for word in words:
@@ -477,8 +477,9 @@ class HybridDynaPrompt:
             ts = torch.full((1,), step, device=self.device, dtype=torch.long)
             
             # === HYBRID FEEDBACK (zk2295 + ch3889) ===
-            if (i % feedback_freq == 0 and 
-                feedback_start <= i < feedback_end):
+            # Trigger at feedback_start, then every feedback_freq steps
+            if (i >= feedback_start and i < feedback_end and 
+                (i - feedback_start) % feedback_freq == 0):
                 
                 # Decode current latent to get intermediate image
                 with torch.no_grad():
