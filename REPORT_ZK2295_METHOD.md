@@ -1,12 +1,15 @@
-# ZK2295 Method: CLIP-Guided Iterative Embedding Refinement
+# ZK2295 Method: DynaPrompt - Iterative CLIP-Guided Embedding Feedback
 
 ## 1. Intuition
+
+### Core Idea
+**DynaPrompt** dynamically adjusts text embeddings during image generation using CLIP similarity as a feedback signal. Unlike static prompting, it iteratively refines embeddings to emphasize underrepresented concepts.
 
 ### Signal Used
 **Primary Signal**: CLIP vision-language similarity scores
 - **Global alignment**: Full prompt-to-image CLIP score (0-100 range)
 - **Per-token alignment**: Individual concept-to-image CLIP scores
-- **Gradient direction**: Text-image feature space alignment vector
+- **Feedback direction**: CLIP feature space alignment vector (image features - text features)
 
 ### What It Edits
 **Target**: Text embedding vectors in Stable Diffusion's conditioning space (768-dimensional)
@@ -69,7 +72,7 @@ $$
 
 Where:
 - $c_t \in \mathbb{R}^{N \times 768}$ = SD text embedding at step $t$ ($N$ = sequence length, 768 = embedding dimension)
-- $\alpha \in [0.06, 0.20]$ = learning rate (adaptive, currently 0.13)
+- $\alpha \in [0.06, 0.15]$ = learning rate (default 0.08, adaptive based on stage)
 - $\mathcal{P}(g_t)$ = projection of CLIP gradient (512D) to SD embedding space (768D)
 - $s(d_t) = 1 - \min(d_t/100, 1)$ = scaling factor based on CLIP score $d_t$
 - $d_t = \text{CLIP}(\hat{x}_t, p)$ = current alignment score
@@ -109,12 +112,12 @@ Where:
 
 $$
 \beta_i = \begin{cases}
-1.0 + 1.5 \cdot \frac{\max(0, 20-d_i)}{20} & \text{if } w_i \in \mathcal{W}_t \\
+1.0 + 1.3 \cdot \frac{\max(0, 20-d_i)}{20} & \text{if } w_i \in \mathcal{W}_t \\
 1.0 & \text{otherwise}
 \end{cases}
 $$
 
-This gives boost factors: $\beta_i \in [1.0, 2.5]$ (higher for weaker tokens)
+This gives boost factors: $\beta_i \in [1.0, 2.3]$ (higher for weaker tokens, moderate amplification)
 
 **Selective Update**:
 
@@ -140,18 +143,20 @@ Where $\phi(t/T, w_i)$ is stage-dependent emphasis:
 
 $$
 \phi(\tau, w_i) = \begin{cases}
-2.0 & \text{if } \tau < 0.33 \land w_i \in \text{subjects} \\
-2.0 & \text{if } 0.33 \leq \tau < 0.66 \land w_i \in \text{attributes} \\
-2.0 & \text{if } \tau \geq 0.66 \land w_i \in \text{objects} \\
-0.5 & \text{if early stage, non-subject token} \\
+1.3 & \text{if } \tau < 0.33 \land w_i \in \text{subjects} \\
+1.3 & \text{if } 0.33 \leq \tau < 0.66 \land w_i \in \text{attributes} \\
+1.3 & \text{if } \tau \geq 0.66 \land w_i \in \text{objects} \\
+0.9 & \text{if early stage, non-subject token} \\
 1.0 & \text{otherwise}
 \end{cases}
 $$
 
+**Rationale**: Gentle stage-based emphasis (1.3x max) guides concept formation without disrupting the diffusion process.
+
 Example progression (30 total steps):
-- **Steps 5-11** (τ=0.16-0.35): Emphasize subjects (cat, table) with α=0.26
-- **Steps 13-21** (τ=0.42-0.68): Emphasize attributes (red, yellow, fluffy) with α=0.26  
-- **Steps 23-33** (τ=0.74-1.0): Emphasize objects (hat, vase, apple) with α=0.26
+- **Steps 5-11** (τ=0.16-0.35): Emphasize subjects (cat, table) with α≈0.10
+- **Steps 13-21** (τ=0.42-0.68): Emphasize attributes (red, yellow, fluffy) with α≈0.10
+- **Steps 23-33** (τ=0.74-1.0): Emphasize objects (hat, vase, apple) with α≈0.10
 
 ---
 
@@ -163,7 +168,8 @@ def zk2295_feedback_loop(
     latent: Tensor,           # z_t ∈ ℝ^(1×4×64×64)
     embedding: Tensor,        # c_t ∈ ℝ^(N×768)
     step: int,
-    alpha: float = 0.13
+    alpha: float = 0.08,
+    boost_factor: float = 1.3
 ) -> Tensor:
     """
     ZK2295 CLIP-guided embedding refinement
@@ -214,8 +220,8 @@ def zk2295_feedback_loop(
     # Returns: {token_idx: emphasis_weight} where emphasis ∈ [0.5, 2.0]
     
     # Use maximum emphasis of boosted tokens (not average)
-    max_emphasis = max([v for v in stage_emphasis.values() if v >= 1.5], default=1.0)
-    alpha_effective = alpha * max_emphasis  # e.g., 0.13 * 2.0 = 0.26
+    max_emphasis = max([v for v in stage_emphasis.values() if v >= 1.2], default=1.0)
+    alpha_effective = alpha * max_emphasis  # e.g., 0.08 * 1.3 = 0.10
     
     # === Phase 5: Global embedding update ===
     embedding_new = embedding + alpha_effective * g_proj
@@ -226,9 +232,9 @@ def zk2295_feedback_loop(
             # Map concept to token positions
             token_indices = find_token_positions(concept, prompt)
             
-            # Adaptive boost factor
+            # Adaptive boost factor  
             weakness = max(0, 20 - score) / 20  # Normalize to [0, 1]
-            boost = 1.0 + 1.5 * weakness  # ∈ [1.0, 2.5]
+            boost = 1.0 + boost_factor * weakness  # e.g., 1.0 + 1.3 * 0.5 = 1.65
             
             # Apply boost
             for idx in token_indices:

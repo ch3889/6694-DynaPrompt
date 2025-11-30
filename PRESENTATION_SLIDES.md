@@ -1,4 +1,4 @@
-# Presentation Slides: ZK2295 & Hybrid Methods
+# Presentation Slides: DynaPrompt Methods
 
 ## **PART 1: ZK2295 Method** (2 minutes, 3 slides)
 
@@ -8,7 +8,7 @@
 
 #### **Problem**: Compositional Failure in Diffusion Models
 
-Stable Diffusion exhibits **semantic neglect** [Feng et al., 2023] — strong priors suppress weak concepts.
+Stable Diffusion exhibits **semantic neglect** — strong priors suppress weak concepts.
 
 **Test Suite (5 Prompts)**:
 
@@ -21,52 +21,38 @@ Stable Diffusion exhibits **semantic neglect** [Feng et al., 2023] — strong pr
 | "dog holding frisbee" | 0.702 | holding | Relation missing |
 | **Average** | **0.611** | **2.4 concepts/prompt** | — |
 
-**Root Cause**: Cross-attention mechanism allocates ~85% attention to first 3 tokens [Hertz et al., 2023]. Weak concepts receive <2% attention → not generated.
+**Root Cause**: Cross-attention allocates ~85% to first 3 tokens. Weak concepts receive <2% attention → not generated.
 
 ---
 
-#### **Solution**: Iterative CLIP-Guided Embedding Feedback (DynaPrompt)
+#### **Solution**: Iterative CLIP-Guided Embedding Feedback (ZK2295)
 
-**Key Insight**: Dynamically adjust text embeddings during generation using CLIP similarity as a feedback signal.
+**Key Idea**: Dynamically adjust text embeddings during generation using CLIP similarity feedback.
 
-**DynaPrompt Algorithm** (ZK2295 Method):
+**Algorithm**:
 
-1. **Decode Intermediate Image** at timestep $t$:
-   $$\hat{x}_t = \text{VAE-Decode}(z_t)$$
+1. **Decode Intermediate Image**: $\hat{x}_t = \text{VAE-Decode}(z_t)$
    
-2. **Compute Per-Token CLIP Scores** to identify weak concepts:
-   $$d_i = \text{sim}_{\text{CLIP}}(\hat{x}_t, w_i) \quad \forall w_i \in \text{prompt}$$
+2. **Measure CLIP Similarity** for each concept:
+   $$d_i = \text{CLIP}(\hat{x}_t, w_i) \quad \forall w_i \in \text{prompt}$$
    
-   Weak tokens: $\mathcal{W} = \{w_i : d_i < \text{threshold}\}$
+   Identify weak tokens: $\mathcal{W} = \{w_i : d_i < \text{threshold}\}$
 
-3. **Update Text Embedding** with two strategies:
+3. **Update Embedding** (two strategies):
    
-   **A. Global Alignment** (gradient-based push):
-   $$c_{t+1} = c_t + \alpha \cdot \mathcal{P}(E_{\text{img}}(\hat{x}_t) - E_{\text{text}}(c_t))$$
+   **Global Alignment**: Push embedding toward image semantics
+   $$c_{t+1} = c_t + \alpha \cdot (E_{\text{img}}(\hat{x}_t) - E_{\text{text}}(c_t))$$
    
-   Where:
-   - $\mathcal{P}: \mathbb{R}^{512} \to \mathbb{R}^{768}$: CLIP → SD embedding projection (zero-padding)
-   - $\alpha = 0.08$: Learning rate (conservative)
-   
-   **B. Selective Token Boosting** (adaptive re-weighting):
-   $$c_i \leftarrow c_i \cdot \beta_i, \quad \beta_i = \begin{cases}
-   1.0 + 1.5 \cdot \frac{20 - d_i}{20} & \text{if } w_i \in \mathcal{W} \\
-   1.0 & \text{otherwise}
-   \end{cases}$$
+   **Selective Token Boost**: Amplify weak concepts
+   $$c_i \leftarrow c_i \cdot \beta_i, \quad \beta_i = 1.0 + 1.3 \cdot \frac{\max(0, 20-d_i)}{20}$$
 
-4. **Continue Denoising** with updated embedding $c_{t+1}$
+4. **Continue Denoising** with updated $c_{t+1}$
 
-**Critical Differences from Prior Work**:
-- **Prompt-to-Prompt** [Hertz et al., 2023]: Edits attention maps (post-hoc, no semantic change)
-- **Attend-and-Excite** [Chefer et al., 2023]: Backprop through U-Net (expensive, 45% overhead)
-- **DynaPrompt (ZK2295)**: Pre-U-Net embedding optimization (7% overhead, direct semantic improvement)
-
-**Why Not Riemannian Optimization?**
-While embeddings lie on a manifold, explicit manifold projection adds complexity without empirical gains. Simple normalization suffices.
+**Parameters**: $\alpha = 0.08$ (learning rate), feedback every 4 steps, steps 5-30
 
 ---
 
-### Slide 2: ZK2295 — Experimental Validation & Critical Analysis
+### Slide 2: ZK2295 — Results & Limitations
 
 #### **Comprehensive Benchmark (5 Test Prompts)**
 
