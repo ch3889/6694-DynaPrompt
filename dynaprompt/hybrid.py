@@ -485,9 +485,22 @@ class HybridDynaPrompt:
                     # Compute average emphasis for this stage
                     avg_emphasis = sum(stage_emphasis.values()) / max(len(stage_emphasis), 1)
                     
+                    # Determine current stage for logging
+                    progress = i / total_steps
+                    if progress < 0.33:
+                        stage_name = "Stage 1 (Subjects)"
+                    elif progress < 0.66:
+                        stage_name = "Stage 2 (Attributes)"
+                    else:
+                        stage_name = "Stage 3 (Objects)"
+                    
+                    print(f"\n  [Step {i}/{total_steps}] {stage_name}, Emphasis: {avg_emphasis:.2f}x")
+                    
                     # Use zk2295's CLIP gradient feedback with STAGE-ADJUSTED alpha
                     base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.10)
                     adjusted_alpha = base_alpha * avg_emphasis  # Scale by stage emphasis
+                    
+                    print(f"    Alpha: {base_alpha:.3f} * {avg_emphasis:.2f} = {adjusted_alpha:.3f}")
                     
                     feedback_result = self.dynaprompt.feedback_loop(
                         prompt=prompt,
@@ -501,6 +514,9 @@ class HybridDynaPrompt:
                     # Update embedding with CLIP guidance
                     c = feedback_result['updated_embedding']
                     weak_tokens = feedback_result['weak_tokens']
+                    
+                    print(f"    CLIP Score: {feedback_result['clip_score']:.2f}")
+                    print(f"    Weak tokens: {list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens}")
                         
                     metrics_history.append({
                         'step': i,
@@ -528,7 +544,7 @@ class HybridDynaPrompt:
                             
                             # Store for metrics
                             metrics_history[-1]['negative_prompt'] = negative_prompt
-                            print(f"  [Step {i}] Applied negative: {negative_prompt[:50]}...")                    # === PHASE 2: Attention Boosting (ch3889) ===
+                            print(f"    Negative prompt: '{negative_prompt}'")                    # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback and weak_tokens:
                         # Compute per-token CLIP scores for adaptive boosting
                         token_clip_scores = self.compute_token_clip_scores(
