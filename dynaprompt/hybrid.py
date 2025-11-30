@@ -482,8 +482,13 @@ class HybridDynaPrompt:
                     # Get stage-based emphasis weights
                     stage_emphasis = self.decompose_prompt_by_stage(prompt, i, total_steps)
                     
-                    # Compute average emphasis for this stage
-                    avg_emphasis = sum(stage_emphasis.values()) / max(len(stage_emphasis), 1)
+                    # Use MAXIMUM emphasis of focused tokens (not average which dilutes)
+                    # Only consider tokens with emphasis >= 1.5 (actively boosted)
+                    boosted_values = [v for v in stage_emphasis.values() if v >= 1.5]
+                    if boosted_values:
+                        max_emphasis = max(boosted_values)
+                    else:
+                        max_emphasis = 1.0  # No boosting this stage
                     
                     # Determine current stage for logging
                     progress = i / total_steps
@@ -494,13 +499,13 @@ class HybridDynaPrompt:
                     else:
                         stage_name = "Stage 3 (Objects)"
                     
-                    print(f"\n  [Step {i}/{total_steps}] {stage_name}, Emphasis: {avg_emphasis:.2f}x")
+                    print(f"\n  [Step {i}/{total_steps}] {stage_name}, Emphasis: {max_emphasis:.2f}x")
                     
                     # Use zk2295's CLIP gradient feedback with STAGE-ADJUSTED alpha
-                    base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.10)
-                    adjusted_alpha = base_alpha * avg_emphasis  # Scale by stage emphasis
+                    base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.15)
+                    adjusted_alpha = base_alpha * max_emphasis  # Scale by stage emphasis
                     
-                    print(f"    Alpha: {base_alpha:.3f} * {avg_emphasis:.2f} = {adjusted_alpha:.3f}")
+                    print(f"    Alpha: {base_alpha:.3f} * {max_emphasis:.2f} = {adjusted_alpha:.3f}")
                     
                     feedback_result = self.dynaprompt.feedback_loop(
                         prompt=prompt,
@@ -522,29 +527,37 @@ class HybridDynaPrompt:
                         'step': i,
                         'clipscore': feedback_result['clip_score'],
                         'weak_tokens': weak_tokens,
-                        'stage_emphasis': avg_emphasis
+                        'stage_emphasis': max_emphasis
                     })
                     
                     # === PHASE 1.5: Dynamic Negative Prompts ===
                     # Generate negative prompts for missing concepts
+                    negative_prompt = ""
                     if weak_tokens:
-                        token_clip_scores = self.compute_token_clip_scores(
-                            intermediate_image, prompt, weak_tokens
-                        )
+                        # Filter to individual tokens only (1-2 words max), not phrases
+                        if isinstance(weak_tokens, dict):
+                            individual_tokens = {k: v for k, v in weak_tokens.items() if len(k.split()) <= 2}
+                        else:
+                            individual_tokens = [t for t in weak_tokens if len(t.split()) <= 2]
                         
-                        negative_prompt = self.generate_negative_prompts(
-                            weak_tokens, token_clip_scores
-                        )
-                        
-                        if negative_prompt:
-                            # Encode negative prompt and strengthen unconditional guidance
-                            uc_negative = self.sd.encode_text([negative_prompt])
-                            # STRONGER blending: 0.5 original + 0.5 negative (equal weight)
-                            uc = 0.5 * uc + 0.5 * uc_negative
+                        if individual_tokens:
+                            token_clip_scores = self.compute_token_clip_scores(
+                                intermediate_image, prompt, individual_tokens
+                            )
                             
-                            # Store for metrics
-                            metrics_history[-1]['negative_prompt'] = negative_prompt
-                            print(f"    Negative prompt: '{negative_prompt}'")                    # === PHASE 2: Attention Boosting (ch3889) ===
+                            negative_prompt = self.generate_negative_prompts(
+                                individual_tokens, token_clip_scores
+                            )
+                            
+                            if negative_prompt:
+                                # Encode negative prompt and strengthen unconditional guidance
+                                uc_negative = self.sd.encode_text([negative_prompt])
+                                # STRONGER blending: 0.5 original + 0.5 negative (equal weight)
+                                uc = 0.5 * uc + 0.5 * uc_negative
+                    
+                    # Always log negative prompt status (even if empty)
+                    metrics_history[-1]['negative_prompt'] = negative_prompt if negative_prompt else "(none)"
+                    print(f"    Negative prompt: '{negative_prompt if negative_prompt else '(none)'}'")                    # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback and weak_tokens:
                         # Compute per-token CLIP scores for adaptive boosting
                         token_clip_scores = self.compute_token_clip_scores(
