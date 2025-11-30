@@ -24,7 +24,7 @@ feedback:
   feedback_end_step: 35   # Continue most of generation
 
 prompt_update:
-  update_alpha: 0.08  # Moderate strength - balanced approach
+  update_alpha: 0.50  # Very strong boost - 50% amplification for real impact
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
@@ -34,10 +34,10 @@ clip:
   model_name: "openai/clip-vit-base-patch32"  # CLIP model for embedding feedback
 
 attention:
-  boost_factor: 1.6  # Moderate boost - noticeable but not overwhelming
-  threshold: 0.06     # Moderate threshold - catch more weak tokens
-  start_step: 8       # Start slightly earlier
-  end_step: 28        # Continue slightly longer
+  boost_factor: 3.0  # Very strong attention boost - triple the attention
+  threshold: 0.05     # Lower threshold to catch more tokens
+  start_step: 0       # Start immediately from first step
+  end_step: 35        # Continue throughout most of generation
 
 # Adaptive reweighting configuration
 adaptive_reweighting:

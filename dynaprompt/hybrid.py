@@ -147,8 +147,8 @@ class HybridDynaPrompt:
         
         Uses heuristics based on:
         1. Token rarity (rare tokens tend to be underrepresented)
-        2. Token position (later tokens often get less attention)
-        3. Modifier tokens (colors, sizes, materials)
+        2. Critical visual attributes (colors, sizes, materials)
+        3. Key objects that SD often misses
         
         Args:
             prompt: Text prompt string
@@ -162,26 +162,32 @@ class HybridDynaPrompt:
         
         weak_indices = []
         
-        # Known weak token patterns (colors, sizes, materials, counting)
-        weak_patterns = [
-            'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'white', 'black', 'brown',
-            'tiny', 'small', 'large', 'huge', 'fluffy', 'wooden', 'metal', 'glass',
-            'wearing', 'holding', 'sitting', 'standing', 'next', 'arranged',
-            'one', 'two', 'three', 'four', 'five', 'hat', 'vase', 'table',
-            'apple', 'banana', 'carrot', 'flower'
+        # CRITICAL tokens that SD frequently misses (very selective)
+        critical_patterns = [
+            # Colors - most important for attributes
+            'red', 'blue', 'green', 'yellow', 'orange', 'purple', 'pink', 'white', 'golden',
+            # Sizes/descriptors - often ignored
+            'tiny', 'small', 'large', 'huge', 'fluffy',
+            # Materials - frequently missed
+            'wooden', 'metal', 'glass',
+            # Specific objects that need emphasis
+            'hat', 'vase', 'flower', 'apple', 'banana', 'carrot', 'table',
+            # Spatial/action modifiers
+            'wearing', 'next', 'arranged', 'row'
         ]
         
+        print("\nToken analysis:")
         for idx, token in enumerate(text_tokens[1:-1], start=1):  # Skip BOS/EOS
             token_str = token.replace('</w>', '').lower()
             
-            # Check if token matches weak patterns
-            if any(pattern in token_str for pattern in weak_patterns):
-                weak_indices.append(idx)
-            # Boost tokens in second half of prompt (tend to get less attention)
-            elif idx > len(text_tokens) // 2:
-                weak_indices.append(idx)
+            # Only boost if token exactly matches critical pattern
+            for pattern in critical_patterns:
+                if pattern == token_str or token_str.startswith(pattern):
+                    weak_indices.append(idx)
+                    print(f"  Token {idx}: '{token_str}' -> BOOST")
+                    break
         
-        print(f"Pre-analysis identified {len(weak_indices)} potentially weak tokens")
+        print(f"\n→ Selected {len(weak_indices)} critical tokens for boosting")
         return weak_indices
     
     def generate(
@@ -250,14 +256,15 @@ class HybridDynaPrompt:
                 
                 # Boost embedding dimensions for weak token positions
                 c_boosted = c_original.clone()
-                boost_strength = self.config.get('prompt_update', {}).get('update_alpha', 0.12)
+                boost_strength = self.config.get('prompt_update', {}).get('update_alpha', 0.50)
                 
                 for idx in pre_weak_indices:
                     if idx < c_boosted.shape[1]:  # Safety check
-                        # Amplify this token's embedding
+                        # STRONGLY amplify this token's embedding
                         c_boosted[0, idx] *= (1.0 + boost_strength)
                 
-                print(f"Boosted {len(pre_weak_indices)} weak token embeddings by {boost_strength*100:.0f}%")
+                print(f"\n✓ Boosted {len(pre_weak_indices)} critical tokens by {boost_strength*100:.0f}%")
+                print(f"  This should make these concepts MUCH more prominent\n")
                 c = c_boosted
             else:
                 c = c_original.clone()
