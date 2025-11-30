@@ -177,30 +177,30 @@ class HybridDynaPrompt:
         
         return token_scores
     
-    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.2):
+    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.3):
         """Compute adaptive boost factor based on token's CLIP score
         
         Args:
-            token_clip_score: CLIP score for this specific token (0-30 range)
+            token_clip_score: CLIP score for this specific token (15-35 typical range during generation)
             base_boost: Base boost factor from config
             
         Returns:
-            Adaptive boost factor (1.0 - 1.6)
+            Adaptive boost factor (1.3 - 2.5x)
         """
-        # Adaptive boost based on how missing the token is (very gentle range):
-        # - Completely missing (score < 5): 1.6x boost
-        # - Very weak (score 5-10): 1.3x boost  
-        # - Weak (score 10-15): 1.15x boost
-        # - Present (score >= 15): 1.0x (no boost)
+        # Adaptive boost based on how missing the token is:
+        # - Very weak (score < 20): Use base_boost × 2.0 (strong correction)
+        # - Weak (score 20-25): Use base_boost × 1.5 (moderate boost)  
+        # - Present (score 25-30): Use base_boost × 1.0 (maintain)
+        # - Strong (score >= 30): Use 1.0x (no boost needed)
         
-        if token_clip_score < 5:
-            return 1.6  # Completely missing - gentle boost
-        elif token_clip_score < 10:
-            return 1.3  # Very weak - minimal boost
-        elif token_clip_score < 15:
-            return 1.15  # Weak - tiny boost
+        if token_clip_score < 20:
+            return base_boost * 2.0  # Very weak - strong boost
+        elif token_clip_score < 25:
+            return base_boost * 1.5  # Weak - moderate boost
+        elif token_clip_score < 30:
+            return base_boost  # Present - use base
         else:
-            return 1.0  # Already present - no boost needed
+            return 1.0  # Strong - no boost needed
     
     def decompose_prompt_by_stage(self, prompt, current_step, total_steps):
         """Decompose prompt into stages for progressive concept building
@@ -599,7 +599,7 @@ class HybridDynaPrompt:
                             # ADAPTIVE: Set per-token boost factors based on CLIP scores
                             # Build mapping of token index to adaptive boost
                             adaptive_boosts = {}
-                            base_boost = self.config.get('attention', {}).get('boost_factor', 1.8)
+                            base_boost = self.config.get('attention', {}).get('boost_factor', 1.3)
                             
                             # Get concepts for each token index
                             if isinstance(weak_tokens, dict):
