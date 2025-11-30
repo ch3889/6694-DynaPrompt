@@ -22,11 +22,11 @@ class DynaPrompt:
     def __init__(self, clip_model_name="openai/clip-vit-base-patch32", device="cuda"):
         self.device = device
         self.clip_model = CLIPModel.from_pretrained(clip_model_name).to(device)
-        self.clip_processor = CLIPProcessor.from_pretrained(clip_model_name)
+        self.clip_processor = CLIPProcessor.from_pretrained(clip_model_name, use_fast=True)
         self.fid = None  # Lazy-loaded when needed
 
     def compute_clipscore(self, image, prompt):
-        inputs = self.clip_processor(text=[prompt], images=image, return_tensors="pt", padding=True).to(self.device)
+        inputs = self.clip_processor(text=[prompt], images=image, return_tensors="pt", padding=True, do_rescale=False).to(self.device)
         outputs = self.clip_model(**inputs)
         clipscore = outputs.logits_per_image[0][0].item()
         return clipscore
