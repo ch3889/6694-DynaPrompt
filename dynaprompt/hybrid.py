@@ -205,6 +205,125 @@ class HybridDynaPrompt:
         else:
             return 1.0  # Already strong - no boost needed
     
+    def decompose_prompt_by_stage(self, prompt, current_step, total_steps):
+        """Decompose prompt into stages for progressive concept building
+        
+        Stage 1 (0-33%): Establish main subjects
+        Stage 2 (34-66%): Add attributes (colors, sizes, materials)
+        Stage 3 (67-100%): Add objects and spatial relationships
+        
+        Args:
+            prompt: Full text prompt
+            current_step: Current denoising step
+            total_steps: Total number of steps
+            
+        Returns:
+            Dict with token emphasis weights
+        """
+        # Calculate stage (0.0 to 1.0)
+        progress = current_step / total_steps
+        
+        # Tokenize prompt
+        words = prompt.lower().split()
+        
+        # Token categories
+        subjects = ['cat', 'dog', 'table', 'car', 'person', 'bird', 'animal']
+        attributes = ['red', 'blue', 'green', 'yellow', 'orange', 'white', 'black',
+                     'tiny', 'small', 'large', 'fluffy', 'wooden', 'metal', 'golden']
+        objects = ['hat', 'vase', 'flower', 'ball', 'apple', 'banana', 'carrot', 'umbrella']
+        spatial = ['wearing', 'next', 'arranged', 'row', 'behind', 'front', 'sitting', 'playing']
+        
+        # Compute emphasis weights based on stage
+        emphasis = {}
+        
+        for i, word in enumerate(words):
+            clean_word = word.strip('.,!?')
+            
+            if progress < 0.33:  # Stage 1: Focus on subjects
+                if any(subj in clean_word for subj in subjects):
+                    emphasis[i] = 2.0  # Strong emphasis
+                elif any(attr in clean_word for attr in attributes):
+                    emphasis[i] = 0.5  # Suppress attributes early
+                elif any(obj in clean_word for obj in objects):
+                    emphasis[i] = 0.3  # Suppress objects early
+                else:
+                    emphasis[i] = 1.0
+                    
+            elif progress < 0.66:  # Stage 2: Add attributes
+                if any(subj in clean_word for subj in subjects):
+                    emphasis[i] = 1.2  # Maintain subjects
+                elif any(attr in clean_word for attr in attributes):
+                    emphasis[i] = 2.0  # Strong emphasis on attributes
+                elif any(obj in clean_word for obj in objects):
+                    emphasis[i] = 0.8  # Light emphasis on objects
+                else:
+                    emphasis[i] = 1.0
+                    
+            else:  # Stage 3: Add objects and spatial
+                if any(subj in clean_word for subj in subjects):
+                    emphasis[i] = 1.0  # Maintain subjects
+                elif any(attr in clean_word for attr in attributes):
+                    emphasis[i] = 1.2  # Maintain attributes
+                elif any(obj in clean_word for obj in objects):
+                    emphasis[i] = 2.0  # Strong emphasis on objects
+                elif any(spat in clean_word for spat in spatial):
+                    emphasis[i] = 1.8  # Emphasize spatial relationships
+                else:
+                    emphasis[i] = 1.0
+        
+        return emphasis
+    
+    def generate_negative_prompts(self, weak_tokens, token_clip_scores):
+        """Generate dynamic negative prompts based on missing concepts
+        
+        Args:
+            weak_tokens: Dict or list of weak tokens
+            token_clip_scores: CLIP scores for each token
+            
+        Returns:
+            Negative prompt string
+        """
+        negatives = []
+        
+        # Handle both dict and list formats
+        if isinstance(weak_tokens, dict):
+            concepts = list(weak_tokens.keys())
+        else:
+            concepts = weak_tokens
+        
+        # Mapping of concepts to negatives
+        negative_map = {
+            'hat': 'no hat, bare head, without hat',
+            'vase': 'no vase, missing vase',
+            'wearing': 'not wearing, bare, without accessories',
+            'red': 'not red, wrong color',
+            'blue': 'not blue, wrong color',
+            'green': 'not green, wrong color',
+            'yellow': 'not yellow, wrong color',
+            'orange': 'not orange, wrong color',
+            'banana': 'no banana, missing banana',
+            'apple': 'no apple, missing apple',
+            'carrot': 'no carrot, missing carrot',
+            'flower': 'no flower, missing flower',
+            'arranged': 'scattered, random placement, disorganized',
+            'row': 'scattered, piled together, not in a row'
+        }
+        
+        # Add negatives for very weak concepts (CLIP < 10)
+        for concept in concepts:
+            score = token_clip_scores.get(concept, 0)
+            if score < 10:  # Really missing
+                for key, neg in negative_map.items():
+                    if key in concept.lower():
+                        negatives.append(neg)
+                        break
+        
+        # Combine into single negative prompt
+        if negatives:
+            return ', '.join(negatives[:5])  # Limit to 5 negatives to avoid overload
+        else:
+            return ''
+    
     def pre_analyze_prompt(self, prompt):
         """Pre-analyze prompt to identify potentially weak tokens before generation
         
