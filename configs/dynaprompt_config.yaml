@@ -18,13 +18,13 @@ sampling:
 
 feedback:
   enabled: true
-  clip_model: "openai/clip-vit-base-patch32"  # Use base model for stability
-  feedback_frequency: 3  # More frequent - every 3 steps
-  feedback_start_step: 0  # Start from the beginning
-  feedback_end_step: 35   # Continue most of generation
+  clip_model: "openai/clip-vit-base-patch32"
+  feedback_frequency: 4  # Every 4 steps
+  feedback_start_step: 5  # Start at step 5
+  feedback_end_step: 35   # End at step 35
 
 prompt_update:
-  update_alpha: 0.50  # Very strong boost - 50% amplification for real impact
+  update_alpha: 0.10  # Moderate CLIP gradient feedback strength
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update
@@ -34,10 +34,10 @@ clip:
   model_name: "openai/clip-vit-base-patch32"  # CLIP model for embedding feedback
 
 attention:
-  boost_factor: 3.0  # Very strong attention boost - triple the attention
-  threshold: 0.05     # Lower threshold to catch more tokens
-  start_step: 0       # Start immediately from first step
-  end_step: 35        # Continue throughout most of generation
+  boost_factor: 1.8  # Moderate attention boost (ch3889)
+  threshold: 0.05     # Attention threshold for weak tokens
+  start_step: 0       # Start from beginning
+  end_step: 35        # Continue throughout
 
 # Adaptive reweighting configuration
 adaptive_reweighting:
