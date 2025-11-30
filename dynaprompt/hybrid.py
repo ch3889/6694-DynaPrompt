@@ -122,7 +122,13 @@ class HybridDynaPrompt:
         words = prompt_lower.split()
         token_indices = []
         
-        for weak_concept in weak_tokens.keys():
+        # Handle both dict and list formats
+        if isinstance(weak_tokens, dict):
+            weak_concepts = list(weak_tokens.keys())
+        else:
+            weak_concepts = weak_tokens
+        
+        for weak_concept in weak_concepts:
             concept_words = weak_concept.split()
             
             # Search for concept in prompt
