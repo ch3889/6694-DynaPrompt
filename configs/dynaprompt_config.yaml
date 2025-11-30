@@ -24,7 +24,7 @@ feedback:
   feedback_end_step: 35   # End at step 35
 
 prompt_update:
-  update_alpha: 0.15  # Stronger embedding updates for better impact
+  update_alpha: 0.12  # Moderate embedding updates (0.12 * 2.0 = 0.24 max)
   update_method: "weighted"  # Options: weighted, additive, multiplicative
   token_threshold: 0.5  # Minimum similarity threshold to trigger update
   normalize: true  # Normalize embeddings after update

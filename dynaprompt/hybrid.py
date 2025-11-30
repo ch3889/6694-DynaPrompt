@@ -277,7 +277,7 @@ class HybridDynaPrompt:
         """Generate dynamic negative prompts based on missing concepts
         
         Args:
-            weak_tokens: Dict or list of weak tokens
+            weak_tokens: Dict or list of weak tokens (can be phrases like "red hat")
             token_clip_scores: CLIP scores for each token
             
         Returns:
@@ -291,36 +291,45 @@ class HybridDynaPrompt:
         else:
             concepts = weak_tokens
         
-        # Mapping of concepts to negatives
+        # Mapping of KEYWORDS (not phrases) to negatives
         negative_map = {
-            'hat': 'no hat, bare head, without hat',
-            'vase': 'no vase, missing vase',
-            'wearing': 'not wearing, bare, without accessories',
-            'red': 'not red, wrong color',
-            'blue': 'not blue, wrong color',
-            'green': 'not green, wrong color',
-            'yellow': 'not yellow, wrong color',
-            'orange': 'not orange, wrong color',
-            'banana': 'no banana, missing banana',
-            'apple': 'no apple, missing apple',
-            'carrot': 'no carrot, missing carrot',
-            'flower': 'no flower, missing flower',
-            'arranged': 'scattered, random placement, disorganized',
-            'row': 'scattered, piled together, not in a row'
+            'hat': 'no hat, bare head',
+            'vase': 'no vase',
+            'wearing': 'not wearing, bare',
+            'red': 'wrong color, not red',
+            'blue': 'wrong color, not blue',
+            'green': 'wrong color, not green',
+            'yellow': 'wrong color, not yellow',
+            'orange': 'wrong color, not orange',
+            'banana': 'no banana',
+            'apple': 'no apple',
+            'carrot': 'no carrot',
+            'flower': 'no flower',
+            'arranged': 'scattered, disorganized',
+            'row': 'piled together, not in a row',
+            'tiny': 'large, oversized',
+            'fluffy': 'smooth, sleek'
         }
         
-        # Add negatives for very weak concepts (CLIP < 10)
+        # Extract keywords from phrases and check against negative map
+        # E.g., "red hat" → check both "red" and "hat"
+        seen_keys = set()
         for concept in concepts:
             score = token_clip_scores.get(concept, 0)
-            if score < 10:  # Really missing
-                for key, neg in negative_map.items():
-                    if key in concept.lower():
-                        negatives.append(neg)
-                        break
+            if score < 15:  # Missing or very weak
+                # Split phrase into words
+                words = concept.lower().split()
+                for word in words:
+                    # Check if this word matches any key in negative_map
+                    for key, neg in negative_map.items():
+                        if key in word and key not in seen_keys:
+                            negatives.append(neg)
+                            seen_keys.add(key)
+                            break
         
         # Combine into single negative prompt
         if negatives:
-            return ', '.join(negatives[:5])  # Limit to 5 negatives to avoid overload
+            return ', '.join(negatives[:5])  # Limit to 5 to avoid overload
         else:
             return ''
     

@@ -7,7 +7,7 @@ import sys
 sys.path.append('.')
 
 import torch
-from dynaprompt.hybrid import HybridDynaPromptPipeline
+from dynaprompt.hybrid import HybridDynaPrompt
 
 def test_configurations(prompt, seed=42):
     """Test three configurations:
@@ -23,7 +23,7 @@ def test_configurations(prompt, seed=42):
     print(f"Seed: {seed}")
     print("="*80)
     
-    pipeline = HybridDynaPromptPipeline()
+    pipeline = HybridDynaPrompt()
     
     # 1. Baseline
     print("\n[1/3] BASELINE (no feedback)")
