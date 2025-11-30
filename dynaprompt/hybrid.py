@@ -477,63 +477,58 @@ class HybridDynaPrompt:
                     intermediate_image = self.sd.model.first_stage_model.decode(latents_scaled)
                     intermediate_image = torch.clamp((intermediate_image + 1.0) / 2.0, min=0.0, max=1.0)
                 
-                    # === PHASE 1: Embedding Feedback (zk2295) ===
-                    if embedding_feedback:
-                        # Get stage-based emphasis weights
-                        stage_emphasis = self.decompose_prompt_by_stage(prompt, i, total_steps)
+                # === PHASE 1: Embedding Feedback (zk2295) ===
+                if embedding_feedback:
+                    # Get stage-based emphasis weights
+                    stage_emphasis = self.decompose_prompt_by_stage(prompt, i, total_steps)
+                    
+                    # Compute average emphasis for this stage
+                    avg_emphasis = sum(stage_emphasis.values()) / max(len(stage_emphasis), 1)
+                    
+                    # Use zk2295's CLIP gradient feedback with STAGE-ADJUSTED alpha
+                    base_alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.10)
+                    adjusted_alpha = base_alpha * avg_emphasis  # Scale by stage emphasis
+                    
+                    feedback_result = self.dynaprompt.feedback_loop(
+                        prompt=prompt,
+                        current_embedding=c,
+                        generated_image=intermediate_image,
+                        step=i,
+                        use_per_token=True,
+                        alpha=adjusted_alpha
+                    )
+                    
+                    # Update embedding with CLIP guidance
+                    c = feedback_result['updated_embedding']
+                    weak_tokens = feedback_result['weak_tokens']
                         
-                        # Use zk2295's CLIP gradient feedback
-                        alpha = self.config.get('prompt_update', {}).get('update_alpha', 0.10)
-                        
-                        feedback_result = self.dynaprompt.feedback_loop(
-                            prompt=prompt,
-                            current_embedding=c,
-                            generated_image=intermediate_image,
-                            step=i,
-                            use_per_token=True,
-                            alpha=alpha
+                    metrics_history.append({
+                        'step': i,
+                        'clipscore': feedback_result['clip_score'],
+                        'weak_tokens': weak_tokens,
+                        'stage_emphasis': avg_emphasis
+                    })
+                    
+                    # === PHASE 1.5: Dynamic Negative Prompts ===
+                    # Generate negative prompts for missing concepts
+                    if weak_tokens:
+                        token_clip_scores = self.compute_token_clip_scores(
+                            intermediate_image, prompt, weak_tokens
                         )
                         
-                        # Update embedding with CLIP guidance
-                        c_updated = feedback_result['updated_embedding']
+                        negative_prompt = self.generate_negative_prompts(
+                            weak_tokens, token_clip_scores
+                        )
                         
-                        # Apply stage-based emphasis to embedding update
-                        # Modulate the update strength based on stage
-                        for token_idx, emphasis in stage_emphasis.items():
-                            if token_idx < c_updated.shape[1]:
-                                # Scale the update for this token by emphasis
-                                delta = c_updated[0, token_idx] - c[0, token_idx]
-                                c_updated[0, token_idx] = c[0, token_idx] + delta * emphasis
-                        
-                        c = c_updated
-                        weak_tokens = feedback_result['weak_tokens']
-                        
-                        metrics_history.append({
-                            'step': i,
-                            'clipscore': feedback_result['clip_score'],
-                            'weak_tokens': weak_tokens
-                        })
-                        
-                        # === PHASE 1.5: Dynamic Negative Prompts ===
-                        # Generate negative prompts for missing concepts
-                        if weak_tokens:
-                            token_clip_scores = self.compute_token_clip_scores(
-                                intermediate_image, prompt, weak_tokens
-                            )
+                        if negative_prompt:
+                            # Encode negative prompt and strengthen unconditional guidance
+                            uc_negative = self.sd.encode_text([negative_prompt])
+                            # STRONGER blending: 0.5 original + 0.5 negative (equal weight)
+                            uc = 0.5 * uc + 0.5 * uc_negative
                             
-                            negative_prompt = self.generate_negative_prompts(
-                                weak_tokens, token_clip_scores
-                            )
-                            
-                            if negative_prompt:
-                                # Encode negative prompt and strengthen unconditional guidance
-                                uc_negative = self.sd.encode_text([negative_prompt])
-                                # Blend with existing unconditional embedding
-                                # Weight: 0.7 original + 0.3 negative (avoid overpowering)
-                                uc = 0.7 * uc + 0.3 * uc_negative
-                                
-                                # Store for metrics
-                                metrics_history[-1]['negative_prompt'] = negative_prompt                    # === PHASE 2: Attention Boosting (ch3889) ===
+                            # Store for metrics
+                            metrics_history[-1]['negative_prompt'] = negative_prompt
+                            print(f"  [Step {i}] Applied negative: {negative_prompt[:50]}...")                    # === PHASE 2: Attention Boosting (ch3889) ===
                     if attention_feedback and weak_tokens:
                         # Compute per-token CLIP scores for adaptive boosting
                         token_clip_scores = self.compute_token_clip_scores(
