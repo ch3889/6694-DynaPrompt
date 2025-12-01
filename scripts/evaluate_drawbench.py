@@ -16,8 +16,52 @@ import argparse
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from dynaprompt.wrapper import StableDiffusionWrapper
-from dynaprompt.sd_loader import load_stable_diffusion
+from dynaprompt.hybrid import HybridDynaPrompt
+from dynaprompt.sd_loader import load_sd_model
+from dynaprompt.core import DynaPrompt
+
+def generate_baseline(sd_model, prompt, steps=50, seed=42):
+    """Generate image without any feedback"""
+    device = sd_model.device
+    
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    
+    # Encode prompt
+    c = sd_model.encode_text([prompt])
+    uc = sd_model.encode_text([""])
+    
+    # Create sampler
+    sampler = sd_model.create_sampler('ddim')
+    sampler.make_schedule(ddim_num_steps=steps, ddim_eta=0.0, verbose=False)
+    
+    # Initialize latent
+    shape = [1, 4, 512 // 8, 512 // 8]
+    latents = torch.randn(shape, device=device)
+    
+    # Denoising loop
+    timesteps = sampler.ddim_timesteps
+    time_range = np.flip(timesteps)
+    total_steps = timesteps.shape[0]
+    
+    for i, step in enumerate(time_range):
+        index = total_steps - i - 1
+        ts = torch.full((1,), step, device=device, dtype=torch.long)
+        latents = sampler.p_sample_ddim(
+            x=latents, c=c, t=ts, index=index,
+            unconditional_guidance_scale=7.5,
+            unconditional_conditioning=uc
+        )[0]
+    
+    # Decode
+    with torch.no_grad():
+        latents_scaled = 1 / 0.18215 * latents
+        image = sd_model.model.first_stage_model.decode(latents_scaled)
+        image = torch.clamp((image + 1.0) / 2.0, min=0.0, max=1.0)
+    
+    return image
+
 
 def extract_concepts(prompt):
     """Extract concepts from prompt for compositional accuracy evaluation"""
@@ -154,35 +198,36 @@ def evaluate_drawbench(
     
     # Initialize Stable Diffusion models
     print("\nInitializing Stable Diffusion models...")
+    
+    # Find checkpoint
+    possible_paths = [
+        'models/models--runwayml--stable-diffusion-v1-5/snapshots/451f4fe16113bff5a5d2269ed5ad43b0592e9a14/v1-5-pruned-emaonly.ckpt',
+        'models/stable_diffusion_compvis/v1-5-pruned-emaonly.ckpt'
+    ]
+    ckpt_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            ckpt_path = path
+            print(f"  Found checkpoint: {path}")
+            break
+    
+    if ckpt_path is None:
+        print("  Warning: No checkpoint found, will use default")
+    
     models = {}
     
     if "baseline" in methods:
         print("  Loading Baseline (vanilla SD)...")
-        baseline_pipe = load_stable_diffusion(device=device)
         models["baseline"] = {
-            "pipe": baseline_pipe,
-            "use_dynaprompt": False
+            "type": "baseline",
+            "ckpt_path": ckpt_path
         }
     
     if "hybrid" in methods:
         print("  Loading Hybrid (DynaPrompt)...")
-        from dynaprompt.hybrid import apply_hybrid_dynaprompt
-        from configs.dynaprompt_config import load_config
-        
-        config = load_config("configs/dynaprompt_config.yaml")
-        hybrid_pipe = load_stable_diffusion(device=device)
-        
-        # Apply hybrid modifications
-        apply_hybrid_dynaprompt(
-            pipe=hybrid_pipe,
-            config=config,
-            device=device
-        )
-        
         models["hybrid"] = {
-            "pipe": hybrid_pipe,
-            "use_dynaprompt": True,
-            "config": config
+            "type": "hybrid",
+            "ckpt_path": ckpt_path
         }
     
     # Create output directory
@@ -200,17 +245,44 @@ def evaluate_drawbench(
         
         for method_name, model_info in models.items():
             try:
-                # Generate image
-                generator = torch.Generator(device=device).manual_seed(seed)
-                
-                output = model_info["pipe"](
-                    prompt=prompt,
-                    num_inference_steps=num_inference_steps,
-                    guidance_scale=guidance_scale,
-                    generator=generator
-                )
-                
-                image = output.images[0]
+                # Generate image based on method
+                if method_name == "baseline":
+                    # Generate baseline
+                    sd_model = load_sd_model(ckpt_path=model_info["ckpt_path"], device=device)
+                    image_tensor = generate_baseline(sd_model, prompt, num_inference_steps, seed)
+                    
+                    # Convert tensor to PIL
+                    image_np = image_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy()
+                    image_np = (image_np * 255).astype(np.uint8)
+                    image = Image.fromarray(image_np)
+                    
+                    # Cleanup
+                    del sd_model
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
+                    
+                elif method_name == "hybrid":
+                    # Generate with hybrid
+                    hybrid_pipeline = HybridDynaPrompt(ckpt_path=model_info["ckpt_path"], device=device)
+                    hybrid_result = hybrid_pipeline.generate(
+                        prompt=prompt,
+                        steps=num_inference_steps,
+                        cfg_scale=guidance_scale,
+                        seed=seed,
+                        embedding_feedback=True,
+                        attention_feedback=True
+                    )
+                    
+                    # Convert tensor to PIL
+                    image_tensor = hybrid_result['image']
+                    image_np = image_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy()
+                    image_np = (image_np * 255).astype(np.uint8)
+                    image = Image.fromarray(image_np)
+                    
+                    # Cleanup
+                    del hybrid_pipeline
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
                 
                 # Save image
                 safe_prompt = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in prompt)[:50]
