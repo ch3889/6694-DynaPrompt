@@ -178,29 +178,34 @@ class HybridDynaPrompt:
         return token_scores
     
     def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.3):
-        """Compute adaptive boost factor based on token's CLIP score
+        """Compute adaptive boost using smooth inverse scaling based on CLIP score
+        
+        Principle: Boost inversely proportional to current alignment strength
+        Uses smooth gradient instead of hard thresholds for stable optimization
         
         Args:
-            token_clip_score: CLIP score for this specific token (15-35 typical range during generation)
+            token_clip_score: CLIP score for this specific token (15-35 typical range)
             base_boost: Base boost factor from config
             
         Returns:
-            Adaptive boost factor (1.3 - 2.5x)
+            Adaptive boost factor with smooth gradient (1.0x to base_boost×1.5)
         """
-        # Adaptive boost based on how missing the token is:
-        # - Very weak (score < 20): Use base_boost × 2.0 (strong correction)
-        # - Weak (score 20-25): Use base_boost × 1.5 (moderate boost)  
-        # - Present (score 25-30): Use base_boost × 1.0 (maintain)
-        # - Strong (score >= 30): Use 1.0x (no boost needed)
+        # Define CLIP score range observed during generation
+        min_score = 15.0  # Weakest typical CLIP score
+        max_score = 35.0  # Strongest typical CLIP score
         
-        if token_clip_score < 20:
-            return base_boost * 2.0  # Very weak - strong boost
-        elif token_clip_score < 25:
-            return base_boost * 1.5  # Weak - moderate boost
-        elif token_clip_score < 30:
-            return base_boost  # Present - use base
-        else:
-            return 1.0  # Strong - no boost needed
+        # Define boost range
+        max_boost = base_boost * 1.5  # Maximum boost for weakest tokens (1.3 × 1.5 = 1.95x)
+        min_boost = 1.0                # No boost for strong tokens
+        
+        # Normalize score to [0, 1] range
+        normalized = (token_clip_score - min_score) / (max_score - min_score)
+        normalized = max(0.0, min(1.0, normalized))  # Clamp to valid range
+        
+        # Inverse linear interpolation: low score → high boost, high score → low boost
+        boost = max_boost - (max_boost - min_boost) * normalized
+        
+        return boost
     
     def decompose_prompt_by_stage(self, prompt, current_step, total_steps):
         """Decompose prompt into stages for progressive concept building
