@@ -12,6 +12,7 @@ from pathlib import Path
 from tqdm import tqdm
 from PIL import Image
 import argparse
+import gc
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -255,9 +256,11 @@ def evaluate_drawbench(
             current_model = HybridDynaPrompt(ckpt_path=model_info["ckpt_path"], device=device)
         
         # Generate all images for this method
+        prompt_count = 0
         for item in tqdm(all_prompts, desc=f"{method_name}"):
             prompt = item["prompt"]
             category = item["category"]
+            prompt_count += 1
             
             try:
                 # Generate image based on method
@@ -279,11 +282,18 @@ def evaluate_drawbench(
                         attention_feedback=True
                     )
                     
-                    # Convert tensor to PIL
+                    # Convert tensor to PIL and move to CPU immediately
                     image_tensor = hybrid_result['image']
                     image_np = image_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy()
                     image_np = (image_np * 255).astype(np.uint8)
                     image = Image.fromarray(image_np)
+                    
+                    # Cleanup ALL result tensors aggressively
+                    for key in list(hybrid_result.keys()):
+                        if key != 'image':  # Already processed
+                            del hybrid_result[key]
+                    del hybrid_result
+                    del image_tensor
                 
                 # Save image
                 safe_prompt = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in prompt)[:50]
@@ -308,9 +318,17 @@ def evaluate_drawbench(
                     "image_path": str(img_path)
                 })
                 
-                # Cleanup tensors
+                # Aggressive cleanup after each image
+                del image
+                del image_np
                 if torch.cuda.is_available():
                     torch.cuda.empty_cache()
+                
+                # Every 5 prompts, run full garbage collection
+                if prompt_count % 5 == 0:
+                    gc.collect()
+                    if torch.cuda.is_available():
+                        torch.cuda.empty_cache()
                 
             except Exception as e:
                 print(f"\n⚠️  Error on prompt '{prompt}' with {method_name}: {e}")
