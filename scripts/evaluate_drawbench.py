@@ -234,37 +234,43 @@ def evaluate_drawbench(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
     
-    # Evaluation loop
+    # Evaluation loop - Process one method at a time to conserve memory
     results = {method: [] for method in methods}
     
     print("\nStarting evaluation...\n")
     
-    for item in tqdm(all_prompts, desc="Evaluating prompts"):
-        prompt = item["prompt"]
-        category = item["category"]
+    # Process each method separately to avoid OOM
+    for method_name, model_info in models.items():
+        print(f"\n{'='*60}")
+        print(f"Processing {method_name.upper()} method ({len(all_prompts)} prompts)")
+        print(f"{'='*60}\n")
         
-        for method_name, model_info in models.items():
+        # Load model once for this method
+        current_model = None
+        if method_name == "baseline":
+            print("Loading Baseline SD model...")
+            current_model = load_sd_model(ckpt_path=model_info["ckpt_path"], device=device)
+        elif method_name == "hybrid":
+            print("Loading Hybrid DynaPrompt model...")
+            current_model = HybridDynaPrompt(ckpt_path=model_info["ckpt_path"], device=device)
+        
+        # Generate all images for this method
+        for item in tqdm(all_prompts, desc=f"{method_name}"):
+            prompt = item["prompt"]
+            category = item["category"]
+            
             try:
                 # Generate image based on method
                 if method_name == "baseline":
-                    # Generate baseline
-                    sd_model = load_sd_model(ckpt_path=model_info["ckpt_path"], device=device)
-                    image_tensor = generate_baseline(sd_model, prompt, num_inference_steps, seed)
+                    image_tensor = generate_baseline(current_model, prompt, num_inference_steps, seed)
                     
                     # Convert tensor to PIL
                     image_np = image_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy()
                     image_np = (image_np * 255).astype(np.uint8)
                     image = Image.fromarray(image_np)
                     
-                    # Cleanup
-                    del sd_model
-                    if torch.cuda.is_available():
-                        torch.cuda.empty_cache()
-                    
                 elif method_name == "hybrid":
-                    # Generate with hybrid
-                    hybrid_pipeline = HybridDynaPrompt(ckpt_path=model_info["ckpt_path"], device=device)
-                    hybrid_result = hybrid_pipeline.generate(
+                    hybrid_result = current_model.generate(
                         prompt=prompt,
                         steps=num_inference_steps,
                         cfg_scale=guidance_scale,
@@ -278,11 +284,6 @@ def evaluate_drawbench(
                     image_np = image_tensor.squeeze(0).permute(1, 2, 0).cpu().numpy()
                     image_np = (image_np * 255).astype(np.uint8)
                     image = Image.fromarray(image_np)
-                    
-                    # Cleanup
-                    del hybrid_pipeline
-                    if torch.cuda.is_available():
-                        torch.cuda.empty_cache()
                 
                 # Save image
                 safe_prompt = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in prompt)[:50]
@@ -307,9 +308,20 @@ def evaluate_drawbench(
                     "image_path": str(img_path)
                 })
                 
+                # Cleanup tensors
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                
             except Exception as e:
                 print(f"\n⚠️  Error on prompt '{prompt}' with {method_name}: {e}")
                 continue
+        
+        # Cleanup model after finishing all prompts for this method
+        print(f"\nFinished {method_name}, cleaning up model...")
+        del current_model
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        print(f"Memory freed\n")
     
     # Aggregate results
     print("\n\nComputing summary statistics...")
