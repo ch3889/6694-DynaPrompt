@@ -149,15 +149,15 @@ Result: "hat" attention stays ~0.009 (0.9%) - still too weak!
 
 ```
 Attention Distribution (before softmax):
-Baseline:  ████████████████████ 3.2 (cat)
-           ████ 0.8 (red)
-           ██ 0.5 (wearing)
-           ▌ 0.15 (hat)
+Baseline:           ████████████████████ 3.2 (cat)
+                    ████ 0.8 (red)
+                    ██ 0.5 (wearing)
+                    ▌ 0.15 (hat)
 
-ZK2295:    ████████████████████ 3.2 (cat)  ← Unchanged
-           ████ 0.8 (red)                    ← Unchanged
-           ██ 0.5 (wearing)                  ← Unchanged
-           ▌ 0.19 (hat)                      ← +27% but still tiny!
+Embedding Technique: ████████████████████ 3.2 (cat)  ← Unchanged
+                    ████ 0.8 (red)                    ← Unchanged
+                    ██ 0.5 (wearing)                  ← Unchanged
+                    ▌ 0.19 (hat)                      ← +27% but still tiny!
 
 After softmax normalization:
 Both: 45.2% cat, 18.2% red, 9.6% wearing, 0.9% hat
