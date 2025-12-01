@@ -32,14 +32,15 @@ python scripts/download_drawbench.py
 
 # Step 2: Run evaluation on subset (5 categories, 50 prompts)
 echo ""
-echo "Step 2: Running evaluation..."
+echo "Step 2: Running evaluation (LOW MEMORY MODE)..."
 echo "  Categories: Colors, Positional, Counting, Descriptions, Conflicting"
 echo "  Methods: Baseline, Hybrid"
 echo "  Prompts: 50 total"
-echo "  Estimated time: 2 hours"
+echo "  Batch size: 10 (reloads model every 10 prompts)"
+echo "  Estimated time: 2-3 hours"
 echo ""
 
-python scripts/evaluate_drawbench.py \
+python scripts/evaluate_drawbench_lowmem.py \
   --categories Colors Positional Counting Descriptions Conflicting \
   --methods baseline hybrid \
   --steps 50 \
