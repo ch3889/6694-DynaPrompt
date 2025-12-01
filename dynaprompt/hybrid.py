@@ -501,6 +501,9 @@ class HybridDynaPrompt:
         print(f"Running hybrid denoising with {total_steps} steps...")
         iterator = tqdm(enumerate(time_range), total=total_steps, desc="Hybrid DynaPrompt")
         
+        # Initialize scene difficulty (will be updated during generation if embedding feedback enabled)
+        scene_difficulty = 'standard'  # Default to standard boost multiplier
+        
         for i, step in iterator:
             index = total_steps - i - 1
             ts = torch.full((1,), step, device=self.device, dtype=torch.long)
@@ -665,6 +668,7 @@ class HybridDynaPrompt:
                                     normalization_factor = 1.0
                                 
                                 # Apply normalized boosts
+                                # FIX: When multiple concepts share tokens, use MAX boost (not overwrite)
                                 adaptive_boosts = {}
                                 for concept, raw_boost in raw_boosts.items():
                                     normalized_boost = raw_boost * normalization_factor
@@ -672,7 +676,11 @@ class HybridDynaPrompt:
                                     normalized_boost = max(1.0, normalized_boost)
                                     
                                     for idx in concept_to_indices[concept]:
-                                        adaptive_boosts[idx] = normalized_boost
+                                        # Use max if token already has a boost (handle overlapping concepts)
+                                        if idx in adaptive_boosts:
+                                            adaptive_boosts[idx] = max(adaptive_boosts[idx], normalized_boost)
+                                        else:
+                                            adaptive_boosts[idx] = normalized_boost
                                 
                                 # Set token-specific boost factors in attention modifier
                                 self.attention_modifier.set_underrepresented_indices(token_indices)
