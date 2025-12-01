@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dynaprompt.hybrid import HybridDynaPrompt
 from dynaprompt.sd_loader import load_sd_model
 
-BATCH_SIZE = 10  # Process 10 prompts at a time, then reload
+BATCH_SIZE = 5  # Process 5 prompts at a time, then reload (hybrid needs more frequent reloads)
 
 def generate_baseline(sd_model, prompt, steps=50, seed=42):
     """Generate image without any feedback"""
