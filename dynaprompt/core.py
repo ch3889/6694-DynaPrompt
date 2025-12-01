@@ -336,7 +336,7 @@ class DynaPrompt:
         # Strategy 1: Global gradient-based update (for overall alignment)
         # Use provided alpha or default to conservative value
         if alpha is None:
-            alpha = 0.08  # Default to conservative feedback
+            alpha = 0.07  # Default to gentle feedback (reduced from 0.08)
         
         # Report CLIP preservation if applied
         if preservation_applied:

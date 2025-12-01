@@ -572,8 +572,8 @@ class HybridDynaPrompt:
                     print(f"    Weak tokens: {list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens}")
                     
                     # Detect scene difficulty for adaptive boost intensity
-                    # If early CLIP score is high (>23), scene is already well-composed
-                    if i <= 10 and feedback_result['clip_score'] >= 23:
+                    # If early CLIP score is high (>20), scene is already well-composed
+                    if i <= 10 and feedback_result['clip_score'] >= 20:
                         scene_difficulty = 'easy'  # Use gentler boost (1.2x multiplier)
                     else:
                         scene_difficulty = 'standard'  # Use standard boost (1.5x multiplier)
