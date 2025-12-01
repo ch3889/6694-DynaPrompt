@@ -177,26 +177,36 @@ class HybridDynaPrompt:
         
         return token_scores
     
-    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.3):
+    def compute_adaptive_boost_factor(self, token_clip_score, base_boost=1.3, scene_difficulty='standard'):
         """Compute adaptive boost using smooth inverse scaling based on CLIP score
         
         Principle: Boost inversely proportional to current alignment strength
         Uses smooth gradient instead of hard thresholds for stable optimization
+        Adapts boost intensity based on scene difficulty
         
         Args:
             token_clip_score: CLIP score for this specific token (15-35 typical range)
             base_boost: Base boost factor from config
+            scene_difficulty: 'easy' for well-composed scenes, 'standard' for difficult ones
             
         Returns:
-            Adaptive boost factor with smooth gradient (1.0x to base_boost×1.5)
+            Adaptive boost factor with smooth gradient (1.0x to base_boost×multiplier)
         """
         # Define CLIP score range observed during generation
         min_score = 15.0  # Weakest typical CLIP score
         max_score = 35.0  # Strongest typical CLIP score
         
+        # Adaptive boost multiplier based on scene difficulty
+        # Easy scenes (baseline already good): gentler boost to avoid over-correction
+        # Standard scenes (baseline needs help): standard boost for correction
+        if scene_difficulty == 'easy':
+            boost_multiplier = 1.2  # Gentler: 1.3 × 1.2 = 1.56x max
+        else:
+            boost_multiplier = 1.5  # Standard: 1.3 × 1.5 = 1.95x max
+        
         # Define boost range
-        max_boost = base_boost * 1.5  # Maximum boost for weakest tokens (1.3 × 1.5 = 1.95x)
-        min_boost = 1.0                # No boost for strong tokens
+        max_boost = base_boost * boost_multiplier
+        min_boost = 1.0  # No boost for strong tokens
         
         # Normalize score to [0, 1] range
         normalized = (token_clip_score - min_score) / (max_score - min_score)
@@ -553,6 +563,13 @@ class HybridDynaPrompt:
                     
                     print(f"    CLIP Score: {feedback_result['clip_score']:.2f}")
                     print(f"    Weak tokens: {list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens}")
+                    
+                    # Detect scene difficulty for adaptive boost intensity
+                    # If early CLIP score is high (>25), scene is already well-composed
+                    if i <= 10 and feedback_result['clip_score'] >= 25:
+                        scene_difficulty = 'easy'  # Use gentler boost (1.2x multiplier)
+                    else:
+                        scene_difficulty = 'standard'  # Use standard boost (1.5x multiplier)
                         
                     metrics_history.append({
                         'step': i,
@@ -619,7 +636,9 @@ class HybridDynaPrompt:
                             
                             for concept in concepts:
                                 clip_score = token_clip_scores.get(concept, 0.0)
-                                raw_boost = self.compute_adaptive_boost_factor(clip_score, base_boost)
+                                raw_boost = self.compute_adaptive_boost_factor(
+                                    clip_score, base_boost, scene_difficulty
+                                )
                                 
                                 # Find token indices for this concept
                                 concept_indices = self.map_concepts_to_token_positions(

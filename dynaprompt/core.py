@@ -318,7 +318,9 @@ class DynaPrompt:
                 feedback_gradient = alignment_direction.unsqueeze(1).expand_as(current_embedding)
             
             # Scale by alignment score (stronger feedback when misaligned)
+            # Use sqrt to reduce aggressiveness and preserve CLIP score better
             feedback_scale = (1.0 - torch.clamp(torch.tensor(clipscore / 100.0), 0, 1)).item()
+            feedback_scale = feedback_scale ** 0.5  # Square root for gentler scaling
             feedback_gradient = feedback_gradient * feedback_scale
         
         # Strategy 1: Global gradient-based update (for overall alignment)
