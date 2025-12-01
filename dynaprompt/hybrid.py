@@ -253,11 +253,11 @@ class HybridDynaPrompt:
             
             if progress < 0.33:  # Stage 1: Focus on subjects
                 if any(subj in clean_word for subj in subjects):
-                    emphasis[i] = 2.0  # Strong emphasis on current stage
+                    emphasis[i] = 1.5  # Moderate emphasis on current stage (reduced from 2.0x)
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 0.8  # Suppress non-stage concepts
+                    emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 0.8  # Suppress non-stage concepts
+                    emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
                 else:
                     emphasis[i] = 1.0
                     
@@ -265,9 +265,9 @@ class HybridDynaPrompt:
                 if any(subj in clean_word for subj in subjects):
                     emphasis[i] = 1.0  # Maintain established subjects
                 elif any(attr in clean_word for attr in attributes):
-                    emphasis[i] = 2.0  # Strong emphasis on current stage
+                    emphasis[i] = 1.5  # Moderate emphasis on current stage (reduced from 2.0x)
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 0.8  # Suppress not-yet-focused
+                    emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
                 else:
                     emphasis[i] = 1.0
                     
@@ -277,7 +277,7 @@ class HybridDynaPrompt:
                 elif any(attr in clean_word for attr in attributes):
                     emphasis[i] = 1.0  # Maintain attributes
                 elif any(obj in clean_word for obj in objects):
-                    emphasis[i] = 2.0  # Strong emphasis on objects
+                    emphasis[i] = 1.5  # Moderate emphasis on objects (reduced from 2.0x)
                 elif any(spat in clean_word for spat in spatial):
                     emphasis[i] = 1.8  # Strong emphasis on spatial
                 else:
@@ -565,8 +565,8 @@ class HybridDynaPrompt:
                     print(f"    Weak tokens: {list(weak_tokens.keys()) if isinstance(weak_tokens, dict) else weak_tokens}")
                     
                     # Detect scene difficulty for adaptive boost intensity
-                    # If early CLIP score is high (>25), scene is already well-composed
-                    if i <= 10 and feedback_result['clip_score'] >= 25:
+                    # If early CLIP score is high (>23), scene is already well-composed
+                    if i <= 10 and feedback_result['clip_score'] >= 23:
                         scene_difficulty = 'easy'  # Use gentler boost (1.2x multiplier)
                     else:
                         scene_difficulty = 'standard'  # Use standard boost (1.5x multiplier)

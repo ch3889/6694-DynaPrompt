@@ -321,6 +321,13 @@ class DynaPrompt:
             # Use sqrt to reduce aggressiveness and preserve CLIP score better
             feedback_scale = (1.0 - torch.clamp(torch.tensor(clipscore / 100.0), 0, 1)).item()
             feedback_scale = feedback_scale ** 0.5  # Square root for gentler scaling
+            
+            # Additional CLIP preservation: exponential decay for high scores
+            # For CLIP > 28, reduce feedback quadratically to preserve quality
+            if clipscore > 28:
+                preservation_factor = ((35 - clipscore) / 7) ** 2  # 1.0 at 28, 0.0 at 35
+                feedback_scale = feedback_scale * max(0.2, preservation_factor)  # Min 20% feedback
+            
             feedback_gradient = feedback_gradient * feedback_scale
         
         # Strategy 1: Global gradient-based update (for overall alignment)
