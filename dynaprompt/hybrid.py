@@ -601,9 +601,10 @@ class HybridDynaPrompt:
                         )
                         
                         if token_indices:
-                            # ADAPTIVE: Set per-token boost factors based on CLIP scores
-                            # Build mapping of token index to adaptive boost
-                            adaptive_boosts = {}
+                            # ADAPTIVE: Set per-token boost factors with budget balancing
+                            # Principle: Redistribute attention budget based on relative weakness
+                            # instead of amplifying all weak tokens (which can exceed budget)
+                            
                             base_boost = self.config.get('attention', {}).get('boost_factor', 1.3)
                             
                             # Get concepts for each token index
@@ -612,9 +613,13 @@ class HybridDynaPrompt:
                             else:
                                 concepts = weak_tokens
                             
+                            # Step 1: Calculate raw adaptive boosts for each concept
+                            raw_boosts = {}
+                            concept_to_indices = {}
+                            
                             for concept in concepts:
                                 clip_score = token_clip_scores.get(concept, 0.0)
-                                adaptive_boost = self.compute_adaptive_boost_factor(clip_score, base_boost)
+                                raw_boost = self.compute_adaptive_boost_factor(clip_score, base_boost)
                                 
                                 # Find token indices for this concept
                                 concept_indices = self.map_concepts_to_token_positions(
@@ -623,18 +628,44 @@ class HybridDynaPrompt:
                                     self.sd.model.cond_stage_model.tokenizer
                                 )
                                 
-                                # Store adaptive boost for these indices
-                                for idx in concept_indices:
-                                    adaptive_boosts[idx] = adaptive_boost
+                                if concept_indices:
+                                    raw_boosts[concept] = raw_boost
+                                    concept_to_indices[concept] = concept_indices
                             
-                            # Set token-specific boost factors in attention modifier
-                            self.attention_modifier.set_underrepresented_indices(token_indices)
-                            self.attention_modifier.set_adaptive_boosts(adaptive_boosts)
-                            self.attention_modifier.enable()
-                            
-                            # Store for metrics
-                            metrics_history[-1]['adaptive_boosts'] = adaptive_boosts
-                            metrics_history[-1]['token_clip_scores'] = token_clip_scores
+                            # Step 2: Normalize boosts to stay within attention budget
+                            # Total attention should not exceed reasonable multiplier (1.5x of base)
+                            if raw_boosts:
+                                total_raw_boost = sum(raw_boosts.values())
+                                num_concepts = len(raw_boosts)
+                                max_total_budget = base_boost * num_concepts  # Each concept can get base_boost on average
+                                
+                                # If total exceeds budget, normalize down
+                                if total_raw_boost > max_total_budget:
+                                    normalization_factor = max_total_budget / total_raw_boost
+                                else:
+                                    normalization_factor = 1.0
+                                
+                                # Apply normalized boosts
+                                adaptive_boosts = {}
+                                for concept, raw_boost in raw_boosts.items():
+                                    normalized_boost = raw_boost * normalization_factor
+                                    # Ensure minimum boost of 1.0 (no suppression)
+                                    normalized_boost = max(1.0, normalized_boost)
+                                    
+                                    for idx in concept_to_indices[concept]:
+                                        adaptive_boosts[idx] = normalized_boost
+                                
+                                # Set token-specific boost factors in attention modifier
+                                self.attention_modifier.set_underrepresented_indices(token_indices)
+                                self.attention_modifier.set_adaptive_boosts(adaptive_boosts)
+                                self.attention_modifier.enable()
+                                
+                                # Store for metrics
+                                metrics_history[-1]['adaptive_boosts'] = adaptive_boosts
+                                metrics_history[-1]['token_clip_scores'] = token_clip_scores
+                                metrics_history[-1]['normalization_factor'] = normalization_factor
+                            else:
+                                self.attention_modifier.disable()
                         else:
                             self.attention_modifier.disable()
                     else:
