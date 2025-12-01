@@ -258,6 +258,8 @@ class HybridDynaPrompt:
                     emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
                 elif any(obj in clean_word for obj in objects):
                     emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
+                elif any(spat in clean_word for spat in spatial):
+                    emphasis[i] = 0.9  # Gentle suppression of spatial terms
                 else:
                     emphasis[i] = 1.0
                     
@@ -268,6 +270,8 @@ class HybridDynaPrompt:
                     emphasis[i] = 1.5  # Moderate emphasis on current stage (reduced from 2.0x)
                 elif any(obj in clean_word for obj in objects):
                     emphasis[i] = 0.9  # Gentle suppression (reduced from 0.8x)
+                elif any(spat in clean_word for spat in spatial):
+                    emphasis[i] = 0.9  # Gentle suppression of spatial terms
                 else:
                     emphasis[i] = 1.0
                     

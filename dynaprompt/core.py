@@ -323,12 +323,12 @@ class DynaPrompt:
             feedback_scale = feedback_scale ** 0.5  # Square root for gentler scaling
             
             # Additional CLIP preservation: exponential decay for high scores
-            # For CLIP > 28, reduce feedback quadratically to preserve quality
+            # For CLIP > 28, reduce feedback linearly to preserve quality
             preservation_applied = False
             if clipscore > 28:
-                preservation_factor = ((35 - clipscore) / 7) ** 2  # 1.0 at 28, 0.0 at 35
+                preservation_factor = (35 - clipscore) / 7  # Linear: 1.0 at 28, 0.0 at 35
                 original_scale = feedback_scale
-                feedback_scale = feedback_scale * max(0.2, preservation_factor)  # Min 20% feedback
+                feedback_scale = feedback_scale * max(0.3, preservation_factor)  # Min 30% feedback (was 20%)
                 preservation_applied = True
             
             feedback_gradient = feedback_gradient * feedback_scale
