@@ -324,9 +324,12 @@ class DynaPrompt:
             
             # Additional CLIP preservation: exponential decay for high scores
             # For CLIP > 28, reduce feedback quadratically to preserve quality
+            preservation_applied = False
             if clipscore > 28:
                 preservation_factor = ((35 - clipscore) / 7) ** 2  # 1.0 at 28, 0.0 at 35
+                original_scale = feedback_scale
                 feedback_scale = feedback_scale * max(0.2, preservation_factor)  # Min 20% feedback
+                preservation_applied = True
             
             feedback_gradient = feedback_gradient * feedback_scale
         
@@ -334,6 +337,10 @@ class DynaPrompt:
         # Use provided alpha or default to conservative value
         if alpha is None:
             alpha = 0.08  # Default to conservative feedback
+        
+        # Report CLIP preservation if applied
+        if preservation_applied:
+            print(f"    [CLIP Preservation] Score {clipscore:.2f} > 28: Reduced feedback to {feedback_scale*100:.1f}% (factor {preservation_factor:.3f})")
         
         global_updated = self.update_prompt_embedding(
             current_embedding, 

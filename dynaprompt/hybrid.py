@@ -279,7 +279,7 @@ class HybridDynaPrompt:
                 elif any(obj in clean_word for obj in objects):
                     emphasis[i] = 1.5  # Moderate emphasis on objects (reduced from 2.0x)
                 elif any(spat in clean_word for spat in spatial):
-                    emphasis[i] = 1.8  # Strong emphasis on spatial
+                    emphasis[i] = 1.5  # Moderate emphasis on spatial (reduced from 1.8x)
                 else:
                     emphasis[i] = 1.0
         
