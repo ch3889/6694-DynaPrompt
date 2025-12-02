@@ -288,70 +288,53 @@ Strong Baseline (CLIP 65.27):
 
 ---
 
-### Slide 5: Adaptive Parameter Selection
+### Slide 5: CLIP Ceiling Effect
 
-#### **Need**: Dynamic parameter selection based on baseline quality
+#### **Problem Discovery**: Fixed Parameters Fail on Strong Baselines
 
-**Method 1: Baseline Quality Assessment + Decision Rules** ✅ **IMPLEMENTED**
+**Contradictory Results**:
 
-**Approach**: Fast, rule-based (practical for real-time use)
+| Evaluation | Baseline CLIP | Hybrid CLIP | Delta | Result |
+|------------|---------------|-------------|-------|--------|
+| **2-Prompt Test** | 30.51 | 31.36 | **+2.8%** ✅ | Works on weak baseline |
+| **DrawBench (50)** | 65.27 | 64.38 | **-1.4%** ❌ | Fails on strong baseline |
 
-**Algorithm**:
-1. **Assess**: Run baseline for 10 steps, measure CLIP score
-2. **Classify**: Determine quality tier (very weak / weak / medium / strong / very strong)
-3. **Select**: Apply decision rules to choose parameters
+**Root Cause**: CLIP Ceiling Effect
+- Strong baselines already near CLIP ceiling (~70-75)
+- Fixed aggressive feedback (α=0.07) causes over-optimization
+- Weak baselines have room for improvement, same feedback works well
 
-**Decision Rules**:
-```
-IF baseline_clip < 35:    # Very weak
-    alpha = 0.10, boost = 1.5, freq = 3
-ELIF baseline_clip < 45:  # Weak
-    alpha = 0.07, boost = 1.3, freq = 4
-ELIF baseline_clip < 55:  # Medium
-    alpha = 0.05, boost = 1.2, freq = 5
-ELIF baseline_clip < 65:  # Strong
-    alpha = 0.03, boost = 1.1, freq = 6
-ELSE:                     # Very strong
-    alpha = 0.01, boost = 1.05, freq = 8
-```
+**Visualization**: [Inverted-U curve]
+- Weak baseline: Rising curve, optimal at high aggressiveness ✅
+- Strong baseline: Inverted-U, optimal at low aggressiveness
+- Fixed params positioned wrong for strong baselines ❌
 
-**Advantages**:
-- ✅ Fast (10 steps baseline = ~0.5s overhead)
-- ✅ Interpretable (clear decision boundaries)
-- ✅ No training required
-- ✅ Works immediately on any prompt
-
-**Limitations**:
-- ⚠️ Discrete tiers (not continuous adaptation)
-- ⚠️ Hand-tuned boundaries (may not generalize perfectly)
+**Key Insight**: One-size-fits-all parameters cannot accommodate quality variation
 
 ---
 
 ### Slide 6: Results & Analysis
 
-**Test Set**: 10 DrawBench prompts spanning quality tiers
+**Test Results**: 2-Prompt Test + DrawBench 50-Prompt Evaluation
 
-**Status**: 🔄 **Currently running on GCP** (PID 1445761)
-- Expected completion: ~1 hour
-- Testing: Fixed (α=0.07, β=1.3, f=4) vs Method 1 adaptive params
-- Output: `outputs/adaptive_results_real.json`
+**2-Prompt Test** (Weak Baselines):
 
-**Preliminary Results Framework**:
+| Metric | Baseline | Hybrid | Delta |
+|--------|----------|--------|-------|
+| **Comp Acc** | 63.09% | 71.56% | **+13.23%** ✅ |
+| **CLIP Score** | 30.51 | 31.02 | **+0.85%** ✅ |
 
-| Prompt | Baseline CLIP (est) | Tier | Selected Params | Expected Outcome |
-|--------|---------------------|------|-----------------|------------------|
-| "a blue cube on red sphere" | 58.2 | Strong | α=0.03, β=1.1, f=6 | Moderate gain |
-| "golden bicycle, silver car" | 67.3 | Very Strong | α=0.01, β=1.05, f=8 | Small gain |
-| "cat wearing red hat" | 41.7 | Weak | α=0.07, β=1.3, f=4 | Strong gain |
-| *[7 more prompts...]* | *[varied CLIPs]* | *[varied]* | *[adaptive]* | *[pending]* |
+**DrawBench 50-Prompt** (Strong Baselines):
 
-**Will Report**:
-- ✅ Average improvement (Fixed vs Method 1)
-- ✅ Wins/Losses breakdown
-- ✅ Computational overhead measurement
-- ✅ Validation of CLIP ceiling hypothesis
+| Metric | Baseline | Hybrid | Delta |
+|--------|----------|--------|-------|
+| **CLIP Score** | 65.27 | 64.38 | **-1.4%** ❌ |
 
-**Key Hypothesis**: Adaptive selection prevents over-optimization on strong baselines
+**Key Findings**:
+- ✅ Works well on weak baselines (+2.8% CLIP)
+- ❌ Over-optimizes strong baselines (-1.4% CLIP)
+- ✅ Both metrics positive on 2-prompt average
+- ⚠️ Spatial relationships lost despite better metrics
 
 ---
 
@@ -363,15 +346,12 @@ ELSE:                     # Very strong
 
 2. **CLIP Ceiling Effect Discovery**: Documented why fixed parameters fail - strong baselines near CLIP score ceiling, vulnerable to over-optimization
 
-3. **Adaptive Parameter Selection**: 
-   - Method 1: Rule-based baseline quality assessment
-   - Prevents over-optimization on strong baselines
-   - Maintains strong gains on weak baselines
-   - Zero training cost, immediately deployable
+3. **Generic System Design**: Removed 189 lines of hardcoded prompt-specific logic, system works for ANY prompt
 
 4. **Critical Insight on Evaluation**: 
-   - Fixed parameters optimized for weak baselines (2-prompt test) fail on strong baselines (DrawBench)
-   - Highlights need for adaptive approaches in production systems
+   - CLIP score measures semantic similarity (presence) NOT spatial relationships (correctness)
+   - Quantitative metrics improved (+6.37% comp, +0.85% CLIP) while visual quality degraded
+   - Highlights need for spatial-aware evaluation metrics
 
 ---
 
@@ -385,15 +365,18 @@ ELSE:                     # Very strong
 2. **Metric inadequacy**: CLIP score measures presence, not correctness
    - Need spatial-aware metrics (bounding boxes, pose estimation)
 
-3. **Training cost for Method 4**: 2 hours to collect optimal parameter dataset
-   - Could be amortized across many users
-   - Active learning could reduce sample requirements
+3. **Computational overhead**: +7% generation time (CLIP decoding every 4 steps)
+   - Could be reduced with distilled CLIP models
+   - Trade-off between feedback frequency and speed
 
 **Future Directions**:
-1. **Relationship-aware boosting**: Boost token groups (["cat", "wearing", "hat"]) together instead of individually
-2. **Spatial-aware metrics**: Develop evaluation beyond semantic similarity
-3. **Bayesian optimization**: Online adaptation within single generation (10 feedback steps)
-4. **Aesthetic predictors**: Replace CLIP with aesthetic quality models (LAION Aesthetics)
+1. **Adaptive parameter selection**: 
+   - Method 1: Rule-based baseline assessment (fast, interpretable)
+   - Method 4: Meta-learning predictor (data-driven, continuous)
+   - Prevents over-optimization on strong baselines
+2. **Relationship-aware boosting**: Boost token groups (["cat", "wearing", "hat"]) together instead of individually
+3. **Spatial-aware metrics**: Develop evaluation beyond semantic similarity (bounding boxes, pose estimation)
+4. **Training-based approaches**: Compositional fine-tuning, neural-symbolic reasoning, RLHF
 
 ---
 
@@ -401,13 +384,13 @@ ELSE:                     # Very strong
 
 **Summary**:
 - Hybrid method combines embedding feedback (ZK2295) + attention boosting (CH3889)
-- **Problem discovered**: Fixed parameters fail across baseline quality variations (CLIP ceiling effect)
-- **Solution implemented**: Adaptive parameter selection via:
-  - Method 1: Rule-based assessment (+1.2% average improvement)
-  - Method 4: Meta-learning predictor (+1.4% average improvement)
-- **Key contribution**: First adaptive feedback system that prevents over-optimization
+- **Key results**: +6.37% compositional accuracy, +0.85% CLIP score on weak baselines
+- **Problem discovered**: 
+  - Fixed parameters fail on strong baselines (CLIP ceiling effect: -1.4%)
+  - Spatial relationships lost despite better metrics (quantitative-visual disconnect)
+- **Future direction**: Adaptive parameter selection to prevent over-optimization
 
-**Key Takeaway**: Demonstrated both **technical innovation** (dual-stream architecture) and **practical necessity** (adaptive parameters for production systems) - paving way for deployable compositional generation.
+**Key Takeaway**: Demonstrated both **technical feasibility** (dual-stream architecture works) and **critical limitations** (metrics inadequate, spatial relationships lost) - highlighting need for relationship-aware methods and spatial evaluation.
 
 ---
 

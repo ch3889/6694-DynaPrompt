@@ -828,7 +828,61 @@ boost_attribute("red", "hat")             # Bind attribute to object
 
 ## 5. Future Work
 
-### 5.1 Relationship-Aware Attention
+### 5.1 Adaptive Parameter Selection
+
+**Motivation**: Fixed parameters (α=0.07, β=1.3, f=4) fail across baseline quality variations due to CLIP ceiling effect:
+- Weak baselines: +2.8% improvement ✅
+- Strong baselines: -1.4% degradation ❌
+
+**Proposed Methods**:
+
+#### Method 1: Rule-Based Baseline Quality Assessment
+
+**Approach**: Fast, interpretable decision rules based on early baseline assessment
+
+**Algorithm**:
+1. Run baseline for 10 steps, measure CLIP score
+2. Classify into quality tier (very weak / weak / medium / strong / very strong)
+3. Select parameters from decision table:
+
+```python
+if baseline_clip < 35:    # Very weak
+    alpha, boost, freq = 0.10, 1.5, 3
+elif baseline_clip < 45:  # Weak
+    alpha, boost, freq = 0.07, 1.3, 4
+elif baseline_clip < 55:  # Medium
+    alpha, boost, freq = 0.05, 1.2, 5
+elif baseline_clip < 65:  # Strong
+    alpha, boost, freq = 0.03, 1.1, 6
+else:                     # Very strong
+    alpha, boost, freq = 0.01, 1.05, 8
+```
+
+**Advantages**: Fast (0.5s overhead), interpretable, no training required
+
+**Limitations**: Discrete tiers, hand-tuned boundaries, assumes 10-step assessment generalizes
+
+#### Method 4: Meta-Learning Predictor
+
+**Approach**: Learn parameter selection function from dataset of (prompt, baseline_quality) → optimal_params
+
+**Training**:
+1. Collect dataset: 100+ prompts × grid search (5 alpha × 5 boost values) = 2,500 generations
+2. Train neural network: `predictor(prompt_embedding, baseline_clip) → (alpha, boost, freq)`
+3. Loss function: `-CLIP_improvement` (maximize CLIP gain)
+
+**Advantages**: Continuous adaptation, learns from data, generalizes to unseen prompts
+
+**Limitations**: Training cost (2 hours), requires diverse prompt dataset, black-box predictions
+
+**Expected Outcomes**:
+- Method 1: +0.8% to +1.5% average improvement (estimated)
+- Method 4: +1.0% to +2.0% average improvement (estimated)
+- Both prevent over-optimization on strong baselines
+
+---
+
+### 5.2 Relationship-Aware Attention
 
 **Proposal**: Boost token groups that form syntactic units
 
@@ -850,7 +904,7 @@ for relation in dependencies:
 
 **Expected Benefit**: Preserves compositional structure while improving detection
 
-### 5.2 Spatial-Aware Evaluation Metrics
+### 5.3 Spatial-Aware Evaluation Metrics
 
 **Limitation of Current Metrics**: Can't distinguish "cat wearing hat" from "cat near hat"
 
@@ -899,7 +953,7 @@ for relation in dependencies:
        return accuracy
    ```
 
-### 5.3 Adaptive Composition Preservation
+### 5.4 Adaptive Composition Preservation
 
 **Idea**: Detect when boosting breaks compositional structure and roll back
 
@@ -925,7 +979,7 @@ if detect_composition_break(attention):
     embedding = embedding_prev
 ```
 
-### 5.4 Human Evaluation Study
+### 5.5 Human Evaluation Study
 
 **Motivation**: Validate that metrics don't align with human judgment
 
@@ -945,6 +999,25 @@ if detect_composition_break(attention):
    - Collect human ratings for 100+ images
    - Compute correlation with CLIP score, compositional accuracy
    - Expected: Low correlation (r < 0.4) → validates metric inadequacy
+
+### 5.6 Training-Based Approaches
+
+**Beyond Test-Time Adaptation**: While current system modifies prompts at inference, training-based methods could learn compositional generation directly:
+
+1. **Compositional Fine-Tuning**:
+   - Dataset: Prompts with spatial relationships + ground-truth images
+   - Fine-tune Stable Diffusion with compositional loss
+   - Preserve relationship structure in learned representations
+
+2. **Neural-Symbolic Reasoning**:
+   - Parse prompt into scene graph (symbolic)
+   - Use graph neural network to plan attention distribution
+   - Combine with diffusion model for generation
+
+3. **Reinforcement Learning from Human Feedback (RLHF)**:
+   - Collect human preferences on compositional correctness
+   - Train reward model distinguishing correct vs incorrect compositions
+   - Fine-tune diffusion with RL to maximize compositional reward
 
 ---
 
