@@ -1,0 +1,228 @@
+{
+  "timestamp": "2025-11-11T16:24:32.395992",
+  "configuration": {
+    "boost_factor": 7.5,
+    "check_step": 3,
+    "max_retries": 15,
+    "attention_threshold": 0.03,
+    "adaptive_boosting": true,
+    "seed": null
+  },
+  "summary": {
+    "total_images": 30,
+    "total_time_seconds": 2898.5304730000003,
+    "average_time_per_image": 96.61768243333334
+  },
+  "results": [
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p00_a_red_car_next_to_a_blue_truck.png",
+      "seed": 515897,
+      "generation_time": 99.66297,
+      "difficulty": "easy",
+      "prompt": "a red car next to a blue truck"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p01_a_cat_sitting_on_a_wooden_chair.png",
+      "seed": 884478,
+      "generation_time": 96.377948,
+      "difficulty": "easy",
+      "prompt": "a cat sitting on a wooden chair"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p02_a_dog_playing_with_a_yellow_ball.png",
+      "seed": 333853,
+      "generation_time": 96.737289,
+      "difficulty": "easy",
+      "prompt": "a dog playing with a yellow ball"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p03_a_white_bird_perched_on_a_tree_branch.png",
+      "seed": 947131,
+      "generation_time": 96.604594,
+      "difficulty": "easy",
+      "prompt": "a white bird perched on a tree branch"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p04_a_brown_horse_standing_in_a_green_field.png",
+      "seed": 388745,
+      "generation_time": 95.684156,
+      "difficulty": "easy",
+      "prompt": "a brown horse standing in a green field"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p05_a_black_bear_eating_honey_from_a_jar.png",
+      "seed": 788637,
+      "generation_time": 95.659081,
+      "difficulty": "easy",
+      "prompt": "a black bear eating honey from a jar"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p06_a_orange_cat_sleeping_on_a_soft_pillow.png",
+      "seed": 838289,
+      "generation_time": 96.894951,
+      "difficulty": "easy",
+      "prompt": "a orange cat sleeping on a soft pillow"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p07_a_grey_elephant_drinking_water_from_a_pond.png",
+      "seed": 332350,
+      "generation_time": 96.085965,
+      "difficulty": "easy",
+      "prompt": "a grey elephant drinking water from a pond"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p08_a_pink_flower_growing_next_to_a_stone.png",
+      "seed": 961486,
+      "generation_time": 97.001113,
+      "difficulty": "easy",
+      "prompt": "a pink flower growing next to a stone"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/easy_p09_a_blue_butterfly_landing_on_a_red_rose.png",
+      "seed": 770526,
+      "generation_time": 96.247652,
+      "difficulty": "easy",
+      "prompt": "a blue butterfly landing on a red rose"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p00_a_silver_laptop_on_a_wooden_desk.png",
+      "seed": 969475,
+      "generation_time": 94.435253,
+      "difficulty": "medium",
+      "prompt": "a silver laptop on a wooden desk"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p01_a_golden_trophy_next_to_a_red_ribbon.png",
+      "seed": 622725,
+      "generation_time": 97.132705,
+      "difficulty": "medium",
+      "prompt": "a golden trophy next to a red ribbon"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p02_a_green_bicycle_leaning_against_a_white_wall.png",
+      "seed": 148722,
+      "generation_time": 96.753089,
+      "difficulty": "medium",
+      "prompt": "a green bicycle leaning against a white wall"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p03_a_purple_book_resting_on_a_glass_table.png",
+      "seed": 683063,
+      "generation_time": 95.934455,
+      "difficulty": "medium",
+      "prompt": "a purple book resting on a glass table"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p04_a_yellow_candle_burning_next_to_a_mirror.png",
+      "seed": 790687,
+      "generation_time": 97.499502,
+      "difficulty": "medium",
+      "prompt": "a yellow candle burning next to a mirror"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p05_a_brown_guitar_standing_beside_a_window.png",
+      "seed": 66916,
+      "generation_time": 96.882923,
+      "difficulty": "medium",
+      "prompt": "a brown guitar standing beside a window"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p06_a_black_camera_sitting_on_a_leather_bag.png",
+      "seed": 484472,
+      "generation_time": 97.228742,
+      "difficulty": "medium",
+      "prompt": "a black camera sitting on a leather bag"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p07_a_red_umbrella_leaning_against_a_door.png",
+      "seed": 707209,
+      "generation_time": 97.033989,
+      "difficulty": "medium",
+      "prompt": "a red umbrella leaning against a door"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p08_a_blue_backpack_lying_on_a_bench.png",
+      "seed": 897182,
+      "generation_time": 95.918103,
+      "difficulty": "medium",
+      "prompt": "a blue backpack lying on a bench"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/medium_p09_a_orange_lamp_standing_on_a_nightstand.png",
+      "seed": 314602,
+      "generation_time": 97.513887,
+      "difficulty": "medium",
+      "prompt": "a orange lamp standing on a nightstand"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p00_a_silver_car_parked_next_to_a_golden_bicycle.png",
+      "seed": 890080,
+      "generation_time": 97.001709,
+      "difficulty": "hard",
+      "prompt": "a silver car parked next to a golden bicycle"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p01_a_purple_elephant_standing_next_to_a_yellow_giraff.png",
+      "seed": 102336,
+      "generation_time": 96.547432,
+      "difficulty": "hard",
+      "prompt": "a purple elephant standing next to a yellow giraffe"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p02_a_crystal_vase_containing_rainbow_flowers.png",
+      "seed": 676439,
+      "generation_time": 96.922801,
+      "difficulty": "hard",
+      "prompt": "a crystal vase containing rainbow flowers"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p03_a_turquoise_dragon_flying_beside_a_pink_unicorn.png",
+      "seed": 792238,
+      "generation_time": 95.554439,
+      "difficulty": "hard",
+      "prompt": "a turquoise dragon flying beside a pink unicorn"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p04_a_metallic_robot_holding_a_delicate_butterfly.png",
+      "seed": 637257,
+      "generation_time": 96.721451,
+      "difficulty": "hard",
+      "prompt": "a metallic robot holding a delicate butterfly"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p05_a_transparent_glass_sphere_containing_a_miniature_.png",
+      "seed": 953491,
+      "generation_time": 96.996947,
+      "difficulty": "hard",
+      "prompt": "a transparent glass sphere containing a miniature forest"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p06_a_neon_green_snake_coiled_around_a_blue_gem.png",
+      "seed": 82368,
+      "generation_time": 96.116708,
+      "difficulty": "hard",
+      "prompt": "a neon green snake coiled around a blue gem"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p07_a_golden_phoenix_perched_on_a_silver_fountain.png",
+      "seed": 594439,
+      "generation_time": 95.859031,
+      "difficulty": "hard",
+      "prompt": "a golden phoenix perched on a silver fountain"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p08_a_rainbow_butterfly_resting_on_a_black_rose.png",
+      "seed": 791348,
+      "generation_time": 96.548419,
+      "difficulty": "hard",
+      "prompt": "a rainbow butterfly resting on a black rose"
+    },
+    {
+      "filepath": "data/images/v7_cleaned_eval/hard_p09_a_marble_statue_wearing_a_silk_scarf.png",
+      "seed": 340958,
+      "generation_time": 96.973169,
+      "difficulty": "hard",
+      "prompt": "a marble statue wearing a silk scarf"
+    }
+  ]
+}

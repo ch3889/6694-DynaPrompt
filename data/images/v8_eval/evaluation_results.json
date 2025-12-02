@@ -1,0 +1,489 @@
+{
+  "timestamp": "2025-11-17T02:34:29.449251",
+  "configuration": {
+    "steps": 30,
+    "cfg_scale": 7.5,
+    "clip_guidance_scale": 150.0,
+    "clip_threshold": 0.25,
+    "clip_guidance_steps": 0,
+    "height": 512,
+    "width": 512,
+    "seed": null
+  },
+  "summary": {
+    "total_images": 30,
+    "total_time_seconds": 489.04009400000007,
+    "average_time_per_image": 16.30133646666667
+  },
+  "results": [
+    {
+      "filepath": "data/images/v8_eval/easy_p00_a_red_car_next_to_a_blue_truck.png",
+      "seed": 440915,
+      "generation_time": 16.665921,
+      "difficulty": "easy",
+      "prompt": "a red car next to a blue truck",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2411007136106491,
+        "final_clip_scores": {
+          "a red car": 0.25871118903160095,
+          "a blue truck": 0.22349023818969727
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p01_a_cat_sitting_on_a_wooden_chair.png",
+      "seed": 930832,
+      "generation_time": 15.522068,
+      "difficulty": "easy",
+      "prompt": "a cat sitting on a wooden chair",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.23442889750003815,
+        "final_clip_scores": {
+          "a cat sitting": 0.18744170665740967,
+          "a wooden chair": 0.2814160883426666
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p02_a_dog_playing_with_a_yellow_ball.png",
+      "seed": 448629,
+      "generation_time": 15.77687,
+      "difficulty": "easy",
+      "prompt": "a dog playing with a yellow ball",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.17008627951145172,
+        "final_clip_scores": {
+          "a dog playing": 0.13589242100715637,
+          "a yellow ball": 0.20428013801574707
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p03_a_white_bird_perched_on_a_tree_branch.png",
+      "seed": 49362,
+      "generation_time": 16.081069,
+      "difficulty": "easy",
+      "prompt": "a white bird perched on a tree branch",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2740611881017685,
+        "final_clip_scores": {
+          "a white bird perched": 0.3518587052822113,
+          "a tree branch": 0.19626367092132568
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p04_a_brown_horse_standing_in_a_green_field.png",
+      "seed": 567319,
+      "generation_time": 16.423266,
+      "difficulty": "easy",
+      "prompt": "a brown horse standing in a green field",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.18813275545835495,
+        "final_clip_scores": {
+          "a brown horse standing": 0.15503033995628357,
+          "a green field": 0.22123517096042633
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p05_a_black_bear_eating_honey_from_a_jar.png",
+      "seed": 259146,
+      "generation_time": 16.566057,
+      "difficulty": "easy",
+      "prompt": "a black bear eating honey from a jar",
+      "metrics": {
+        "guidance_applied_steps": 11,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3630765676498413,
+        "final_clip_scores": {
+          "a black bear eating honey from a jar": 0.3630765676498413
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p06_a_orange_cat_sleeping_on_a_soft_pillow.png",
+      "seed": 769333,
+      "generation_time": 17.184367,
+      "difficulty": "easy",
+      "prompt": "a orange cat sleeping on a soft pillow",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.27579282969236374,
+        "final_clip_scores": {
+          "a orange cat sleeping": 0.34732571244239807,
+          "a soft pillow": 0.2042599469423294
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p07_a_grey_elephant_drinking_water_from_a_pond.png",
+      "seed": 28164,
+      "generation_time": 16.123526,
+      "difficulty": "easy",
+      "prompt": "a grey elephant drinking water from a pond",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.24316886067390442,
+        "final_clip_scores": {
+          "a grey elephant drinking water from a pond": 0.24316886067390442
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p08_a_pink_flower_growing_next_to_a_stone.png",
+      "seed": 470979,
+      "generation_time": 16.251189,
+      "difficulty": "easy",
+      "prompt": "a pink flower growing next to a stone",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.26808926463127136,
+        "final_clip_scores": {
+          "a pink flower growing": 0.3312039375305176,
+          "a stone": 0.20497459173202515
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/easy_p09_a_blue_butterfly_landing_on_a_red_rose.png",
+      "seed": 116205,
+      "generation_time": 16.343197,
+      "difficulty": "easy",
+      "prompt": "a blue butterfly landing on a red rose",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.18470434844493866,
+        "final_clip_scores": {
+          "a blue butterfly landing": 0.26917436718940735,
+          "a red rose": 0.10023432970046997
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p00_a_silver_laptop_on_a_wooden_desk.png",
+      "seed": 536007,
+      "generation_time": 16.41327,
+      "difficulty": "medium",
+      "prompt": "a silver laptop on a wooden desk",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.16401875764131546,
+        "final_clip_scores": {
+          "a silver laptop": 0.16336488723754883,
+          "a wooden desk": 0.1646726280450821
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p01_a_golden_trophy_next_to_a_red_ribbon.png",
+      "seed": 726597,
+      "generation_time": 16.404201,
+      "difficulty": "medium",
+      "prompt": "a golden trophy next to a red ribbon",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.23180635273456573,
+        "final_clip_scores": {
+          "a golden trophy": 0.23797382414340973,
+          "a red ribbon": 0.22563888132572174
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p02_a_green_bicycle_leaning_against_a_white_wall.png",
+      "seed": 782066,
+      "generation_time": 16.230099,
+      "difficulty": "medium",
+      "prompt": "a green bicycle leaning against a white wall",
+      "metrics": {
+        "guidance_applied_steps": 12,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3391486406326294,
+        "final_clip_scores": {
+          "a green bicycle leaning against a white wall": 0.3391486406326294
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p03_a_purple_book_resting_on_a_glass_table.png",
+      "seed": 416299,
+      "generation_time": 16.325642,
+      "difficulty": "medium",
+      "prompt": "a purple book resting on a glass table",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2901795133948326,
+        "final_clip_scores": {
+          "a purple book resting": 0.38226252794265747,
+          "a glass table": 0.19809649884700775
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p04_a_yellow_candle_burning_next_to_a_mirror.png",
+      "seed": 715016,
+      "generation_time": 16.315574,
+      "difficulty": "medium",
+      "prompt": "a yellow candle burning next to a mirror",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2519424110651016,
+        "final_clip_scores": {
+          "a yellow candle burning": 0.3324333727359772,
+          "a mirror": 0.17145144939422607
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p05_a_brown_guitar_standing_beside_a_window.png",
+      "seed": 350310,
+      "generation_time": 16.212867,
+      "difficulty": "medium",
+      "prompt": "a brown guitar standing beside a window",
+      "metrics": {
+        "guidance_applied_steps": 14,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.30511024594306946,
+        "final_clip_scores": {
+          "a brown guitar standing beside a window": 0.30511024594306946
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p06_a_black_camera_sitting_on_a_leather_bag.png",
+      "seed": 386821,
+      "generation_time": 16.356778,
+      "difficulty": "medium",
+      "prompt": "a black camera sitting on a leather bag",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.23640650510787964,
+        "final_clip_scores": {
+          "a black camera sitting": 0.33035627007484436,
+          "a leather bag": 0.14245674014091492
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p07_a_red_umbrella_leaning_against_a_door.png",
+      "seed": 224403,
+      "generation_time": 16.242999,
+      "difficulty": "medium",
+      "prompt": "a red umbrella leaning against a door",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2544862926006317,
+        "final_clip_scores": {
+          "a red umbrella leaning against a door": 0.2544862926006317
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p08_a_blue_backpack_lying_on_a_bench.png",
+      "seed": 183229,
+      "generation_time": 16.357253,
+      "difficulty": "medium",
+      "prompt": "a blue backpack lying on a bench",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.22093116492033005,
+        "final_clip_scores": {
+          "a blue backpack lying": 0.12446711957454681,
+          "a bench": 0.3173952102661133
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/medium_p09_a_orange_lamp_standing_on_a_nightstand.png",
+      "seed": 517260,
+      "generation_time": 16.360631,
+      "difficulty": "medium",
+      "prompt": "a orange lamp standing on a nightstand",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.14481092989444733,
+        "final_clip_scores": {
+          "a orange lamp standing": 0.1255248636007309,
+          "a nightstand": 0.16409699618816376
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p00_a_silver_car_parked_next_to_a_golden_bicycle.png",
+      "seed": 414565,
+      "generation_time": 16.379189,
+      "difficulty": "hard",
+      "prompt": "a silver car parked next to a golden bicycle",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2169848084449768,
+        "final_clip_scores": {
+          "a silver car parked": 0.19211742281913757,
+          "a golden bicycle": 0.24185219407081604
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p01_a_purple_elephant_standing_next_to_a_yellow_giraff.png",
+      "seed": 902605,
+      "generation_time": 16.384827,
+      "difficulty": "hard",
+      "prompt": "a purple elephant standing next to a yellow giraffe",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2351548671722412,
+        "final_clip_scores": {
+          "a purple elephant standing": 0.2720450758934021,
+          "a yellow giraffe": 0.19826465845108032
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p02_a_crystal_vase_containing_rainbow_flowers.png",
+      "seed": 94167,
+      "generation_time": 16.24055,
+      "difficulty": "hard",
+      "prompt": "a crystal vase containing rainbow flowers",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3988772928714752,
+        "final_clip_scores": {
+          "a crystal vase containing rainbow flowers": 0.3988772928714752
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p03_a_turquoise_dragon_flying_beside_a_pink_unicorn.png",
+      "seed": 841874,
+      "generation_time": 16.263839,
+      "difficulty": "hard",
+      "prompt": "a turquoise dragon flying beside a pink unicorn",
+      "metrics": {
+        "guidance_applied_steps": 12,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3567866086959839,
+        "final_clip_scores": {
+          "a turquoise dragon flying beside a pink unicorn": 0.3567866086959839
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p04_a_metallic_robot_holding_a_delicate_butterfly.png",
+      "seed": 778239,
+      "generation_time": 16.274629,
+      "difficulty": "hard",
+      "prompt": "a metallic robot holding a delicate butterfly",
+      "metrics": {
+        "guidance_applied_steps": 10,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.4384685456752777,
+        "final_clip_scores": {
+          "a metallic robot holding a delicate butterfly": 0.4384685456752777
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p05_a_transparent_glass_sphere_containing_a_miniature_.png",
+      "seed": 101474,
+      "generation_time": 16.233968,
+      "difficulty": "hard",
+      "prompt": "a transparent glass sphere containing a miniature forest",
+      "metrics": {
+        "guidance_applied_steps": 14,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.39479637145996094,
+        "final_clip_scores": {
+          "a transparent glass sphere containing a miniature forest": 0.39479637145996094
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p06_a_neon_green_snake_coiled_around_a_blue_gem.png",
+      "seed": 995256,
+      "generation_time": 16.208222,
+      "difficulty": "hard",
+      "prompt": "a neon green snake coiled around a blue gem",
+      "metrics": {
+        "guidance_applied_steps": 13,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3229876160621643,
+        "final_clip_scores": {
+          "a neon green snake coiled around a blue gem": 0.3229876160621643
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p07_a_golden_phoenix_perched_on_a_silver_fountain.png",
+      "seed": 118529,
+      "generation_time": 16.379179,
+      "difficulty": "hard",
+      "prompt": "a golden phoenix perched on a silver fountain",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.2973272204399109,
+        "final_clip_scores": {
+          "a golden phoenix perched": 0.3143014907836914,
+          "a silver fountain": 0.28035295009613037
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p08_a_rainbow_butterfly_resting_on_a_black_rose.png",
+      "seed": 616977,
+      "generation_time": 16.336815,
+      "difficulty": "hard",
+      "prompt": "a rainbow butterfly resting on a black rose",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.22398466616868973,
+        "final_clip_scores": {
+          "a rainbow butterfly resting": 0.22769828140735626,
+          "a black rose": 0.2202710509300232
+        }
+      }
+    },
+    {
+      "filepath": "data/images/v8_eval/hard_p09_a_marble_statue_wearing_a_silk_scarf.png",
+      "seed": 614042,
+      "generation_time": 16.182032,
+      "difficulty": "hard",
+      "prompt": "a marble statue wearing a silk scarf",
+      "metrics": {
+        "guidance_applied_steps": 15,
+        "total_steps": 30,
+        "avg_final_clip_score": 0.3379579782485962,
+        "final_clip_scores": {
+          "a marble statue wearing a silk scarf": 0.3379579782485962
+        }
+      }
+    }
+  ]
+}

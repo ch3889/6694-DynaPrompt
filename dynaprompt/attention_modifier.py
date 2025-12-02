@@ -102,6 +102,7 @@ class AttentionModifier:
         self.underrepresented_indices = []
         self.hooks = []
         self.enabled = True
+        self.original_forwards = {}  # Store original forward methods for unpatching
 
     def register_hooks(self, unet):
         """
@@ -268,16 +269,31 @@ class AttentionModifier:
         Args:
             unet: The U-Net model
         """
-        def patch_recr(net):
+        self.original_forwards = {}  # Clear any previous storage
+
+        def patch_recr(net, path=""):
             if net.__class__.__name__ == 'CrossAttention':
+                # Store original forward method for later unpatching
+                self.original_forwards[id(net)] = (net, net.forward)
                 # Replace forward method with our modified version
                 net.forward = self.modify_attention_forward(net.forward)
             elif hasattr(net, 'children'):
-                for child in net.children():
-                    patch_recr(child)
+                for i, child in enumerate(net.children()):
+                    patch_recr(child, f"{path}.{i}")
 
         patch_recr(unet)
-        print("Patched CrossAttention layers for attention modification")
+        print(f"Patched {len(self.original_forwards)} CrossAttention layers for attention modification")
+
+    def unpatch_attention_layers(self):
+        """
+        Restore original forward methods to all patched CrossAttention layers.
+        """
+        for net_id, (net, original_forward) in self.original_forwards.items():
+            net.forward = original_forward
+
+        count = len(self.original_forwards)
+        self.original_forwards = {}
+        print(f"Unpatched {count} CrossAttention layers")
 
     def identify_underrepresented_tokens(self, prompt: str, attention_threshold: Optional[float] = None):
         """

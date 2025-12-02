@@ -135,24 +135,28 @@ class DynaPromptV3Sampler:
             unconditional_embeddings = self.model.cond_stage_model.transformer(unconditional_input.input_ids)[0]
 
         # Sample with attention modification
-        samples, intermediates = self._sample_with_attention_feedback(
-            text_embeddings=text_embeddings,
-            unconditional_embeddings=unconditional_embeddings,
-            shape=shape,
-            steps=steps,
-            unconditional_guidance_scale=unconditional_guidance_scale,
-            attention_modifier=attention_modifier,
-            prompt=prompt,
-            verbose=verbose,
-            **kwargs
-        )
+        try:
+            samples, intermediates = self._sample_with_attention_feedback(
+                text_embeddings=text_embeddings,
+                unconditional_embeddings=unconditional_embeddings,
+                shape=shape,
+                steps=steps,
+                unconditional_guidance_scale=unconditional_guidance_scale,
+                attention_modifier=attention_modifier,
+                prompt=prompt,
+                verbose=verbose,
+                **kwargs
+            )
 
-        print(f"\n{'='*80}")
-        print(f"✓ DynaPrompt V3 sampling complete!")
-        print(f"  Final underrepresented tokens: {attention_modifier.underrepresented_indices}")
-        print(f"{'='*80}\n")
+            print(f"\n{'='*80}")
+            print(f"✓ DynaPrompt V3 sampling complete!")
+            print(f"  Final underrepresented tokens: {attention_modifier.underrepresented_indices}")
+            print(f"{'='*80}\n")
 
-        return samples, intermediates
+            return samples, intermediates
+        finally:
+            # CRITICAL: Always unpatch attention layers to allow reuse
+            attention_modifier.unpatch_attention_layers()
 
     def _sample_with_attention_feedback(
         self,

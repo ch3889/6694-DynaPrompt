@@ -169,7 +169,6 @@ def main():
     print(f"  Boost factor: {args.boost_factor} (adaptive up to {args.boost_factor * 3}x)")
     print(f"  Check step: {args.check_step} (earlier = better)")
     print(f"  Max retries: {args.max_retries} (Phase 1 seed exploration)")
-    print(f"  LLM rewriting: DISABLED")
     print(f"  Output: {output_dir}")
     print("="*80 + "\n")
 
@@ -189,9 +188,6 @@ def main():
         boost_factor=args.boost_factor,
         start_step_ratio=0.0,
         end_step_ratio=0.5,
-        use_prompt_rewriting=True,
-        llm_model_name="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-        use_llm_gpu=True,
     )
     print("✓ V7 sampler ready\n")
 
@@ -245,7 +241,6 @@ def main():
             "check_step": args.check_step,
             "max_retries": args.max_retries,
             "attention_threshold": 0.03,
-            "use_prompt_rewriting": True,
             "adaptive_boosting": True,
             "seed": args.seed,
         },
