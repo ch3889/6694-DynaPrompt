@@ -358,25 +358,40 @@ Strong Baseline (CLIP 65.27):
 #### **Limitations & Future Work**
 
 **Current Limitations**:
-1. **Spatial relationship loss**: "wearing", "on", "arranged in row" not preserved
-   - Per-token optimization ignores syntactic dependencies
-   - CLIP doesn't differentiate "cat wearing hat" from "cat near hat"
 
-2. **Metric inadequacy**: CLIP score measures presence, not correctness
+1. **⚠️ Spatial Relationship Loss**
+   - Per-token optimization breaks syntactic dependencies ("wearing", "on", "arranged in row")
+   - CLIP doesn't differentiate "cat wearing hat" from "cat near hat"
+   - Objects appear but positioning is incorrect
+
+2. **📊 Metric Inadequacy**
+   - CLIP measures semantic presence, NOT spatial correctness
+   - Compositional accuracy checks existence, not relationships
    - Need spatial-aware metrics (bounding boxes, pose estimation)
 
-3. **Computational overhead**: +7% generation time (CLIP decoding every 4 steps)
-   - Could be reduced with distilled CLIP models
+3. **📈 CLIP Ceiling Effect**
+   - Fixed parameters over-optimize strong baselines (-1.4% on DrawBench)
+   - One-size-fits-all approach fails across quality variations
+
+4. **⚡ Computational Overhead**
+   - +7% generation time (CLIP decoding every 4 steps)
    - Trade-off between feedback frequency and speed
 
 **Future Directions**:
-1. **Adaptive parameter selection**: 
-   - Method 1: Rule-based baseline assessment (fast, interpretable)
-   - Method 4: Meta-learning predictor (data-driven, continuous)
-   - Prevents over-optimization on strong baselines
-2. **Relationship-aware boosting**: Boost token groups (["cat", "wearing", "hat"]) together instead of individually
-3. **Spatial-aware metrics**: Develop evaluation beyond semantic similarity (bounding boxes, pose estimation)
-4. **Training-based approaches**: Compositional fine-tuning, neural-symbolic reasoning, RLHF
+
+**🔗 Short-term:**
+- **Relationship-aware boosting**: Boost token groups (["cat", "wearing", "hat"]) together instead of individually
+- **Spatial-aware metrics + human evaluation**: Validate that metrics don't align with human judgment
+
+**📉 Medium-term:**
+- **Adaptive parameter selection**:
+  - Method 1: Rule-based baseline assessment (fast, interpretable)
+  - Method 4: Meta-learning predictor (data-driven, continuous)
+  - Prevents over-optimization on strong baselines
+
+**🧠 Long-term:**
+- **Training-based approaches**: Compositional fine-tuning, neural-symbolic reasoning, RLHF
+- **Architectural improvements**: Explicit spatial supervision in diffusion models
 
 ---
 

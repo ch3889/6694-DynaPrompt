@@ -578,125 +578,18 @@ Weak baselines (CLIP score < 40) have substantial room for improvement. The same
 
 **Parameter Sensitivity**:
 
-| Baseline Quality | Optimal Alpha | Optimal Boost | Rationale |
-|------------------|---------------|---------------|-----------|
-| Very Weak (<35) | 0.10 | 1.5 | Needs strong correction |
-| Weak (35-45) | 0.07 | 1.3 | Moderate feedback |
-| Medium (45-55) | 0.05 | 1.2 | Gentle refinement |
-| Strong (55-65) | 0.03 | 1.1 | Minimal adjustment |
-| Very Strong (>65) | 0.01 | 1.05 | Nearly optimal |
+| Baseline Quality | Observed Behavior | Issue |
+|------------------|-------------------|-------|
+| Very Weak (<35) | Large improvements possible | Fixed params may be too conservative |
+| Weak (35-45) | Moderate improvements (2-prompt: +2.8%) | Fixed params work well ✅ |
+| Medium (45-55) | Variable results | Fixed params sometimes over-optimize |
+| Strong (55-65) | Small improvements, risks degradation | Fixed params too aggressive |
+| Very Strong (>65) | Degradation (DrawBench: -1.4%) | Fixed params cause over-optimization ❌ |
 
-#### 3.5.2 Method 1: Baseline Quality Assessment + Decision Rules
+**Implication for Future Work**: Adaptive parameter selection needed to prevent over-optimization on strong baselines while maintaining gains on weak baselines. Two promising approaches explored in **Section 5.1 Future Work**:
 
-**Approach**: Fast, rule-based parameter selection based on early baseline assessment.
-
-**Algorithm**:
-1. **Assess Baseline Quality**: Run baseline generation for first 10 steps
-2. **Compute CLIP Score**: Measure semantic alignment of partial image
-3. **Classify Quality Tier**: Map CLIP score to one of 5 quality tiers
-4. **Select Parameters**: Apply decision rules for that tier
-
-**Implementation**:
-
-```python
-class BaselineQualityAssessor:
-    def assess_baseline_quality(self, prompt: str, num_steps=10) -> Dict:
-        # Generate partial baseline (first 10 steps)
-        partial_image = baseline_model.generate(prompt, num_steps=10)
-        clip_score = compute_clip_score(partial_image, prompt)
-        
-        # Classify quality tier
-        if clip_score < 35:
-            tier = 'very_weak'
-            params = {'alpha': 0.10, 'boost_factor': 1.5, 'frequency': 3}
-        elif clip_score < 45:
-            tier = 'weak'
-            params = {'alpha': 0.07, 'boost_factor': 1.3, 'frequency': 4}
-        elif clip_score < 55:
-            tier = 'medium'
-            params = {'alpha': 0.05, 'boost_factor': 1.2, 'frequency': 5}
-        elif clip_score < 65:
-            tier = 'strong'
-            params = {'alpha': 0.03, 'boost_factor': 1.1, 'frequency': 6}
-        else:
-            tier = 'very_strong'
-            params = {'alpha': 0.01, 'boost_factor': 1.05, 'frequency': 8}
-        
-        return {'tier': tier, 'params': params, 'clip_score': clip_score}
-```
-
-**Evaluation Setup**:
-- Test set: 10 DrawBench prompts spanning all quality tiers
-- Baseline: Stable Diffusion v1.5 (50 steps)
-- Comparison: Fixed params vs Method 1 adaptive params
-- Metric: CLIP score improvement over baseline
-
-**Results**:
-
-| Prompt | Baseline CLIP | Quality Tier | Selected Params | Hybrid CLIP | Improvement |
-|--------|---------------|--------------|-----------------|-------------|-------------|
-| "a blue cube on top of a red sphere" | 58.2 | Strong | α=0.03, β=1.1, f=6 | 59.1 | **+0.9** |
-| "a golden bicycle next to a silver car" | 67.3 | Very Strong | α=0.01, β=1.05, f=8 | 67.5 | **+0.2** |
-| "a cat wearing a red hat" | 41.7 | Weak | α=0.07, β=1.3, f=4 | 43.9 | **+2.2** |
-| "three red apples on a wooden table" | 52.8 | Medium | α=0.05, β=1.2, f=5 | 54.1 | **+1.3** |
-| "a small dog sitting under a large tree" | 63.1 | Strong | α=0.03, β=1.1, f=6 | 63.8 | **+0.7** |
-| "colorful balloons floating in the sky" | 36.4 | Weak | α=0.07, β=1.3, f=4 | 38.1 | **+1.7** |
-| "a white vase with pink flowers" | 69.2 | Very Strong | α=0.01, β=1.05, f=8 | 69.3 | **+0.1** |
-| "a person riding a horse" | 48.9 | Medium | α=0.05, β=1.2, f=5 | 50.3 | **+1.4** |
-| "a green frog on a lily pad" | 44.3 | Weak | α=0.07, β=1.3, f=4 | 46.7 | **+2.4** |
-| "a castle on a mountain peak" | 59.7 | Strong | α=0.03, β=1.1, f=6 | 60.5 | **+0.8** |
-
-**Summary Statistics** (⏳ PENDING):
-
-| Metric | Expected Range |
-|--------|----------------|
-| **Average Improvement** | **+0.8% to +1.5%** |
-| **Wins / Neutral / Losses** | 8-10 / 0-2 / 0 |
-| **Computational Overhead** | +0.5s per image (10-step assessment) |
-| **Training Required** | None |
-
-**Key Advantages**:
-- ✅ Fast inference (0.5s overhead for 10-step assessment)
-- ✅ Interpretable decision boundaries
-- ✅ No training data collection required
-- ✅ Deterministic and reproducible
-- ✅ Works immediately on any prompt
-
-**Limitations**:
-- ⚠️ Discrete quality tiers (not continuous adaptation)
-- ⚠️ Hand-tuned boundaries may not generalize perfectly
-- ⚠️ Assumes 10-step assessment is representative of final quality
-
-**Expected Validation** (once real results arrive):
-- Hypothesis: Method 1 prevents over-optimization on strong baselines
-- Hypothesis: Method 1 maintains strong gains on weak baselines
-- Hypothesis: Average improvement should be positive across all tiers
-
-#### 3.5.3 Comparison: Fixed vs Method 1
-
-**Aggregate Results** (10-prompt test set):
-
-| Approach | Status | Avg Improvement | Overhead | Training | Interpretability |
-|----------|--------|-----------------|----------|----------|------------------|
-| **Fixed (α=0.07, β=1.3)** | ❌ Failed | **-1.4%** | 0s | None | High |
-| **Method 1 (Rules)** | ✅ Implemented | **+0.8% to +1.5%** (⏳ pending) | +0.5s | None | High |
-
-**Key Insights**:
-
-1. **Fixed parameters catastrophically fail**:
-   - Average degradation of -1.4% on diverse prompts (documented in DrawBench evaluation)
-   - 70% failure rate (7 out of 10 prompts degraded)
-   - Over-optimizes strong baselines, under-optimizes weak baselines
-
-2. **Method 1 (Implemented) expected to succeed**:
-   - ⏳ Real experimental results pending from GCP
-   - Hypothesis: 80-100% win rate across quality tiers
-   - Expected average improvement: +0.8% to +1.5%
-   - Successfully prevents over-optimization via adaptive parameter selection
-
-**Current Recommendation**:
-- **For production deployment**: Method 1 (no training required, interpretable, immediately deployable)
-- **For resource-constrained settings**: Fixed parameters unsuitable - at minimum, use Method 1
+1. **Method 1 (Rule-Based)**: Fast baseline quality assessment with decision rules
+2. **Method 4 (Meta-Learning)**: Data-driven predictor for continuous adaptation
 
 #### 3.5.4 Qualitative Analysis
 
