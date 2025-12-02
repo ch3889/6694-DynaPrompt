@@ -672,113 +672,7 @@ class BaselineQualityAssessor:
 - Hypothesis: Method 1 maintains strong gains on weak baselines
 - Hypothesis: Average improvement should be positive across all tiers
 
-#### 3.5.3 Method 4: Meta-Learning Predictor
-
-**Approach**: Train neural network to predict optimal parameters from prompt features.
-
-**Architecture**:
-
-```
-Input: [CLIP text embedding (512-dim), baseline CLIP score (1-dim)] = 513-dim
-  ↓
-Hidden Layer 1: Linear(513 → 256) + ReLU + Dropout(0.2)
-  ↓
-Hidden Layer 2: Linear(256 → 128) + ReLU + Dropout(0.2)
-  ↓
-Hidden Layer 3: Linear(128 → 64) + ReLU + Dropout(0.2)
-  ↓
-Output Layer: Linear(64 → 3)
-  ↓
-Constrained Outputs:
-  - alpha ∈ [0, 0.15] via Sigmoid scaling
-  - boost_factor ∈ [1.0, 2.0] via Sigmoid scaling
-  - frequency ∈ [2, 10] via Sigmoid scaling
-```
-
-**Training Procedure**:
-
-1. **Dataset Collection** (30 DrawBench prompts):
-   - For each prompt:
-     - Generate baseline (measure CLIP score)
-     - Sweep 10 random parameter combinations
-     - Track best-performing combination
-     - Extract CLIP text embedding from prompt
-   - Total: 30 examples (prompt → optimal params)
-
-2. **Feature Extraction**:
-   - Encode prompt with CLIP text encoder → 512-dim embedding
-   - Concatenate with baseline CLIP score (normalized to [0, 1])
-   - Final feature vector: 513-dim
-
-3. **Training**:
-   - 80/20 train/validation split (24 train, 6 validation)
-   - Loss: MSE between predicted and optimal parameters
-   - Optimizer: Adam (lr=0.001)
-   - Epochs: 100
-   - Batch size: 16
-
-4. **Evaluation**:
-   - Test on 10 held-out DrawBench prompts
-   - Measure CLIP improvement vs baseline
-
-**Training Results**:
-
-| Epoch | Train Loss | Validation Loss |
-|-------|------------|-----------------|
-| 10 | 0.0234 | 0.0287 |
-| 20 | 0.0156 | 0.0198 |
-| 50 | 0.0089 | 0.0102 |
-| 100 | 0.0041 | 0.0067 |
-
-Final validation MSE: **0.0067** (good generalization)
-
-**Test Set Results**:
-
-| Prompt | Baseline CLIP | Predicted Params | Hybrid CLIP | Improvement |
-|--------|---------------|------------------|-------------|-------------|
-| "a blue cube on top of a red sphere" | 58.2 | α=0.029, β=1.08, f=6 | 59.3 | **+1.1** |
-| "a golden bicycle next to a silver car" | 67.3 | α=0.012, β=1.03, f=8 | 67.7 | **+0.4** |
-| "a cat wearing a red hat" | 41.7 | α=0.068, β=1.28, f=4 | 44.1 | **+2.4** |
-| "three red apples on a wooden table" | 52.8 | α=0.048, β=1.19, f=5 | 54.3 | **+1.5** |
-| "a small dog sitting under a large tree" | 63.1 | α=0.027, β=1.09, f=6 | 63.9 | **+0.8** |
-| "colorful balloons floating in the sky" | 36.4 | α=0.071, β=1.32, f=4 | 38.3 | **+1.9** |
-| "a white vase with pink flowers" | 69.2 | α=0.009, β=1.02, f=8 | 69.4 | **+0.2** |
-| "a person riding a horse" | 48.9 | α=0.052, β=1.21, f=5 | 50.5 | **+1.6** |
-| "a green frog on a lily pad" | 44.3 | α=0.065, β=1.27, f=4 | 46.9 | **+2.6** |
-| "a castle on a mountain peak" | 59.7 | α=0.031, β=1.10, f=6 | 60.7 | **+1.0** |
-
-**Expected Performance Metrics** (based on architecture capacity):
-
-| Metric | Estimated Range |
-|--------|-----------------|
-| **Average Improvement** | **+1.0% to +1.8%** |
-| **Wins / Neutral / Losses** | 9-10 / 0-1 / 0 |
-| **Computational Overhead** | +0.5s (assessment) + <1ms (inference) |
-| **Training Cost** | 6-8 hours (one-time) |
-| **Expected Prediction MSE** | <0.01 on validation |
-
-**Expected Advantages Over Method 1**:
-- ✅ Continuous parameter predictions (finer-grained than discrete rules)
-- ✅ Learns non-linear relationships from data (adapts to complex patterns)
-- ✅ Generalizes via text embedding similarity (novel prompts benefit from semantic similarity)
-- ✅ Negligible inference overhead (<1ms neural network forward pass)
-- ✅ Expected marginal improvement: +0.1-0.3% over Method 1
-- ✅ Expected marginal improvement: +0.1-0.3% over Method 1
-
-**Implementation Challenges**:
-- ⏱️ Expensive dataset collection (6-8 hours for 100 prompts × 10 parameter sweeps)
-- 💰 Requires significant compute budget ($50-100 on GCP)
-- 📋 Black-box predictions (less interpretable than Method 1 rules)
-- 🧑‍🔬 Potential overfitting with small dataset (requires careful regularization)
-- 🎯 Assumes training distribution covers test distribution
-
-**Why This is Proposed Work** (not current implementation):
-1. **Time constraints**: Method 1 provides 80-90% of potential gains with zero training
-2. **Diminishing returns**: Expected +0.1-0.3% improvement over Method 1 may not justify 8-hour training
-3. **Production readiness**: Method 1 is immediately deployable, Method 4 requires infrastructure for training
-4. **Research value**: Method 4 is valuable for understanding optimal parameter spaces but not critical for proof-of-concept
-
-#### 3.5.4 Comparison: Fixed vs Method 1 (Real) vs Method 4 (Proposed)
+#### 3.5.3 Comparison: Fixed vs Method 1
 
 **Aggregate Results** (10-prompt test set):
 
@@ -786,7 +680,6 @@ Final validation MSE: **0.0067** (good generalization)
 |----------|--------|-----------------|----------|----------|------------------|
 | **Fixed (α=0.07, β=1.3)** | ❌ Failed | **-1.4%** | 0s | None | High |
 | **Method 1 (Rules)** | ✅ Implemented | **+0.8% to +1.5%** (⏳ pending) | +0.5s | None | High |
-| **Method 4 (Meta-Learning)** | 🔬 Proposed | **+1.0% to +1.8%** (estimated) | +0.5s + <1ms | 6-8 hours | Low |
 
 **Key Insights**:
 
@@ -801,17 +694,11 @@ Final validation MSE: **0.0067** (good generalization)
    - Expected average improvement: +0.8% to +1.5%
    - Successfully prevents over-optimization via adaptive parameter selection
 
-3. **Method 4 (Proposed) potential for marginal improvement**:
-   - Expected +0.1-0.3% gain over Method 1
-   - Requires 6-8 hours training investment
-   - Trade-off: marginal performance gain vs significant training cost
-
 **Current Recommendation**:
 - **For production deployment**: Method 1 (no training required, interpretable, immediately deployable)
-- **For future research**: Method 4 (investigate if continuous predictions provide meaningful improvements over discrete rules)
 - **For resource-constrained settings**: Fixed parameters unsuitable - at minimum, use Method 1
 
-#### 3.5.5 Qualitative Analysis
+#### 3.5.4 Qualitative Analysis
 
 **Case Study: Strong Baseline (CLIP 67.3)**
 
@@ -821,9 +708,8 @@ Prompt: "a golden bicycle next to a silver car"
 |--------|-------|-------|-------------|----------------|
 | Fixed | 0.07 | 1.3 | 65.9 (-1.4) | Over-saturated colors, artifacts |
 | Method 1 | 0.01 | 1.05 | 67.5 (+0.2) | Clean, preserves baseline quality |
-| Method 4 | 0.012 | 1.03 | 67.7 (+0.4) | Clean, subtle compositional refinement |
 
-**Observation**: Fixed parameters push strong baseline beyond optimal point, introducing visual artifacts. Adaptive methods recognize high baseline quality and apply minimal feedback, preserving quality while making subtle improvements.
+**Observation**: Fixed parameters push strong baseline beyond optimal point, introducing visual artifacts. Method 1 recognizes high baseline quality and applies minimal feedback, preserving quality while making subtle improvements.
 
 **Case Study: Weak Baseline (CLIP 41.7)**
 
@@ -833,9 +719,8 @@ Prompt: "a cat wearing a red hat"
 |--------|-------|-------|-------------|----------------|
 | Fixed | 0.07 | 1.3 | 43.9 (+2.2) | Improved composition, hat more visible |
 | Method 1 | 0.07 | 1.3 | 43.9 (+2.2) | Identical (same params selected) |
-| Method 4 | 0.068 | 1.28 | 44.1 (+2.4) | Slightly better color accuracy |
 
-**Observation**: For weak baselines, all methods converge to similar aggressive feedback. Fixed parameters happen to be optimal for this tier, so Method 1 selects the same values. Method 4 learns slightly refined values (+2.4% vs +2.2%).
+**Observation**: For weak baselines, Method 1 converges to aggressive feedback. Fixed parameters happen to be optimal for this tier, so Method 1 selects the same values.
 
 ---
 

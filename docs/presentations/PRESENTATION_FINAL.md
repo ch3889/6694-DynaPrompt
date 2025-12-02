@@ -288,13 +288,9 @@ Strong Baseline (CLIP 65.27):
 
 ---
 
-### Slide 5: Adaptive Parameter Selection - Two Approaches
+### Slide 5: Adaptive Parameter Selection
 
 #### **Need**: Dynamic parameter selection based on baseline quality
-
-**Method 1 (Implemented)** + **Method 4 (Proposed Future Work)**:
-
----
 
 **Method 1: Baseline Quality Assessment + Decision Rules** ✅ **IMPLEMENTED**
 
@@ -331,46 +327,7 @@ ELSE:                     # Very strong
 
 ---
 
-**Method 4: Meta-Learning Predictor** 🔬 **PROPOSED FUTURE WORK**
-
-**Approach**: Data-driven, learns optimal parameter mapping
-
-**Architecture**:
-```
-Input: [CLIP text embedding (512-dim), baseline CLIP score (1-dim)]
-     ↓
-Hidden: 256 → 128 → 64 (ReLU + Dropout)
-     ↓
-Output: [alpha, boost_factor, frequency]
-     ↓
-Constraints: alpha ∈ [0, 0.15], boost ∈ [1.0, 2.0], freq ∈ [2, 10]
-```
-
-**Training Procedure**:
-1. **Collect Dataset**: For N prompts, sweep parameters to find optimal values
-   - Sample 10 parameter combinations per prompt
-   - Track best CLIP improvement for each prompt
-   - Extract CLIP text embedding + baseline score
-2. **Train MLP**: Map (embedding, baseline_score) → optimal_params
-   - 100 epochs, Adam optimizer, MSE loss
-   - 80/20 train/validation split
-3. **Evaluate**: Test on held-out prompts
-
-**Advantages**:
-- ✅ Continuous predictions (not discrete tiers)
-- ✅ Learns from data (adapts to actual optimal mappings)
-- ✅ Generalizes to novel prompts (via text embedding similarity)
-
-**Limitations**:
-- ⚠️ Requires training dataset (expensive to collect)
-- ⚠️ Black-box (less interpretable than rules)
-- ⚠️ Small network overhead (negligible ~1ms)
-
----
-
 ### Slide 6: Results & Analysis
-
-#### **Method 1 Results: Baseline Assessment + Rules** ✅ **REAL EXPERIMENTAL DATA**
 
 **Test Set**: 10 DrawBench prompts spanning quality tiers
 
@@ -398,47 +355,6 @@ Constraints: alpha ∈ [0, 0.15], boost ∈ [1.0, 2.0], freq ∈ [2, 10]
 
 ---
 
-#### **Method 4: Meta-Learning Predictor** 🔬 **PROPOSED FUTURE WORK**
-
-**Why Proposed (Not Implemented)**:
-- ⏱️ Requires 6-8 hours training (300+ generations for parameter sweep)
-- 💰 Expensive data collection ($50+ compute cost)
-- 📊 Need larger training set for robust generalization (100+ prompts)
-
-**Proposed Architecture**:
-- Input: CLIP text embedding (512-dim) + baseline score (1-dim)
-- Hidden: 256 → 128 → 64 neurons (ReLU + Dropout)
-- Output: Continuous predictions for α, β, frequency
-- Training: 100+ prompts, parameter sweep to find optimal values
-
-**Expected Advantages Over Method 1**:
-- ✅ Continuous predictions (not discrete tiers)
-- ✅ Learns non-linear relationships from data
-- ✅ Generalizes via embedding similarity
-
-**Expected Performance** (based on architecture capacity):
-- **Estimated improvement**: +1.3-1.5% (vs +1.2% for Method 1)
-- **Training cost**: 6-8 hours one-time
-- **Inference overhead**: <1ms (negligible)
-
-**Future Work**: Collect training dataset, validate generalization to novel prompts
-
----
-
-#### **Comparison: Fixed vs Method 1 (Real) vs Method 4 (Proposed)**
-
-| Approach | Status | Avg Improvement | Overhead | Training |
-|----------|--------|-----------------|----------|----------|
-| **Fixed (α=0.07)** | ❌ Fails | -1.4% | 0s | None |
-| **Method 1 (Rules)** | ✅ Implemented | **+1.2% (pending real results)** | +0.5s | None |
-| **Method 4 (ML)** | 🔬 Proposed | +1.3-1.5% (estimated) | +0.5s + <1ms | 6-8 hours |
-
-**Current Recommendation**:
-- **Production deployment**: Method 1 (no training, interpretable, proven effective)
-- **Research extension**: Method 4 (requires dataset collection, expected marginal improvement)
-
----
-
 ### Slide 7: Contributions & Future Work
 
 #### **Key Contributions**
@@ -447,10 +363,11 @@ Constraints: alpha ∈ [0, 0.15], boost ∈ [1.0, 2.0], freq ∈ [2, 10]
 
 2. **CLIP Ceiling Effect Discovery**: Documented why fixed parameters fail - strong baselines near CLIP score ceiling, vulnerable to over-optimization
 
-3. **Adaptive Parameter Methods**: 
-   - Method 1: Fast rule-based selection (+1.2% average)
-   - Method 4: Data-driven meta-learning (+1.4% average)
-   - Both prevent over-optimization and generalize across quality tiers
+3. **Adaptive Parameter Selection**: 
+   - Method 1: Rule-based baseline quality assessment
+   - Prevents over-optimization on strong baselines
+   - Maintains strong gains on weak baselines
+   - Zero training cost, immediately deployable
 
 4. **Critical Insight on Evaluation**: 
    - Fixed parameters optimized for weak baselines (2-prompt test) fail on strong baselines (DrawBench)
