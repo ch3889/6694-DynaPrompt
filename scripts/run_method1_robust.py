@@ -90,9 +90,9 @@ def main():
         print(f"{'='*60}")
         
         # Configure fixed params
-        model.config.alpha = FIXED_ALPHA
-        model.config.boost_factor = FIXED_BOOST
-        model.config.feedback_frequency = FIXED_FREQ
+        model.config['alpha'] = FIXED_ALPHA
+        model.config['boost_factor'] = FIXED_BOOST
+        model.config['feedback_frequency'] = FIXED_FREQ
         
         for i in range(completed_fixed, len(TEST_PROMPTS)):
             prompt = TEST_PROMPTS[i]
@@ -146,8 +146,8 @@ def main():
             try:
                 # Step 1: Run baseline for 10 steps to assess quality
                 print(f"   🔍 Assessing baseline quality (10 steps)...")
-                model.config.alpha = 0.0  # No feedback for baseline
-                model.config.boost_factor = 1.0
+                model.config['alpha'] = 0.0  # No feedback for baseline
+                model.config['boost_factor'] = 1.0
                 
                 baseline_result = model.generate(
                     prompt=prompt,
@@ -165,9 +165,9 @@ def main():
                 print(f"   🎯 Selected: α={params['alpha']:.2f}, β={params['boost_factor']:.2f}, f={params['frequency']}")
                 
                 # Step 3: Run full generation with adaptive params
-                model.config.alpha = params['alpha']
-                model.config.boost_factor = params['boost_factor']
-                model.config.feedback_frequency = params['frequency']
+                model.config['alpha'] = params['alpha']
+                model.config['boost_factor'] = params['boost_factor']
+                model.config['feedback_frequency'] = params['frequency']
                 
                 start_time = time.time()
                 result = model.generate(
