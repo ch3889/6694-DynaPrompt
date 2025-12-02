@@ -1143,7 +1143,48 @@ This work was developed through iterative experimentation and debugging on Googl
 
 ## Appendices
 
-### A. Configuration Files
+### A. Runnable Code & Reproduction
+
+**GitHub Repository**: https://github.com/ch3889/6694-DynaPrompt  
+**Branch**: `zk2295` (Method 1 implementation)
+
+**Quick Start**:
+```bash
+# Clone repository
+git clone https://github.com/ch3889/6694-DynaPrompt.git
+cd 6694-DynaPrompt
+git checkout zk2295
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run Method 1 experiments (reproduces Section 3.5.2 results)
+python scripts/run_method1_robust.py
+
+# View results
+python update_method1_results.py
+```
+
+**Key Scripts**:
+1. `scripts/run_method1_robust.py` - Main experiment runner with checkpointing
+2. `scripts/baseline_vs_hybrid.py` - Quick 2-prompt test
+3. `scripts/test_hybrid_dynaprompt.py` - Full hybrid evaluation
+4. `update_method1_results.py` - Format and analyze experimental results
+
+**Configuration**:
+- `configs/dynaprompt_config.yaml` - Hyperparameters for all methods
+- Modify `alpha`, `boost_factor`, `frequency` to test different settings
+
+**Hardware Requirements**:
+- GPU: NVIDIA T4 or better (16GB VRAM recommended)
+- RAM: 16GB minimum
+- Storage: 10GB for models + outputs
+
+**Expected Runtime**:
+- Method 1 (10 prompts): ~40-60 minutes on single T4
+- Quick test (2 prompts): ~5 minutes
+
+### B. Configuration Files
 
 **configs/dynaprompt_config.yaml**:
 ```yaml
@@ -1167,14 +1208,50 @@ adaptive:
   standard_multiplier: 1.5     # Stronger boost for hard scenes
 ```
 
-### B. Code Architecture
+### C. Code Architecture
 
 **Key Files**:
 - `dynaprompt/core.py`: ZK2295 implementation (embedding feedback)
-- `dynaprompt/hybrid.py`: CH3889 + pipeline integration
+- `dynaprompt/hybrid.py`: Hybrid method combining ZK2295 + CH3889
+- `dynaprompt/attention_modifier.py`: Attention boosting implementation
+- `dynaprompt/adaptive_reweighting.py`: Adaptive parameter selection (Method 1)
 - `dynaprompt/wrapper.py`: StableDiffusionWrapper with hooks
 - `configs/dynaprompt_config.yaml`: Hyperparameter configuration
-- `scripts/baseline_vs_hybrid.py`: Evaluation script
+- `scripts/baseline_vs_hybrid.py`: Main evaluation script
+- `scripts/run_method1_robust.py`: Method 1 experiment runner with checkpointing
+- `update_method1_results.py`: Results formatting and analysis
+
+**Directory Structure**:
+```
+DynaPrompt/
+├── dynaprompt/              # Core implementation
+│   ├── __init__.py
+│   ├── core.py             # ZK2295 CLIP feedback
+│   ├── hybrid.py           # Hybrid method (final)
+│   ├── attention_modifier.py
+│   ├── adaptive_reweighting.py
+│   ├── sd_loader.py
+│   └── wrapper.py
+├── configs/
+│   ├── dynaprompt_config.yaml      # Main config
+│   └── baselines_config.yaml       # Baseline configs
+├── scripts/
+│   ├── baseline_vs_hybrid.py       # Main test
+│   ├── test_hybrid_dynaprompt.py
+│   ├── run_method1_robust.py      # Method 1 experiments
+│   └── adaptive_parameter_methods.py
+├── docs/
+│   ├── presentations/
+│   │   └── PRESENTATION_FINAL.md
+│   └── reports/
+│       └── REPORT_HYBRID_FINAL.md  # This document
+├── outputs/                 # Generated images & results
+│   ├── adaptive_results_real.json
+│   ├── method1_checkpoint.json
+│   └── formatted_method1_results.md
+├── models/                  # Downloaded SD models
+└── tests/                   # Unit tests
+```
 
 **Major Refactor** (Generic System):
 - **Removed**: `decompose_prompt_by_stage()` - 80 lines of hardcoded word lists
@@ -1183,7 +1260,7 @@ adaptive:
 - **Added**: `compute_progressive_emphasis()` - 15 lines, timestep-based only
 - **Total**: 189 lines removed, replaced with 15 lines of generic logic
 
-### C. Experimental Details
+### D. Experimental Details
 
 **Prompt Extraction**:
 ```python
@@ -1221,3 +1298,28 @@ def compute_clip_score(image: Tensor, text: str) -> float:
     
     return score
 ```
+---
+
+## 10. Conclusion
+
+This report documents the development and evaluation of the Hybrid DynaPrompt system for compositional text-to-image generation. Our key contributions include:
+
+1. **Dual-Stream Architecture**: First method combining external embedding feedback (ZK2295) with internal attention modification (CH3889), achieving multiplicative synergy
+
+2. **CLIP Ceiling Effect**: Documented why fixed parameters catastrophically fail - strong baselines near CLIP score ceiling are vulnerable to over-optimization
+
+3. **Adaptive Parameter Selection**: Implemented Method 1 (rule-based baseline quality assessment) that prevents over-optimization while maintaining strong gains on weak baselines
+
+4. **Generalizability**: Removed 189 lines of hardcoded prompt-specific logic, creating a system that works for ANY prompt
+
+5. **Critical Evaluation Insight**: Identified fundamental inadequacy of current metrics (CLIP score, compositional accuracy) - they measure concept presence but not spatial relationships, leading to quantitative-visual disconnect
+
+**Limitations**: While quantitative metrics improve (+6.37% compositional accuracy), visual quality degrades due to spatial relationship loss. Per-token optimization breaks compositional structure.
+
+**Future Work**: Develop relationship-aware boosting (token groups), spatial-aware evaluation metrics, and validate with human evaluation studies.
+
+**Code Availability**: Full implementation available at https://github.com/ch3889/6694-DynaPrompt (branch: `zk2295`)
+
+---
+
+*End of Report*
