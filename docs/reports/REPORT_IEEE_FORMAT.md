@@ -123,7 +123,7 @@ At each feedback step $t$, the partially denoised latent $z_t$ is decoded to pix
 
 $$\hat{I}_t = \text{VAE}_{\text{decode}}(z_t)$$
 
-This requires:
+The Variational Autoencoder (VAE) [2] decoder maps from 4-channel latent space to RGB pixel space. This requires:
 - VAE decoder forward pass: 0.08s on NVIDIA T4
 - Output: 512×512×3 RGB image representing current generation state
 - Latent dimensionality: $z_t \in \mathbb{R}^{4 \times 64 \times 64}$ → image $\hat{I}_t \in \mathbb{R}^{3 \times 512 \times 512}$
@@ -137,8 +137,8 @@ For each token $t_i$ in prompt $P = \{t_1, ..., t_N\}$, compute alignment score:
 $$s_i = \text{CLIP}(\hat{I}_t, t_i) = \cos\left(\text{Enc}_I(\hat{I}_t), \text{Enc}_T(t_i)\right)$$
 
 where:
-- $\text{Enc}_I$: CLIP image encoder (ViT-B/32, 151M params)
-- $\text{Enc}_T$: CLIP text encoder (Transformer, 63M params)
+- $\text{Enc}_I$: CLIP image encoder (Vision Transformer ViT-B/32 [16], 151M params)
+- $\text{Enc}_T$: CLIP text encoder (Transformer [17], 63M params)
 - $\cos(\cdot, \cdot)$: Cosine similarity in 512-dimensional embedding space
 
 **Computational cost:** $N$ CLIP forward passes per feedback step. For typical prompt with $N=10$ tokens:
@@ -172,11 +172,11 @@ $$W_t = \left\{i : s_i < \text{median}\left(\{s_j\}_{j=1}^N\right)\right\}$$
 
 *Stage 4: Gradient-Based Embedding Update*
 
-For each weak token $i \in W_t$, update its embedding via gradient ascent on CLIP score:
+For each weak token $i \in W_t$, update its embedding via gradient ascent [20] on CLIP score:
 
 $$c_{i,t+1} = c_{i,t} + \alpha \cdot \frac{\partial \text{CLIP}(\hat{I}_t, t_i)}{\partial c_{i,t}}$$
 
-**Gradient computation:** Backpropagation through CLIP image encoder while treating $\hat{I}_t$ as constant (no gradient to VAE or U-Net):
+**Gradient computation:** Backpropagation through CLIP image encoder while treating $\hat{I}_t$ as constant (no gradient to VAE or U-Net [18]):
 
 $$\frac{\partial \text{CLIP}(\hat{I}_t, t_i)}{\partial c_{i,t}} = \frac{\partial}{\partial c_{i,t}} \cos\left(\text{Enc}_I(\hat{I}_t), \text{Enc}_T(t_i; c_{i,t})\right)$$
 
@@ -201,11 +201,11 @@ Selected via grid search over $\alpha \in \{0.01, 0.03, 0.05, 0.07, 0.10, 0.15\}
 
 **Optimal choice:** $\alpha=0.07$ maximizes compositional accuracy while maintaining positive CLIP score. Larger values ($\alpha \geq 0.10$) introduce visual artifacts due to over-correction.
 
-**Embedding magnitude control:** To prevent unbounded growth, embeddings are normalized after each update:
+**Embedding magnitude control:** To prevent unbounded growth, embeddings are L2-normalized after each update:
 
 $$c_{i,t+1} \leftarrow \frac{c_{i,t+1}}{\|c_{i,t+1}\|} \cdot \|c_{i,0}\|$$
 
-This maintains original embedding norm while changing direction.
+This maintains original embedding norm while changing direction, similar to techniques used in metric learning [19].
 
 **Temporal schedule:** Feedback operates from steps 5-30:
 - **Early phase (steps 5-13):** Large semantic changes, rough structure formation
@@ -218,8 +218,8 @@ This maintains original embedding norm while changing direction.
 At same feedback steps:
 
 1) Measure baseline attention: $\alpha_i^{\text{base}} = \mathbb{E}[\alpha_{t,i}]$ over spatial locations
-2) Identify weak tokens: $W = \{i : s_i < \tau_{\text{weak}}\}$
-3) Apply multiplicative boost:
+2) Identify weak tokens: $W = \{i : s_i < \tau_{\text{weak}}\}$ based on CLIP score
+3) Apply multiplicative boost to softmax attention weights [17]:
 
 $$\alpha'_{t,i} = \begin{cases}
 \beta \cdot \alpha_{t,i} & i \in W \\
@@ -240,7 +240,7 @@ for weak tokens with $\alpha_i \approx 0.02$ and $\beta = 1.3$.
 
 **CLIP:** ViT-B/32 variant with 151M parameters, capable of scoring ceiling ~70-75.
 
-**Denoising:** 50 steps DDIM sampling [12], CFG scale 7.5, feedback frequency every 4 steps (steps 5-30).
+**Denoising:** 50 steps DDIM sampling [12], CFG scale 7.5 (Classifier-Free Guidance [15]), feedback frequency every 4 steps (steps 5-30).
 
 **Weak token detection:** Dynamic thresholding based on per-token CLIP scores relative to median, avoiding hardcoded word lists.
 
@@ -253,8 +253,8 @@ for weak tokens with $\alpha_i \approx 0.02$ and $\beta = 1.3$.
 ### A. Experimental Setup
 
 **Test Sets:**
-1) *2-Prompt Test*: Curated prompts with known compositional challenges ("cat wearing red hat", "table with fruits arranged in row")
-2) *DrawBench 50-Prompt*: Diverse evaluation set spanning object counts, colors, spatial relationships [13]
+1) *2-Prompt Test*: Curated prompts with known compositional challenges ("cat wearing red hat", "table with fruits arranged in row"), designed to test spatial relationship understanding
+2) *DrawBench 50-Prompt*: Diverse evaluation benchmark [13] spanning object counts, colors, and spatial relationships
 
 **Baselines:**
 - Vanilla Stable Diffusion (no intervention)
@@ -513,7 +513,7 @@ This explains contradictory results across evaluations.
 
 Current limitation stems from token independence. **Proposal:** Optimize token groups forming syntactic units.
 
-Use dependency parsing to identify relational structures:
+Use dependency parsing [21] or scene graph generation [14] to identify relational structures:
 
 ```
 parse("cat wearing red hat") → 
@@ -548,7 +548,7 @@ This measures both node presence (objects) and edge correctness (relationships).
 
 For spatial relations ("wearing", "on", "under"):
 
-1) Detect objects: $\{b_1, ..., b_N\}$ (YOLO/DETR)
+1) Detect objects: $\{b_1, ..., b_N\}$ using object detectors (YOLO [22], DETR [23])
 2) Check spatial constraints:
 
 $$\text{wearing}(b_i, b_j) \Leftrightarrow \text{IoU}(b_i, b_j) > 0.3 \land \text{center}_y(b_j) < \text{center}_y(b_i)$$
@@ -569,7 +569,7 @@ CLIP ceiling effect necessitates baseline-dependent parameters. Two approaches:
 
 Test-time intervention has inherent limitations. Long-term solution: train diffusion models with compositional supervision.
 
-**Compositional fine-tuning:** Dataset of (prompt, image) pairs with verified spatial relationships. Loss:
+**Compositional fine-tuning:** Dataset of (prompt, image) pairs with verified spatial relationships, similar to DreamBooth [6] or ControlNet [24] approaches. Loss:
 
 $$\mathcal{L}_{\text{fine-tune}} = \mathcal{L}_{\text{denoising}} + \lambda \mathcal{L}_{\text{spatial}}$$
 
@@ -630,6 +630,26 @@ The author gratefully acknowledges the use of Google Cloud Platform computing re
 [13] C. Saharia, W. Chan, S. Saxena, L. Li, J. Whang, E. Denton, S. K. S. Ghasemipour, B. K. Ayan, S. S. Mahdavi, R. G. Lopes, T. Salimans, J. Ho, D. J. Fleet, and M. Norouzi, "Photorealistic text-to-image diffusion models with deep language understanding," in *Advances in Neural Information Processing Systems*, vol. 35, 2022, pp. 36479-36494.
 
 [14] J. Johnson, A. Gupta, and L. Fei-Fei, "Image generation from scene graphs," in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)*, 2018, pp. 1219-1228.
+
+[15] J. Ho and T. Salimans, "Classifier-free diffusion guidance," *arXiv preprint arXiv:2207.12598*, 2022.
+
+[16] A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly, J. Uszkoreit, and N. Houlsby, "An image is worth 16x16 words: Transformers for image recognition at scale," in *Proc. Int. Conf. Learning Representations (ICLR)*, 2021.
+
+[17] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, Ł. Kaiser, and I. Polosukhin, "Attention is all you need," in *Advances in Neural Information Processing Systems*, vol. 30, 2017, pp. 5998-6008.
+
+[18] O. Ronneberger, P. Fischer, and T. Brox, "U-Net: Convolutional networks for biomedical image segmentation," in *Proc. Int. Conf. Medical Image Computing and Computer-Assisted Intervention (MICCAI)*, 2015, pp. 234-241.
+
+[19] F. Schroff, D. Kalenichenko, and J. Philbin, "FaceNet: A unified embedding for face recognition and clustering," in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)*, 2015, pp. 815-823.
+
+[20] S. Ruder, "An overview of gradient descent optimization algorithms," *arXiv preprint arXiv:1609.04747*, 2016.
+
+[21] C. D. Manning, M. Surdeanu, J. Bauer, J. Finkel, S. J. Bethard, and D. McClosky, "The Stanford CoreNLP natural language processing toolkit," in *Proc. 52nd Annual Meeting of the Association for Computational Linguistics: System Demonstrations*, 2014, pp. 55-60.
+
+[22] J. Redmon, S. Divvala, R. Girshick, and A. Farhadi, "You only look once: Unified, real-time object detection," in *Proc. IEEE/CVF Conf. Computer Vision and Pattern Recognition (CVPR)*, 2016, pp. 779-788.
+
+[23] N. Carion, F. Massa, G. Synnaeve, N. Usunier, A. Kirillov, and S. Zagoruyko, "End-to-end object detection with transformers," in *Proc. European Conf. Computer Vision (ECCV)*, 2020, pp. 213-229.
+
+[24] L. Zhang, A. Rao, and M. Agrawala, "Adding conditional control to text-to-image diffusion models," in *Proc. IEEE/CVF Int. Conf. Computer Vision (ICCV)*, 2023, pp. 3836-3847.
 
 ---
 
