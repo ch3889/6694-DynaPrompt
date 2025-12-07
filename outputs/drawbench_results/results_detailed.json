@@ -1,0 +1,706 @@
+{
+  "baseline": [
+    {
+      "prompt": "A blue colored dog",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.578125,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A blue colored dog.png"
+    },
+    {
+      "prompt": "A red colored car",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.36767578125,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A red colored car.png"
+    },
+    {
+      "prompt": "A green colored apple",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.75927734375,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A green colored apple.png"
+    },
+    {
+      "prompt": "A yellow colored banana",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.70947265625,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A yellow colored banana.png"
+    },
+    {
+      "prompt": "A purple colored cat",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.32177734375,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A purple colored cat.png"
+    },
+    {
+      "prompt": "An orange colored orange",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.10009765625,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/An orange colored orange.png"
+    },
+    {
+      "prompt": "A black colored horse",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.31884765625,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A black colored horse.png"
+    },
+    {
+      "prompt": "A white colored swan",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.56494140625,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A white colored swan.png"
+    },
+    {
+      "prompt": "A pink colored flower",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.162109375,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A pink colored flower.png"
+    },
+    {
+      "prompt": "A brown colored bear",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.3076171875,
+      "image_path": "outputs/drawbench_phase1/baseline/Colors/A brown colored bear.png"
+    },
+    {
+      "prompt": "A car to the left of a house",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.26904296875,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A car to the left of a house.png"
+    },
+    {
+      "prompt": "A cat on top of a table",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.66162109375,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A cat on top of a table.png"
+    },
+    {
+      "prompt": "A dog under a tree",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.63720703125,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A dog under a tree.png"
+    },
+    {
+      "prompt": "A bird above a building",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.71044921875,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A bird above a building.png"
+    },
+    {
+      "prompt": "A book to the right of a cup",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.96484375,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A book to the right of a cup.png"
+    },
+    {
+      "prompt": "A chair behind a desk",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.4765625,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A chair behind a desk.png"
+    },
+    {
+      "prompt": "A lamp next to a sofa",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.33203125,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A lamp next to a sofa.png"
+    },
+    {
+      "prompt": "A painting above a fireplace",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.56494140625,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A painting above a fireplace.png"
+    },
+    {
+      "prompt": "A rug under a table",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.5751953125,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A rug under a table.png"
+    },
+    {
+      "prompt": "A plant beside a window",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.71044921875,
+      "image_path": "outputs/drawbench_phase1/baseline/Positional/A plant beside a window.png"
+    },
+    {
+      "prompt": "One cat",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.43994140625,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/One cat.png"
+    },
+    {
+      "prompt": "Two dogs",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.9658203125,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Two dogs.png"
+    },
+    {
+      "prompt": "Three birds",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.8916015625,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Three birds.png"
+    },
+    {
+      "prompt": "Four apples",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.6484375,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Four apples.png"
+    },
+    {
+      "prompt": "Five oranges",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.1142578125,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Five oranges.png"
+    },
+    {
+      "prompt": "A painting of three cats",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.9677734375,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/A painting of three cats.png"
+    },
+    {
+      "prompt": "Two cars on a street",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.3310546875,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Two cars on a street.png"
+    },
+    {
+      "prompt": "Five people in a park",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.232421875,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Five people in a park.png"
+    },
+    {
+      "prompt": "Three chairs in a room",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.0390625,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Three chairs in a room.png"
+    },
+    {
+      "prompt": "Four trees in a forest",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.453125,
+      "image_path": "outputs/drawbench_phase1/baseline/Counting/Four trees in a forest.png"
+    },
+    {
+      "prompt": "A cozy living room with a fireplace, comfortable sofa, and warm lighting",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.52734375,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A cozy living room with a fireplace_ comfortable s.png"
+    },
+    {
+      "prompt": "A bustling city street with tall buildings, cars, and pedestrians",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.697265625,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A bustling city street with tall buildings_ cars_ .png"
+    },
+    {
+      "prompt": "A serene beach with white sand, blue water, and palm trees",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.39306640625,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A serene beach with white sand_ blue water_ and pa.png"
+    },
+    {
+      "prompt": "A modern kitchen with stainless steel appliances and marble countertops",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.34423828125,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A modern kitchen with stainless steel appliances a.png"
+    },
+    {
+      "prompt": "A lush garden with colorful flowers, green grass, and a stone path",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.37060546875,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A lush garden with colorful flowers_ green grass_ .png"
+    },
+    {
+      "prompt": "A rustic cabin in the woods with a wooden porch and stone chimney",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.27099609375,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A rustic cabin in the woods with a wooden porch an.png"
+    },
+    {
+      "prompt": "An elegant dining room with a long table, chandelier, and fine china",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.12548828125,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/An elegant dining room with a long table_ chandeli.png"
+    },
+    {
+      "prompt": "A child's bedroom with toys, colorful walls, and a small bed",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.73681640625,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A child_s bedroom with toys_ colorful walls_ and a.png"
+    },
+    {
+      "prompt": "A professional office with a desk, computer, and bookshelves",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.4541015625,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A professional office with a desk_ computer_ and b.png"
+    },
+    {
+      "prompt": "A cozy coffee shop with wooden tables, brick walls, and warm ambiance",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.88037109375,
+      "image_path": "outputs/drawbench_phase1/baseline/Descriptions/A cozy coffee shop with wooden tables_ brick walls.png"
+    },
+    {
+      "prompt": "A horse riding an astronaut",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 68.359375,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A horse riding an astronaut.png"
+    },
+    {
+      "prompt": "A car driving a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 62.359619140625,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A car driving a person.png"
+    },
+    {
+      "prompt": "A fish eating a shark",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.501953125,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A fish eating a shark.png"
+    },
+    {
+      "prompt": "A mouse chasing a cat",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.75830078125,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A mouse chasing a cat.png"
+    },
+    {
+      "prompt": "A book reading a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.07470703125,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A book reading a person.png"
+    },
+    {
+      "prompt": "A tree growing under the ground",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.0634765625,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A tree growing under the ground.png"
+    },
+    {
+      "prompt": "A river flowing upward",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.8193359375,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A river flowing upward.png"
+    },
+    {
+      "prompt": "A cloud sitting on the ground",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.34423828125,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A cloud sitting on the ground.png"
+    },
+    {
+      "prompt": "A bicycle riding a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.61181640625,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A bicycle riding a person.png"
+    },
+    {
+      "prompt": "A small elephant",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.66259765625,
+      "image_path": "outputs/drawbench_phase1/baseline/Conflicting/A small elephant.png"
+    }
+  ],
+  "hybrid": [
+    {
+      "prompt": "A blue colored dog",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.49267578125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A blue colored dog.png"
+    },
+    {
+      "prompt": "A red colored car",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.58740234375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A red colored car.png"
+    },
+    {
+      "prompt": "A green colored apple",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.80810546875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A green colored apple.png"
+    },
+    {
+      "prompt": "A yellow colored banana",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.73388671875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A yellow colored banana.png"
+    },
+    {
+      "prompt": "A purple colored cat",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.29736328125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A purple colored cat.png"
+    },
+    {
+      "prompt": "An orange colored orange",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.61181640625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/An orange colored orange.png"
+    },
+    {
+      "prompt": "A black colored horse",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.63623046875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A black colored horse.png"
+    },
+    {
+      "prompt": "A white colored swan",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.54052734375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A white colored swan.png"
+    },
+    {
+      "prompt": "A pink colored flower",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.00244140625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A pink colored flower.png"
+    },
+    {
+      "prompt": "A brown colored bear",
+      "category": "Colors",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.17333984375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Colors/A brown colored bear.png"
+    },
+    {
+      "prompt": "A car to the left of a house",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.4765625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A car to the left of a house.png"
+    },
+    {
+      "prompt": "A cat on top of a table",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.2099609375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A cat on top of a table.png"
+    },
+    {
+      "prompt": "A dog under a tree",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.91796875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A dog under a tree.png"
+    },
+    {
+      "prompt": "A bird above a building",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.71044921875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A bird above a building.png"
+    },
+    {
+      "prompt": "A book to the right of a cup",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.48974609375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A book to the right of a cup.png"
+    },
+    {
+      "prompt": "A chair behind a desk",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.75732421875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A chair behind a desk.png"
+    },
+    {
+      "prompt": "A lamp next to a sofa",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.78369140625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A lamp next to a sofa.png"
+    },
+    {
+      "prompt": "A painting above a fireplace",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.27197265625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A painting above a fireplace.png"
+    },
+    {
+      "prompt": "A rug under a table",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.162109375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A rug under a table.png"
+    },
+    {
+      "prompt": "A plant beside a window",
+      "category": "Positional",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.80810546875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Positional/A plant beside a window.png"
+    },
+    {
+      "prompt": "One cat",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.26904296875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/One cat.png"
+    },
+    {
+      "prompt": "Two dogs",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.92919921875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Two dogs.png"
+    },
+    {
+      "prompt": "Three birds",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.9892578125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Three birds.png"
+    },
+    {
+      "prompt": "Four apples",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.6728515625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Four apples.png"
+    },
+    {
+      "prompt": "Five oranges",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.17529296875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Five oranges.png"
+    },
+    {
+      "prompt": "A painting of three cats",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.02880859375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/A painting of three cats.png"
+    },
+    {
+      "prompt": "Two cars on a street",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.36767578125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Two cars on a street.png"
+    },
+    {
+      "prompt": "Five people in a park",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.17138671875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Five people in a park.png"
+    },
+    {
+      "prompt": "Three chairs in a room",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.380859375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Three chairs in a room.png"
+    },
+    {
+      "prompt": "Four trees in a forest",
+      "category": "Counting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.39208984375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Counting/Four trees in a forest.png"
+    },
+    {
+      "prompt": "A cozy living room with a fireplace, comfortable sofa, and warm lighting",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 57.9833984375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A cozy living room with a fireplace_ comfortable s.png"
+    },
+    {
+      "prompt": "A bustling city street with tall buildings, cars, and pedestrians",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.697265625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A bustling city street with tall buildings_ cars_ .png"
+    },
+    {
+      "prompt": "A serene beach with white sand, blue water, and palm trees",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.4296875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A serene beach with white sand_ blue water_ and pa.png"
+    },
+    {
+      "prompt": "A modern kitchen with stainless steel appliances and marble countertops",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 56.939697265625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A modern kitchen with stainless steel appliances a.png"
+    },
+    {
+      "prompt": "A lush garden with colorful flowers, green grass, and a stone path",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.90771484375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A lush garden with colorful flowers_ green grass_ .png"
+    },
+    {
+      "prompt": "A rustic cabin in the woods with a wooden porch and stone chimney",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 57.373046875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A rustic cabin in the woods with a wooden porch an.png"
+    },
+    {
+      "prompt": "An elegant dining room with a long table, chandelier, and fine china",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 57.89794921875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/An elegant dining room with a long table_ chandeli.png"
+    },
+    {
+      "prompt": "A child's bedroom with toys, colorful walls, and a small bed",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 67.7001953125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A child_s bedroom with toys_ colorful walls_ and a.png"
+    },
+    {
+      "prompt": "A professional office with a desk, computer, and bookshelves",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.6982421875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A professional office with a desk_ computer_ and b.png"
+    },
+    {
+      "prompt": "A cozy coffee shop with wooden tables, brick walls, and warm ambiance",
+      "category": "Descriptions",
+      "compositional_accuracy": 1.0,
+      "clip_score": 59.4970703125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Descriptions/A cozy coffee shop with wooden tables_ brick walls.png"
+    },
+    {
+      "prompt": "A horse riding an astronaut",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 59.65576171875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A horse riding an astronaut.png"
+    },
+    {
+      "prompt": "A car driving a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 62.60986328125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A car driving a person.png"
+    },
+    {
+      "prompt": "A fish eating a shark",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.53857421875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A fish eating a shark.png"
+    },
+    {
+      "prompt": "A mouse chasing a cat",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.7216796875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A mouse chasing a cat.png"
+    },
+    {
+      "prompt": "A book reading a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.02587890625,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A book reading a person.png"
+    },
+    {
+      "prompt": "A tree growing under the ground",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.27099609375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A tree growing under the ground.png"
+    },
+    {
+      "prompt": "A river flowing upward",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 64.74609375,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A river flowing upward.png"
+    },
+    {
+      "prompt": "A cloud sitting on the ground",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 65.3564453125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A cloud sitting on the ground.png"
+    },
+    {
+      "prompt": "A bicycle riding a person",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 63.85498046875,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A bicycle riding a person.png"
+    },
+    {
+      "prompt": "A small elephant",
+      "category": "Conflicting",
+      "compositional_accuracy": 1.0,
+      "clip_score": 66.12548828125,
+      "image_path": "outputs/drawbench_phase1/hybrid/Conflicting/A small elephant.png"
+    }
+  ]
+}

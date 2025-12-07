@@ -1,0 +1,74 @@
+{
+  "baseline": {
+    "overall": {
+      "avg_compositional_accuracy": 1.0,
+      "avg_clip_score": 65.2706298828125,
+      "std_compositional_accuracy": 0.0,
+      "std_clip_score": 1.2537199993195305,
+      "num_samples": 50
+    },
+    "per_category": {
+      "Colors": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 65.718994140625,
+        "num_samples": 10
+      },
+      "Positional": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 64.990234375,
+        "num_samples": 10
+      },
+      "Counting": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 64.808349609375,
+        "num_samples": 10
+      },
+      "Descriptions": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 65.780029296875,
+        "num_samples": 10
+      },
+      "Conflicting": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 65.0555419921875,
+        "num_samples": 10
+      }
+    }
+  },
+  "hybrid": {
+    "overall": {
+      "avg_compositional_accuracy": 1.0,
+      "avg_clip_score": 64.3775634765625,
+      "std_compositional_accuracy": 0.0,
+      "std_clip_score": 2.5715648794400763,
+      "num_samples": 50
+    },
+    "per_category": {
+      "Colors": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 65.58837890625,
+        "num_samples": 10
+      },
+      "Positional": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 65.2587890625,
+        "num_samples": 10
+      },
+      "Counting": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 64.837646484375,
+        "num_samples": 10
+      },
+      "Descriptions": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 62.1124267578125,
+        "num_samples": 10
+      },
+      "Conflicting": {
+        "avg_compositional_accuracy": 1.0,
+        "avg_clip_score": 64.090576171875,
+        "num_samples": 10
+      }
+    }
+  }
+}

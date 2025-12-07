@@ -424,14 +424,7 @@ Despite achieving +6.37% average compositional accuracy and +0.85% CLIP score im
 - ✓ Fruits present (apple, banana)
 - ✗ **Arrangement violated**: fruits scattered, not linear
 
-**Human evaluation** (informal, N=5 raters):
-
-| Image Type | Avg. Quality Rating | CLIP Score | Comp. Acc. |
-|-----------|-------------------|-----------|------------|
-| Baseline (correct spatial) | 7.2/10 | 31.93 | 0.631 |
-| Hybrid (wrong spatial) | 4.1/10 | 29.60 | 0.716 |
-
-**Critical finding:** Compositional accuracy increased (+13.5%) while human-perceived quality decreased (7.2 → 4.1). This reveals that **CLIP-based metrics measure concept presence, not spatial correctness**.
+**Critical finding:** Compositional accuracy increased (+13.5%) as measured by per-token CLIP scores, but visual inspection reveals spatial relationships remain violated. This demonstrates that **CLIP-based metrics measure concept presence, not spatial correctness**.
 
 ### B. Root Cause: Per-Token Optimization
 
@@ -553,17 +546,11 @@ For spatial relations ("wearing", "on", "under"):
 
 $$\text{wearing}(b_i, b_j) \Leftrightarrow \text{IoU}(b_i, b_j) > 0.3 \land \text{center}_y(b_j) < \text{center}_y(b_i)$$
 
-**Estimated correlation with human judgment:** r=0.72 (vs r=0.34 for CLIP score).
+**Estimated correlation with human judgment:** Spatial scene graphs correlate better with compositional correctness than CLIP scores alone.
 
-### C. Adaptive Parameter Selection
+### C. Future Direction: Adaptive Parameter Selection
 
-CLIP ceiling effect necessitates baseline-dependent parameters. Two approaches:
-
-**Method 1 (Rule-Based):** Assess baseline quality via 10-step generation, classify into tiers (very weak <35, weak 35-45, medium 45-55, strong 55-65, very strong >65), apply tier-specific parameters.
-
-**Method 4 (Meta-Learning):** Train neural network $f_\theta: (P, C_{\text{base}}) \to (\alpha, \beta)$ on dataset of 2,500 (prompt, baseline_CLIP) → optimal_params pairs.
-
-**Expected improvement:** +0.8-1.5% on strong baselines, preventing over-optimization.
+The CLIP ceiling effect observed in DrawBench evaluation (Section IV-C) suggests that baseline-dependent parameters could prevent over-optimization on strong prompts while maintaining gains on weak prompts. This remains as future work due to computational constraints.
 
 ### D. Training-Based Approaches
 

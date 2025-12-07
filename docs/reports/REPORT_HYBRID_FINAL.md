@@ -588,32 +588,18 @@ Weak baselines (CLIP score < 40) have substantial room for improvement. The same
 
 **Implication for Future Work**: Adaptive parameter selection needed to prevent over-optimization on strong baselines while maintaining gains on weak baselines. Two promising approaches explored in **Section 5.1 Future Work**:
 
-1. **Method 1 (Rule-Based)**: Fast baseline quality assessment with decision rules
-2. **Method 4 (Meta-Learning)**: Data-driven predictor for continuous adaptation
+**Implication for Future Work**: Adaptive parameter selection could prevent over-optimization on strong baselines while maintaining gains on weak baselines. However, implementation and evaluation of such methods remain as future work due to time and computational constraints.
 
 #### 3.5.4 Qualitative Analysis
 
-**Case Study: Strong Baseline (CLIP 67.3)**
+Visual inspection reveals that while quantitative metrics improve (+6.37% compositional accuracy, +0.85% CLIP), the generated images exhibit spatial relationship failures:
 
-Prompt: "a golden bicycle next to a silver car"
+**Observation 1: "a cat wearing a red hat"**
+- Fixed parameters: Hat appears more prominently but not worn correctly (positioned beside or floating)
 
-| Method | Alpha | Boost | Hybrid CLIP | Visual Quality |
-|--------|-------|-------|-------------|----------------|
-| Fixed | 0.07 | 1.3 | 65.9 (-1.4) | Over-saturated colors, artifacts |
-| Method 1 | 0.01 | 1.05 | 67.5 (+0.2) | Clean, preserves baseline quality |
-
-**Observation**: Fixed parameters push strong baseline beyond optimal point, introducing visual artifacts. Method 1 recognizes high baseline quality and applies minimal feedback, preserving quality while making subtle improvements.
-
-**Case Study: Weak Baseline (CLIP 41.7)**
-
-Prompt: "a cat wearing a red hat"
-
-| Method | Alpha | Boost | Hybrid CLIP | Visual Quality |
-|--------|-------|-------|-------------|----------------|
-| Fixed | 0.07 | 1.3 | 43.9 (+2.2) | Improved composition, hat more visible |
-| Method 1 | 0.07 | 1.3 | 43.9 (+2.2) | Identical (same params selected) |
-
-**Observation**: For weak baselines, Method 1 converges to aggressive feedback. Fixed parameters happen to be optimal for this tier, so Method 1 selects the same values.
+**Observation 2: "a golden bicycle next to a silver car"** 
+- Strong baseline (CLIP 67.3): Fixed parameters cause over-optimization, introducing color artifacts
+- Suggests that baseline-dependent parameters would prevent degradation
 
 ---
 
@@ -621,7 +607,7 @@ Prompt: "a cat wearing a red hat"
 
 ### 4.1 Metric Inadequacy
 
-**Finding**: Current evaluation metrics (CLIP score, compositional accuracy) do NOT align with human perception of visual quality.
+**Finding**: Current evaluation metrics (CLIP score, compositional accuracy) do NOT align with visual correctness of spatial relationships.
 
 **Evidence**:
 ```
@@ -631,7 +617,7 @@ Quantitative:
   +6.37% compositional accuracy ✅
   +0.85% CLIP score ✅
   
-Qualitative (Human Observation):
+Qualitative (Visual Inspection):
   Spatial relationships lost ❌
   "wearing" becomes "near" ❌
   "arranged in row" ignored ❌

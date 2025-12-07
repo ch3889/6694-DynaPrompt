@@ -15,9 +15,9 @@
   - Executive Summary
   - Problem Statement & Motivation
   - System Architecture (ZK2295 + Hybrid Method)
-  - Experimental Setup & Results
-  - Adaptive Parameter Selection (Method 1)
+  - Experimental Setup & Results (2-prompt validation + DrawBench 50-prompt)
   - Critical Analysis & Limitations
+  - Future Work (Adaptive Parameters)
   - Acknowledgments
 
 ### ✅ References
@@ -44,7 +44,7 @@
 
 ### ✅ Runnable Code
 - **GitHub Repository**: https://github.com/ch3889/6694-DynaPrompt
-- **Branch**: `zk2295` (Method 1 implementation)
+- **Branch**: `zk2295` (Hybrid DynaPrompt implementation)
 - **Key Components**:
   - Core implementation: `dynaprompt/` directory
   - Experiment scripts: `scripts/` directory
@@ -123,11 +123,8 @@ python scripts/test_hybrid_dynaprompt.py
 - Aggressive feedback pushes beyond optimal point
 - Causes over-optimization and quality degradation
 
-**Implication**: One-size-fits-all parameters cannot work
-- Need adaptive parameter selection (Future Work: Section 5.1)
-- Two proposed approaches:
-  - Method 1: Rule-based baseline assessment
-  - Method 4: Meta-learning predictor
+**Implication**: One-size-fits-all parameters cannot work across all baseline qualities
+- Adaptive parameter selection proposed as future work (Section 5.1)
 
 ---
 
@@ -222,10 +219,11 @@ All experiments in REPORT_HYBRID_FINAL.md are reproducible:
    - Runtime: ~2 hours
    - Expected: +14.7% compositional accuracy
 
-3. **Section 3.5.2**: Method 1 adaptive parameter experiments
-   - Script: `scripts/run_method1_robust.py`
-   - Runtime: ~1 hour
-   - Status: Currently running (real results pending)
+3. **DrawBench 50-Prompt Evaluation**
+   - Script: `scripts/evaluate_drawbench_minimal.py`
+   - Runtime: ~3 hours
+   - Results: `outputs/drawbench_results/` (real experimental data)
+   - Finding: -1.4% CLIP degradation on strong baselines (ceiling effect)
 
 ### Hardware Configuration
 - **GCP Instance**: n1-standard-4 (4 vCPUs, 15GB RAM)
@@ -250,7 +248,7 @@ All experiment scripts include:
 **Contents**:
 - **Section 1**: Problem statement & motivation
 - **Section 2**: System architecture (ZK2295, CH3889, Hybrid)
-- **Section 3**: Experimental setup & results
+- **Section 3**: Experimental setup & results (2-prompt + DrawBench)
 - **Section 4-5**: Critical analysis & limitations
 - **Section 6-7**: Refactoring journey & conclusions
 - **Section 8**: Acknowledgments
@@ -337,7 +335,7 @@ For questions about:
 - [x] **Runnable Code**: Full implementation on GitHub (zk2295 branch)
 - [x] **Reproducibility**: Detailed instructions in Appendix A
 - [x] **Documentation**: README + testing guide + inline comments
-- [x] **Results**: Real experimental data (Method 1 currently running)
+- [x] **Results**: Real experimental data (2-prompt validation + DrawBench 50-prompt evaluation)
 
 ### File Sizes
 - REPORT_HYBRID_FINAL.md: ~120 KB (text + code blocks)
