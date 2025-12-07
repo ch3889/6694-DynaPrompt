@@ -9,38 +9,40 @@
 ## 📋 Submission Checklist
 
 ### ✅ Paper (Technical Report)
-- **Location**: `docs/reports/REPORT_HYBRID_FINAL.md`
-- **Length**: ~40 pages (comprehensive technical documentation)
+- **Location**: `docs/reports/REPORT_IEEE_FORMAT.md` ⭐
+- **Format**: IEEE Conference Paper Style
+- **Length**: 686 lines (~8,500 words)
 - **Sections**:
-  - Executive Summary
-  - Problem Statement & Motivation
-  - System Architecture (ZK2295 + Hybrid Method)
-  - Experimental Setup & Results (2-prompt validation + DrawBench 50-prompt)
-  - Critical Analysis & Limitations
-  - Future Work (Adaptive Parameters)
-  - Acknowledgments
+  - I. Introduction (Motivation, Research Gap, Contributions)
+  - II. Related Work (Diffusion Models, Compositional Generation, Evaluation Metrics)
+  - III. Methodology (Problem Formulation, ZK2295 Embedding Feedback, CH3889 Attention Boosting, Hybrid Architecture)
+  - IV. Experimental Results (2-prompt validation + DrawBench 50-prompt evaluation)
+  - V. Critical Analysis (Quantitative-Visual Disconnect, CLIP Ceiling Effect, Metric Inadequacy)
+  - VI. Future Work (Relationship-Aware Optimization, Spatial-Aware Metrics)
+  - VII. Conclusion
+  - Appendix A: Reproducibility
 
 ### ✅ References
-- **Location**: Section 9 of `REPORT_HYBRID_FINAL.md`
-- **Count**: 20 academic references
+- **Location**: Section "REFERENCES" of `REPORT_IEEE_FORMAT.md`
+- **Count**: 24 academic references
 - **Categories**:
-  - Foundational Models (Stable Diffusion, CLIP, DDPM)
-  - Compositional Generation Methods (Attend-and-Excite, Prompt-to-Prompt)
-  - Attention Mechanisms (Transformers, BlobGAN)
-  - Evaluation & Metrics (CLIPScore, DrawBench)
-  - Gradient-Based Optimization (Classifier Guidance, GLIDE)
-  - Meta-Learning (MAML, Bayesian Optimization)
-  - Scene Understanding (Visual Genome, OpenPose)
-  - Software Tools (PyTorch, Hugging Face)
+  - Foundational Models (DDPM, Latent Diffusion, Stable Diffusion, CLIP)
+  - Compositional Generation (Attend-and-Excite, Prompt-to-Prompt, Textual Inversion, DreamBooth)
+  - Evaluation Benchmarks (CLIPScore, DrawBench)
+  - Attention Mechanisms (Transformers, Vision Transformers)
+  - Scene Understanding (Scene Graphs, Object Detection - YOLO, DETR)
+  - Optimization Methods (Classifier-Free Guidance, Gradient Descent)
+  - NLP Tools (Stanford CoreNLP for dependency parsing)
+  - Control Methods (ControlNet)
 
 ### ✅ Appendix Sections
-- **Location**: Appendices A-E in `REPORT_HYBRID_FINAL.md`
+- **Location**: Appendix A in `docs/reports/REPORT_IEEE_FORMAT.md`
 - **Contents**:
-  - **Appendix A**: Runnable Code & Reproduction instructions
-  - **Appendix B**: Configuration files (dynaprompt_config.yaml)
-  - **Appendix C**: Code architecture & directory structure
-  - **Appendix D**: Experimental details (algorithms, pseudocode)
-  - **Appendix E**: Experimental results tables (2-prompt test, DrawBench evaluation)
+  - **Appendix A: Reproducibility**
+    - A. Hardware and Software (GCP n1-standard-4, NVIDIA T4, Python 3.10, PyTorch 2.0.1)
+    - B. Hyperparameters (α=0.07, β=1.3, feedback steps, CFG=7.5, DDIM 50 steps)
+    - C. Dataset Details (2-prompt test set + DrawBench 50-prompt)
+    - D. Code Availability (GitHub repo, branch, key files)
 
 ### ✅ Runnable Code
 - **GitHub Repository**: https://github.com/ch3889/6694-DynaPrompt
@@ -133,10 +135,8 @@ python scripts/test_hybrid_dynaprompt.py
 ```
 DynaPrompt/
 ├── docs/
-│   ├── presentations/
-│   │   └── PRESENTATION_FINAL.md       # Final presentation slides
 │   └── reports/
-│       └── REPORT_HYBRID_FINAL.md      # ⭐ Main technical report
+│       └── REPORT_IEEE_FORMAT.md       # ⭐ Main technical report (IEEE format)
 │
 ├── dynaprompt/                          # Core implementation
 │   ├── core.py                         # ZK2295 (embedding feedback)
@@ -148,16 +148,17 @@ DynaPrompt/
 ├── scripts/                             # Experiment runners
 │   ├── baseline_vs_hybrid.py          # Quick 2-prompt test
 │   ├── test_hybrid_dynaprompt.py      # Full evaluation
-│   ├── evaluate_drawbench.py          # DrawBench 50-prompt evaluation
-│   └── adaptive_parameter_methods.py   # Parameter selection exploration
+│   └── quick_hybrid_test.py           # Quick validation script
 │
 ├── configs/
 │   └── dynaprompt_config.yaml          # Hyperparameters
 │
 ├── outputs/                             # Generated results
-│   ├── baseline_*.png                  # Baseline generations
-│   ├── hybrid_*.png                    # Hybrid generations
-│   └── comparison_results.json         # Experimental data
+│   └── drawbench_results/              # Real DrawBench evaluation data
+│       ├── results_summary.json        # Overall metrics
+│       ├── results_detailed.json       # Per-prompt breakdown
+│       ├── baseline/                   # 100 baseline images
+│       └── hybrid/                     # 100 hybrid images
 │
 ├── tests/                               # Unit tests
 │   ├── test_integration.py
@@ -175,31 +176,31 @@ DynaPrompt/
 ### 1. Dual-Stream Architecture
 - **Innovation**: First method combining external embedding feedback (ZK2295) with internal attention modification (CH3889)
 - **Result**: Multiplicative synergy - 10× feature visibility for weak tokens
-- **Section**: 2.1-2.3 of REPORT_HYBRID_FINAL.md
+- **Section**: IV.C of REPORT_IEEE_FORMAT.md
 
-### 2. CLIP Ceiling Effect Discovery
+### 3. CLIP Ceiling Effect Discovery
 - **Finding**: Fixed parameters catastrophically fail on diverse prompts
 - **Cause**: Strong baselines near CLIP score ceiling vulnerable to over-optimization
 - **Evidence**: -1.4% degradation on DrawBench 50-prompt evaluation
-- **Section**: 3.5.1 of REPORT_HYBRID_FINAL.md
+- **Section**: IV.C of REPORT_IEEE_FORMAT.md
 
 ### 3. Generic System Design
 - **Achievement**: Removed 189 lines of hardcoded prompt-specific logic
 - **Result**: System works for ANY prompt without pre-defined word lists
 - **Improvement**: Test 2 went from -6.43% (hardcoded) to +0.31% (generic)
-- **Section**: 3.5.2 of REPORT_HYBRID_FINAL.md
+- **Section**: IV.D of REPORT_IEEE_FORMAT.md
 
 ### 4. Generalizability Achievement
 - **Problem**: Original system had 189 lines of hardcoded prompt-specific logic
 - **Solution**: Refactored to 15 lines of generic timestep-based logic
 - **Result**: System now works for ANY prompt
-- **Section**: 6.2 of REPORT_HYBRID_FINAL.md
+- **Section**: V.A-C of REPORT_IEEE_FORMAT.md
 
 ### 5. Critical Evaluation Insight
 - **Discovery**: Current metrics (CLIP score, compositional accuracy) are inadequate
 - **Issue**: They measure concept presence but NOT spatial relationships
 - **Impact**: Quantitative improvements don't align with visual quality
-- **Section**: 4.1 of REPORT_HYBRID_FINAL.md
+- **Section**: V.B-C of REPORT_IEEE_FORMAT.md
 
 ---
 
@@ -207,7 +208,7 @@ DynaPrompt/
 
 ### Experiments Documented in Report
 
-All experiments in REPORT_HYBRID_FINAL.md are reproducible:
+All experiments in REPORT_IEEE_FORMAT.md are reproducible:
 
 1. **Section 3.2**: Baseline comparison (2-prompt test)
    - Script: `scripts/baseline_vs_hybrid.py`
@@ -243,19 +244,20 @@ All experiment scripts include:
 ## 📖 Documentation Structure
 
 ### 1. Main Technical Report
-**File**: `docs/reports/REPORT_HYBRID_FINAL.md`
+**File**: `docs/reports/REPORT_IEEE_FORMAT.md`
 
 **Contents**:
-- **Section 1**: Problem statement & motivation
-- **Section 2**: System architecture (ZK2295, CH3889, Hybrid)
-- **Section 3**: Experimental setup & results (2-prompt + DrawBench)
-- **Section 4-5**: Critical analysis & limitations
-- **Section 6-7**: Refactoring journey & conclusions
-- **Section 8**: Acknowledgments
-- **Section 9**: References (20 papers)
-- **Section 10-14**: Appendices (code, configs, experiments)
+- **I. Introduction**: Problem statement, research gap, contributions
+- **II. Related Work**: Diffusion models, compositional generation, evaluation metrics
+- **III. Methodology**: ZK2295 embedding feedback, CH3889 attention boosting, hybrid architecture
+- **IV. Experimental Results**: 2-prompt validation + DrawBench 50-prompt evaluation
+- **V. Critical Analysis**: Quantitative-visual disconnect, CLIP ceiling effect, metric inadequacy
+- **VI. Future Work**: Relationship-aware optimization, spatial-aware metrics
+- **VII. Conclusion**: Key findings and implications
+- **References**: 24 academic papers
+- **Appendix A**: Reproducibility (hardware, hyperparameters, datasets, code)
 
-### 2. Presentation Slides
+### 2. Submission Checklist
 **File**: `docs/presentations/PRESENTATION_FINAL.md`
 
 **Contents** (6 slides):
@@ -319,9 +321,9 @@ All experiment scripts include:
 **Student**: Max Zishock Kim (zk2295@columbia.edu)
 
 For questions about:
-- Code reproduction → See Appendix A in REPORT_HYBRID_FINAL.md
-- Experimental setup → See Appendix D in REPORT_HYBRID_FINAL.md
-- Results interpretation → See Sections 3-4 in REPORT_HYBRID_FINAL.md
+- Code reproduction → See Appendix A in REPORT_IEEE_FORMAT.md
+- Experimental setup → See Appendix A.B-C in REPORT_IEEE_FORMAT.md
+- Results interpretation → See Sections IV-V in REPORT_IEEE_FORMAT.md
 
 ---
 
@@ -329,22 +331,23 @@ For questions about:
 
 ### Checklist Completion
 
-- [x] **Paper**: REPORT_HYBRID_FINAL.md (40 pages, comprehensive)
-- [x] **References**: 20 academic papers (Section 9)
-- [x] **Appendix**: 5 appendices covering code, configs, experiments
+- [x] **Paper**: REPORT_IEEE_FORMAT.md (686 lines, IEEE format)
+- [x] **References**: 24 academic papers (REFERENCES section)
+- [x] **Appendix**: Appendix A covering reproducibility details
 - [x] **Runnable Code**: Full implementation on GitHub (zk2295 branch)
 - [x] **Reproducibility**: Detailed instructions in Appendix A
-- [x] **Documentation**: README + testing guide + inline comments
+- [x] **Documentation**: README + inline comments
 - [x] **Results**: Real experimental data (2-prompt validation + DrawBench 50-prompt evaluation)
 
 ### File Sizes
-- REPORT_HYBRID_FINAL.md: ~120 KB (text + code blocks)
+- REPORT_IEEE_FORMAT.md: ~55 KB (IEEE conference paper format)
+- DrawBench results: ~45 MB (200 images + JSON metrics)
 - Total repository: ~50 MB (excluding models)
 - Models (auto-downloaded): ~5 GB (Stable Diffusion v1.5 + CLIP)
 
 ### Timestamps
-- Last commit (zk2295 branch): December 2, 2025
-- Project submission: December 2, 2025
+- Last commit (zk2295 branch): December 7, 2025
+- Project submission: December 2025
 - All experiments completed and documented in report
 
 ---
