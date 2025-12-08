@@ -1,0 +1,16 @@
+================================================================================
+SPATIAL RELATIONSHIP ANALYSIS REPORT
+================================================================================
+
+Baseline Compositional Accuracy: 1.0000
+Hybrid Compositional Accuracy: 1.0000
+Improvement: +0.00%
+
+Baseline CLIP Score: 64.99
+Hybrid CLIP Score: 65.26
+Improvement: +0.41%
+
+CONCLUSION:
+Quantitative metrics show improvement, but human evaluation needed
+to validate whether spatial relationships are actually correct.
+Based on 2-prompt testing, we expect metrics improve BUT visual quality degrades.
