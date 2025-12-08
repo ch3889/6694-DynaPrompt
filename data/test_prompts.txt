@@ -1,0 +1,28 @@
+# DynaPrompt Test Prompts Dataset
+# These prompts are designed to test compositional understanding and attribute binding
+# Format: one prompt per line
+
+# Multi-object with colors
+A blue cat sitting on a red chair with a yellow ball
+A golden retriever playing with a red ball in a snowy park
+A green apple next to a blue bowl on a wooden table
+
+# Attribute binding (color + object)
+A purple elephant wearing a pink hat
+A silver car parked next to a golden bicycle
+A white dog with brown spots sitting under an orange umbrella
+
+# Compositional scenes (multiple objects + locations)
+A cat on top of a laptop next to a coffee cup on a desk
+A bird perched on a fence with mountains in the background
+A teddy bear sitting on a bed with a book and glasses nearby
+
+# Complex multi-attribute prompts
+A small red bird eating seeds from a blue feeder in a garden
+A wooden boat with white sails floating on a calm blue lake at sunset
+A black and white cow grazing in a green field under cloudy sky
+
+# Challenging prompts (known to fail on vanilla SD)
+Three colorful balloons - one red, one blue, one yellow - floating in the sky
+A striped cat and a spotted dog playing together in a park
+Two cups on a table - one filled with coffee, one filled with tea
