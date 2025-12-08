@@ -502,67 +502,13 @@ This explains contradictory results across evaluations.
 
 ## VI. FUTURE WORK
 
-### A. Relationship-Aware Optimization
+The fundamental limitation of token-level optimization is the assumption of token independence. While per-token CLIP feedback successfully amplifies weak concepts, it cannot enforce spatial relationships because CLIP treats each token as an isolated query. This explains why "cat wearing red hat" achieves high per-token scores (all concepts detected) while producing spatially incoherent results (hat floating beside cat). Future methodological improvements should address:
 
-Current limitation stems from token independence. **Proposal:** Optimize token groups forming syntactic units.
+- **Relationship-aware optimization**: Treat syntactic units as atomic operations using dependency parsing or scene graphs, optimizing pairwise relationships (e.g., "cat wearing" as a unit) rather than individual tokens
+- **Adaptive parameter selection**: Adjust intervention strength based on baseline quality to prevent over-optimization on strong prompts while maintaining weak-prompt gains
+- **Training-based solutions**: Address token independence at the model level through compositional fine-tuning with supervised spatial relationships, resolving the tension between per-token optimization and holistic scene coherence
 
-Use dependency parsing [21] or scene graph generation [14] to identify relational structures:
-
-```
-parse("cat wearing red hat") → 
-  {subject: "cat", verb: "wearing", object: "red hat"}
-```
-
-Modify objective:
-
-$$\mathcal{L}_{\text{relation}} = \text{CLIP}(I, \text{"cat wearing"}) + \text{CLIP}(I, \text{"wearing hat"})$$
-
-This enforces pairwise relationships while maintaining individual token presence.
-
-**Expected benefit:** Preserves spatial relationships while improving detection. Estimated +4-6% improvement over hybrid baseline with correct positioning.
-
-### B. Spatial-Aware Evaluation Metrics
-
-CLIP inadequacy motivates development of spatial-aware metrics:
-
-**Proposed: Compositional Scene Graph Matching**
-
-1) Generate scene graph from image: $G_I = (V_I, E_I)$ using scene graph parser [14]
-2) Parse prompt to expected graph: $G_P = (V_P, E_P)$
-3) Compute graph edit distance: $d(G_I, G_P)$
-
-**Metric:**
-
-$$\text{SpatialAcc} = 1 - \frac{d(G_I, G_P)}{|V_P| + |E_P|}$$
-
-This measures both node presence (objects) and edge correctness (relationships).
-
-**Alternative: Bounding Box Verification**
-
-For spatial relations ("wearing", "on", "under"):
-
-1) Detect objects: $\{b_1, ..., b_N\}$ using object detectors (YOLO [22], DETR [23])
-2) Check spatial constraints:
-
-$$\text{wearing}(b_i, b_j) \Leftrightarrow \text{IoU}(b_i, b_j) > 0.3 \land \text{center}_y(b_j) < \text{center}_y(b_i)$$
-
-**Estimated correlation with human judgment:** Spatial scene graphs correlate better with compositional correctness than CLIP scores alone.
-
-### C. Future Direction: Adaptive Parameter Selection
-
-The CLIP ceiling effect observed in DrawBench evaluation (Section IV-C) suggests that baseline-dependent parameters could prevent over-optimization on strong prompts while maintaining gains on weak prompts. This remains as future work due to computational constraints.
-
-### D. Training-Based Approaches
-
-Test-time intervention has inherent limitations. Long-term solution: train diffusion models with compositional supervision.
-
-**Compositional fine-tuning:** Dataset of (prompt, image) pairs with verified spatial relationships, similar to DreamBooth [6] or ControlNet [24] approaches. Loss:
-
-$$\mathcal{L}_{\text{fine-tune}} = \mathcal{L}_{\text{denoising}} + \lambda \mathcal{L}_{\text{spatial}}$$
-
-where $\mathcal{L}_{\text{spatial}}$ penalizes incorrect object positioning.
-
-**Expected benefit:** Fundamentally resolves token independence issue by learning compositional structure.
+Beyond methodology, this work reveals a critical evaluation gap: CLIP-based metrics measure concept presence but not spatial correctness, creating scenarios where quantitative improvements correspond to visual degradation. Compositional generation research requires metrics that explicitly capture spatial relationships, such as scene graph matching (comparing parsed image structures via graph edit distance) or object detection with spatial constraint verification (validating "wearing" relationships satisfy appropriate positioning thresholds). Without such metrics, the quantitative-visual disconnect observed in Section V will continue to obscure genuine progress in compositional generation quality.
 
 ---
 
