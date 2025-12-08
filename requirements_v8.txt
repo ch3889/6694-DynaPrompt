@@ -1,0 +1,19 @@
+# Additional requirements for DynaPrompt V8 (DiT + CLIP)
+
+# Core diffusers library for SDXL
+diffusers>=0.25.0
+transformers>=4.35.0
+accelerate>=0.25.0
+
+# CLIP support
+open-clip-torch>=2.20.0
+
+# Image processing
+pillow>=10.0.0
+
+# Standard ML
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Utilities
+safetensors>=0.4.0

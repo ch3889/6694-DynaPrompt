@@ -1,0 +1,284 @@
+{
+  "metadata": {
+    "version": "V3 (Pure Attention Boosting)",
+    "date": "2025-12-01T23:38:05.316290",
+    "num_prompts": 50,
+    "boost_factor": 7.5,
+    "method": "Direct attention weight modification, no seed retries"
+  },
+  "prompts": [
+    {
+      "id": "color_01",
+      "prompt": "a red cube on top of a blue cube",
+      "attributes": [
+        "red cube",
+        "blue cube"
+      ],
+      "scores": {
+        "red cube": 0.2476198822259903,
+        "blue cube": 0.20063816010951996
+      },
+      "avg_score": 0.22412902116775513,
+      "passed": false,
+      "image_path": "data/drawbench_v3/images/color_01.png"
+    },
+    {
+      "id": "color_02",
+      "prompt": "a green apple and a red apple",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_03",
+      "prompt": "a yellow car and a blue car",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_04",
+      "prompt": "a purple cat sitting on an orange couch",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_05",
+      "prompt": "a pink elephant next to a green tree",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_06",
+      "prompt": "a silver robot holding a golden ball",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_07",
+      "prompt": "a white dog wearing a red collar",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_08",
+      "prompt": "a black cat with blue eyes",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_09",
+      "prompt": "a brown horse next to a white fence",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_10",
+      "prompt": "a red bird on a yellow branch",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_11",
+      "prompt": "a blue butterfly on a pink flower",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_12",
+      "prompt": "a green frog on a brown log",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_13",
+      "prompt": "a purple umbrella next to a yellow raincoat",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_14",
+      "prompt": "a orange basketball and a white basketball",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_15",
+      "prompt": "a red strawberry on a white plate",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_16",
+      "prompt": "a golden crown on a red pillow",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_17",
+      "prompt": "a silver car parked next to a golden bicycle",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_18",
+      "prompt": "a cyan teapot and a magenta cup",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_19",
+      "prompt": "a navy blue boat on a turquoise sea",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "color_20",
+      "prompt": "a lime green lizard on a coral rock",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_01",
+      "prompt": "a cat and a dog sitting together",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_02",
+      "prompt": "a book on a table next to a lamp",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_03",
+      "prompt": "a cup of coffee and a croissant on a plate",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_04",
+      "prompt": "a bicycle leaning against a brick wall",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_05",
+      "prompt": "a bird perched on a tree branch",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_06",
+      "prompt": "a laptop on a wooden desk with a plant",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_07",
+      "prompt": "a guitar standing next to an amplifier",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_08",
+      "prompt": "a teddy bear sitting on a bed",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_09",
+      "prompt": "a camera on a tripod",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_10",
+      "prompt": "a bottle of wine and two glasses on a table",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_11",
+      "prompt": "a soccer ball and a basketball on grass",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_12",
+      "prompt": "a piano in a room with a chandelier",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_13",
+      "prompt": "a hat on a coat rack next to an umbrella",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_14",
+      "prompt": "a pair of sunglasses on a beach towel",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "comp_15",
+      "prompt": "a clock on a wall above a fireplace",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_01",
+      "prompt": "a cat sitting under a table",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_02",
+      "prompt": "a dog jumping over a fence",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_03",
+      "prompt": "a bird flying above the clouds",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_04",
+      "prompt": "a fish swimming below a boat",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_05",
+      "prompt": "a ball rolling towards a goal",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_06",
+      "prompt": "a child standing behind a tree",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_07",
+      "prompt": "a car driving between two buildings",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_08",
+      "prompt": "a plane flying through clouds",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_09",
+      "prompt": "a person walking along a beach",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_10",
+      "prompt": "a boat floating on a river",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_11",
+      "prompt": "a mountain rising behind a lake",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_12",
+      "prompt": "a rainbow arching over a waterfall",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_13",
+      "prompt": "a moon shining above a castle",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_14",
+      "prompt": "a bridge crossing over a canyon",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    },
+    {
+      "id": "spatial_15",
+      "prompt": "a tunnel going through a mountain",
+      "error": "Cannot patch already-wrapped forward method. Unpatch failed?"
+    }
+  ],
+  "summary": {
+    "total_prompts": 50,
+    "successful": 1,
+    "passed": 0,
+    "pass_rate": 0.0,
+    "avg_clip_score": 0.22412902116775513,
+    "by_category": {
+      "color_binding": 0.011206451058387756,
+      "multi_object": 0.0,
+      "spatial": 0.0
+    },
+    "time_minutes": 0.6074905792872111
+  }
+}

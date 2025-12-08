@@ -1,5 +1,5 @@
 """
-Test script for DynaPrompt V7 (Prompt Rewriting + Negative Prompts + Early Detection).
+Test script for DynaPrompt V7 (Early Detection + Adaptive Boosting).
 """
 
 import sys
@@ -45,16 +45,14 @@ def load_model():
 def main():
     parser = argparse.ArgumentParser(description="Test DynaPrompt V7")
     parser.add_argument("--prompt", type=str, required=True, help="Text prompt")
-    parser.add_argument("--negative", type=str, default=None, help="Negative prompt (auto-generated if not provided)")
     parser.add_argument("--steps", type=int, default=50, help="Number of sampling steps")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--cfg", type=float, default=7.5, help="CFG scale")
     parser.add_argument("--outdir", type=str, default="data/images/dynaprompt_v7_test", help="Output directory")
-    parser.add_argument("--check_step", type=int, default=5, help="Step to check composition (default: 5)")
+    parser.add_argument("--check_step", type=int, default=3, help="Step to check composition (default: 3)")
     parser.add_argument("--max_retries", type=int, default=15, help="Max seed retries (default: 15)")
     parser.add_argument("--threshold", type=float, default=0.03, help="Attention threshold (default: 0.03)")
-    parser.add_argument("--boost_factor", type=float, default=5.0, help="Base boost factor for Phase 2 (default: 5.0, adaptive up to 15x)")
-    parser.add_argument("--no_rewrite", action="store_true", help="Disable prompt rewriting")
+    parser.add_argument("--boost_factor", type=float, default=7.5, help="Base boost factor for Phase 2 (default: 7.5, adaptive up to 22.5x)")
 
     args = parser.parse_args()
 
@@ -66,16 +64,13 @@ def main():
     print("DynaPrompt V7 Test")
     print("="*80)
     print(f"Prompt: {args.prompt}")
-    if args.negative:
-        print(f"Negative: {args.negative}")
     print(f"Steps: {args.steps}")
     print(f"Seed: {args.seed}")
     print(f"CFG scale: {args.cfg}")
     print(f"Check step: {args.check_step}")
     print(f"Max retries: {args.max_retries}")
     print(f"Attention threshold: {args.threshold}")
-    print(f"Boost factor: {args.boost_factor}")
-    print(f"Prompt rewriting: {'Disabled' if args.no_rewrite else 'Enabled'}")
+    print(f"Boost factor: {args.boost_factor} (adaptive up to {args.boost_factor * 3}x)")
     print(f"Output: {outdir}")
     print("="*80 + "\n")
 
@@ -98,9 +93,6 @@ def main():
         boost_factor=args.boost_factor,
         start_step_ratio=0.0,
         end_step_ratio=0.5,
-        use_prompt_rewriting=not args.no_rewrite,
-        llm_model_name="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-        use_llm_gpu=True,
     )
 
     # Generate
@@ -114,7 +106,6 @@ def main():
             steps=args.steps,
             unconditional_guidance_scale=args.cfg,
             verbose=True,
-            negative_prompt=args.negative,
         )
 
     # Decode
