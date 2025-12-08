@@ -1,0 +1,1366 @@
+{
+  "metadata": {
+    "model": "PixArt-\u03b1 XL-2-1024-MS (DiT)",
+    "method": "Hybrid DynaPrompt",
+    "date": "2025-12-08T21:43:28.242604",
+    "num_prompts": 50,
+    "clip_threshold": 0.25
+  },
+  "prompts": [
+    {
+      "id": "color_01",
+      "prompt": "a red cube on top of a blue cube",
+      "attributes": [
+        "red cube",
+        "blue cube"
+      ],
+      "vanilla": {
+        "scores": {
+          "red cube": 0.335693359375,
+          "blue cube": 0.308349609375
+        },
+        "avg_score": 0.322021484375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "red cube": 0.312744140625,
+          "blue cube": 0.31298828125
+        },
+        "avg_score": 0.3128662109375,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.0091552734375
+    },
+    {
+      "id": "color_02",
+      "prompt": "a green apple and a red apple",
+      "attributes": [
+        "green apple",
+        "red apple"
+      ],
+      "vanilla": {
+        "scores": {
+          "green apple": 0.28955078125,
+          "red apple": 0.281005859375
+        },
+        "avg_score": 0.2852783203125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "green apple": 0.303466796875,
+          "red apple": 0.2958984375
+        },
+        "avg_score": 0.2996826171875,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.014404296875
+    },
+    {
+      "id": "color_03",
+      "prompt": "a yellow car and a blue car",
+      "attributes": [
+        "yellow car",
+        "blue car"
+      ],
+      "vanilla": {
+        "scores": {
+          "yellow car": 0.2802734375,
+          "blue car": 0.2783203125
+        },
+        "avg_score": 0.279296875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "yellow car": 0.267822265625,
+          "blue car": 0.286376953125
+        },
+        "avg_score": 0.277099609375,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": -0.002197265625
+    },
+    {
+      "id": "color_04",
+      "prompt": "a purple cat sitting on an orange couch",
+      "attributes": [
+        "purple cat",
+        "orange couch"
+      ],
+      "vanilla": {
+        "scores": {
+          "purple cat": 0.33740234375,
+          "orange couch": 0.326416015625
+        },
+        "avg_score": 0.3319091796875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "purple cat": 0.341552734375,
+          "orange couch": 0.29150390625
+        },
+        "avg_score": 0.3165283203125,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.015380859375
+    },
+    {
+      "id": "color_05",
+      "prompt": "a pink elephant next to a green tree",
+      "attributes": [
+        "pink elephant",
+        "green tree"
+      ],
+      "vanilla": {
+        "scores": {
+          "pink elephant": 0.310791015625,
+          "green tree": 0.2454833984375
+        },
+        "avg_score": 0.27813720703125,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "pink elephant": 0.3212890625,
+          "green tree": 0.283447265625
+        },
+        "avg_score": 0.3023681640625,
+        "passed": true,
+        "iterations": 2
+      },
+      "improvement": 0.02423095703125
+    },
+    {
+      "id": "color_06",
+      "prompt": "a silver robot holding a golden ball",
+      "attributes": [
+        "silver robot",
+        "golden ball"
+      ],
+      "vanilla": {
+        "scores": {
+          "silver robot": 0.281005859375,
+          "golden ball": 0.254150390625
+        },
+        "avg_score": 0.267578125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "silver robot": 0.279296875,
+          "golden ball": 0.2445068359375
+        },
+        "avg_score": 0.26190185546875,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.00567626953125
+    },
+    {
+      "id": "color_07",
+      "prompt": "a white dog wearing a red collar",
+      "attributes": [
+        "white dog",
+        "red collar"
+      ],
+      "vanilla": {
+        "scores": {
+          "white dog": 0.28857421875,
+          "red collar": 0.305419921875
+        },
+        "avg_score": 0.2969970703125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "white dog": 0.296630859375,
+          "red collar": 0.31494140625
+        },
+        "avg_score": 0.3057861328125,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0087890625
+    },
+    {
+      "id": "color_08",
+      "prompt": "a black cat with blue eyes",
+      "attributes": [
+        "black cat",
+        "blue eyes"
+      ],
+      "vanilla": {
+        "scores": {
+          "black cat": 0.31103515625,
+          "blue eyes": 0.303466796875
+        },
+        "avg_score": 0.3072509765625,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "black cat": 0.308837890625,
+          "blue eyes": 0.307373046875
+        },
+        "avg_score": 0.30810546875,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0008544921875
+    },
+    {
+      "id": "color_09",
+      "prompt": "a brown horse next to a white fence",
+      "attributes": [
+        "brown horse",
+        "white fence"
+      ],
+      "vanilla": {
+        "scores": {
+          "brown horse": 0.289794921875,
+          "white fence": 0.21826171875
+        },
+        "avg_score": 0.2540283203125,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "brown horse": 0.30615234375,
+          "white fence": 0.2218017578125
+        },
+        "avg_score": 0.26397705078125,
+        "passed": false,
+        "iterations": 2
+      },
+      "improvement": 0.00994873046875
+    },
+    {
+      "id": "color_10",
+      "prompt": "a red bird on a yellow branch",
+      "attributes": [
+        "red bird",
+        "yellow branch"
+      ],
+      "vanilla": {
+        "scores": {
+          "red bird": 0.324951171875,
+          "yellow branch": 0.2486572265625
+        },
+        "avg_score": 0.28680419921875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "red bird": 0.326416015625,
+          "yellow branch": 0.245361328125
+        },
+        "avg_score": 0.285888671875,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": -0.00091552734375
+    },
+    {
+      "id": "color_11",
+      "prompt": "a blue butterfly on a pink flower",
+      "attributes": [
+        "blue butterfly",
+        "pink flower"
+      ],
+      "vanilla": {
+        "scores": {
+          "blue butterfly": 0.303466796875,
+          "pink flower": 0.265625
+        },
+        "avg_score": 0.2845458984375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "blue butterfly": 0.295654296875,
+          "pink flower": 0.293212890625
+        },
+        "avg_score": 0.29443359375,
+        "passed": true,
+        "iterations": 2
+      },
+      "improvement": 0.0098876953125
+    },
+    {
+      "id": "color_12",
+      "prompt": "a green frog on a brown log",
+      "attributes": [
+        "green frog",
+        "brown log"
+      ],
+      "vanilla": {
+        "scores": {
+          "green frog": 0.30224609375,
+          "brown log": 0.2239990234375
+        },
+        "avg_score": 0.26312255859375,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "green frog": 0.300048828125,
+          "brown log": 0.2125244140625
+        },
+        "avg_score": 0.25628662109375,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": -0.0068359375
+    },
+    {
+      "id": "color_13",
+      "prompt": "a purple umbrella next to a yellow raincoat",
+      "attributes": [
+        "purple umbrella",
+        "yellow raincoat"
+      ],
+      "vanilla": {
+        "scores": {
+          "purple umbrella": 0.382568359375,
+          "yellow raincoat": 0.280029296875
+        },
+        "avg_score": 0.331298828125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "purple umbrella": 0.364501953125,
+          "yellow raincoat": 0.30615234375
+        },
+        "avg_score": 0.3353271484375,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0040283203125
+    },
+    {
+      "id": "color_14",
+      "prompt": "an orange basketball and a white basketball",
+      "attributes": [
+        "orange basketball",
+        "white basketball"
+      ],
+      "vanilla": {
+        "scores": {
+          "orange basketball": 0.32666015625,
+          "white basketball": 0.30078125
+        },
+        "avg_score": 0.313720703125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "orange basketball": 0.32958984375,
+          "white basketball": 0.3056640625
+        },
+        "avg_score": 0.317626953125,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.00390625
+    },
+    {
+      "id": "color_15",
+      "prompt": "a red strawberry on a white plate",
+      "attributes": [
+        "red strawberry",
+        "white plate"
+      ],
+      "vanilla": {
+        "scores": {
+          "red strawberry": 0.31103515625,
+          "white plate": 0.272216796875
+        },
+        "avg_score": 0.2916259765625,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "red strawberry": 0.307373046875,
+          "white plate": 0.26611328125
+        },
+        "avg_score": 0.2867431640625,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": -0.0048828125
+    },
+    {
+      "id": "color_16",
+      "prompt": "a golden crown on a red pillow",
+      "attributes": [
+        "golden crown",
+        "red pillow"
+      ],
+      "vanilla": {
+        "scores": {
+          "golden crown": 0.288330078125,
+          "red pillow": 0.26806640625
+        },
+        "avg_score": 0.2781982421875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "golden crown": 0.28857421875,
+          "red pillow": 0.2802734375
+        },
+        "avg_score": 0.284423828125,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": 0.0062255859375
+    },
+    {
+      "id": "color_17",
+      "prompt": "a silver car parked next to a golden bicycle",
+      "attributes": [
+        "silver car",
+        "golden bicycle"
+      ],
+      "vanilla": {
+        "scores": {
+          "silver car": 0.27587890625,
+          "golden bicycle": 0.28271484375
+        },
+        "avg_score": 0.279296875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "silver car": 0.277587890625,
+          "golden bicycle": 0.322265625
+        },
+        "avg_score": 0.2999267578125,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0206298828125
+    },
+    {
+      "id": "color_18",
+      "prompt": "a cyan teapot and a magenta cup",
+      "attributes": [
+        "cyan teapot",
+        "magenta cup"
+      ],
+      "vanilla": {
+        "scores": {
+          "cyan teapot": 0.380615234375,
+          "magenta cup": 0.3095703125
+        },
+        "avg_score": 0.3450927734375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "cyan teapot": 0.400390625,
+          "magenta cup": 0.28564453125
+        },
+        "avg_score": 0.343017578125,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.0020751953125
+    },
+    {
+      "id": "color_19",
+      "prompt": "a navy blue boat on a turquoise sea",
+      "attributes": [
+        "navy blue boat",
+        "turquoise sea"
+      ],
+      "vanilla": {
+        "scores": {
+          "navy blue boat": 0.2978515625,
+          "turquoise sea": 0.29345703125
+        },
+        "avg_score": 0.295654296875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "navy blue boat": 0.28515625,
+          "turquoise sea": 0.2802734375
+        },
+        "avg_score": 0.28271484375,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.012939453125
+    },
+    {
+      "id": "color_20",
+      "prompt": "a lime green lizard on a coral rock",
+      "attributes": [
+        "lime green lizard",
+        "coral rock"
+      ],
+      "vanilla": {
+        "scores": {
+          "lime green lizard": 0.299072265625,
+          "coral rock": 0.19873046875
+        },
+        "avg_score": 0.2489013671875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "lime green lizard": 0.312744140625,
+          "coral rock": 0.190673828125
+        },
+        "avg_score": 0.251708984375,
+        "passed": false,
+        "iterations": 2
+      },
+      "improvement": 0.0028076171875
+    },
+    {
+      "id": "comp_01",
+      "prompt": "a cat and a dog sitting together",
+      "attributes": [
+        "cat",
+        "dog"
+      ],
+      "vanilla": {
+        "scores": {
+          "cat": 0.2445068359375,
+          "dog": 0.2457275390625
+        },
+        "avg_score": 0.2451171875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "cat": 0.2427978515625,
+          "dog": 0.23828125
+        },
+        "avg_score": 0.24053955078125,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.00457763671875
+    },
+    {
+      "id": "comp_02",
+      "prompt": "a book on a table next to a lamp",
+      "attributes": [
+        "book",
+        "table",
+        "lamp"
+      ],
+      "vanilla": {
+        "scores": {
+          "book": 0.26513671875,
+          "table": 0.250244140625,
+          "lamp": 0.284912109375
+        },
+        "avg_score": 0.2667643229166667,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "book": 0.2724609375,
+          "table": 0.2447509765625,
+          "lamp": 0.291015625
+        },
+        "avg_score": 0.2694091796875,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": 0.002644856770833315
+    },
+    {
+      "id": "comp_03",
+      "prompt": "a cup of coffee and a croissant on a plate",
+      "attributes": [
+        "cup of coffee",
+        "croissant"
+      ],
+      "vanilla": {
+        "scores": {
+          "cup of coffee": 0.25390625,
+          "croissant": 0.252685546875
+        },
+        "avg_score": 0.2532958984375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "cup of coffee": 0.26611328125,
+          "croissant": 0.2489013671875
+        },
+        "avg_score": 0.25750732421875,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": 0.00421142578125
+    },
+    {
+      "id": "comp_04",
+      "prompt": "a bicycle leaning against a brick wall",
+      "attributes": [
+        "bicycle",
+        "brick wall"
+      ],
+      "vanilla": {
+        "scores": {
+          "bicycle": 0.306884765625,
+          "brick wall": 0.264892578125
+        },
+        "avg_score": 0.285888671875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "bicycle": 0.30224609375,
+          "brick wall": 0.257080078125
+        },
+        "avg_score": 0.2796630859375,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.0062255859375
+    },
+    {
+      "id": "comp_05",
+      "prompt": "a bird perched on a tree branch",
+      "attributes": [
+        "bird",
+        "tree branch"
+      ],
+      "vanilla": {
+        "scores": {
+          "bird": 0.27978515625,
+          "tree branch": 0.22705078125
+        },
+        "avg_score": 0.25341796875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "bird": 0.267578125,
+          "tree branch": 0.2113037109375
+        },
+        "avg_score": 0.23944091796875,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.01397705078125
+    },
+    {
+      "id": "comp_06",
+      "prompt": "a laptop on a wooden desk with a plant",
+      "attributes": [
+        "laptop",
+        "wooden desk",
+        "plant"
+      ],
+      "vanilla": {
+        "scores": {
+          "laptop": 0.273193359375,
+          "wooden desk": 0.2476806640625,
+          "plant": 0.263427734375
+        },
+        "avg_score": 0.2614339192708333,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "laptop": 0.277099609375,
+          "wooden desk": 0.250732421875,
+          "plant": 0.267822265625
+        },
+        "avg_score": 0.2652180989583333,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0037841796875
+    },
+    {
+      "id": "comp_07",
+      "prompt": "a guitar standing next to an amplifier",
+      "attributes": [
+        "guitar",
+        "amplifier"
+      ],
+      "vanilla": {
+        "scores": {
+          "guitar": 0.305908203125,
+          "amplifier": 0.26318359375
+        },
+        "avg_score": 0.2845458984375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "guitar": 0.30322265625,
+          "amplifier": 0.260009765625
+        },
+        "avg_score": 0.2816162109375,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": -0.0029296875
+    },
+    {
+      "id": "comp_08",
+      "prompt": "a teddy bear sitting on a bed",
+      "attributes": [
+        "teddy bear",
+        "bed"
+      ],
+      "vanilla": {
+        "scores": {
+          "teddy bear": 0.29931640625,
+          "bed": 0.263916015625
+        },
+        "avg_score": 0.2816162109375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "teddy bear": 0.296630859375,
+          "bed": 0.271484375
+        },
+        "avg_score": 0.2840576171875,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.00244140625
+    },
+    {
+      "id": "comp_09",
+      "prompt": "a camera on a tripod",
+      "attributes": [
+        "camera",
+        "tripod"
+      ],
+      "vanilla": {
+        "scores": {
+          "camera": 0.265869140625,
+          "tripod": 0.2607421875
+        },
+        "avg_score": 0.2633056640625,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "camera": 0.27392578125,
+          "tripod": 0.279296875
+        },
+        "avg_score": 0.276611328125,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0133056640625
+    },
+    {
+      "id": "comp_10",
+      "prompt": "a bottle of wine and two glasses on a table",
+      "attributes": [
+        "bottle of wine",
+        "glasses",
+        "table"
+      ],
+      "vanilla": {
+        "scores": {
+          "bottle of wine": 0.275390625,
+          "glasses": 0.220703125,
+          "table": 0.226806640625
+        },
+        "avg_score": 0.240966796875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "bottle of wine": 0.2783203125,
+          "glasses": 0.22265625,
+          "table": 0.236328125
+        },
+        "avg_score": 0.24576822916666666,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": 0.004801432291666657
+    },
+    {
+      "id": "comp_11",
+      "prompt": "a soccer ball and a basketball on grass",
+      "attributes": [
+        "soccer ball",
+        "basketball",
+        "grass"
+      ],
+      "vanilla": {
+        "scores": {
+          "soccer ball": 0.30615234375,
+          "basketball": 0.287841796875,
+          "grass": 0.2474365234375
+        },
+        "avg_score": 0.2804768880208333,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "soccer ball": 0.29833984375,
+          "basketball": 0.251953125,
+          "grass": 0.2484130859375
+        },
+        "avg_score": 0.2662353515625,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.014241536458333315
+    },
+    {
+      "id": "comp_12",
+      "prompt": "a piano in a room with a chandelier",
+      "attributes": [
+        "piano",
+        "chandelier"
+      ],
+      "vanilla": {
+        "scores": {
+          "piano": 0.30029296875,
+          "chandelier": 0.2314453125
+        },
+        "avg_score": 0.265869140625,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "piano": 0.304443359375,
+          "chandelier": 0.2398681640625
+        },
+        "avg_score": 0.27215576171875,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": 0.00628662109375
+    },
+    {
+      "id": "comp_13",
+      "prompt": "a hat on a coat rack next to an umbrella",
+      "attributes": [
+        "hat",
+        "coat rack",
+        "umbrella"
+      ],
+      "vanilla": {
+        "scores": {
+          "hat": 0.26611328125,
+          "coat rack": 0.3349609375,
+          "umbrella": 0.24072265625
+        },
+        "avg_score": 0.2805989583333333,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "hat": 0.310791015625,
+          "coat rack": 0.2783203125,
+          "umbrella": 0.240478515625
+        },
+        "avg_score": 0.2765299479166667,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": -0.00406901041666663
+    },
+    {
+      "id": "comp_14",
+      "prompt": "a pair of sunglasses on a beach towel",
+      "attributes": [
+        "sunglasses",
+        "beach towel"
+      ],
+      "vanilla": {
+        "scores": {
+          "sunglasses": 0.273193359375,
+          "beach towel": 0.27783203125
+        },
+        "avg_score": 0.2755126953125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "sunglasses": 0.2861328125,
+          "beach towel": 0.27392578125
+        },
+        "avg_score": 0.280029296875,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": 0.0045166015625
+    },
+    {
+      "id": "comp_15",
+      "prompt": "a clock on a wall above a fireplace",
+      "attributes": [
+        "clock",
+        "wall",
+        "fireplace"
+      ],
+      "vanilla": {
+        "scores": {
+          "clock": 0.291015625,
+          "wall": 0.2081298828125,
+          "fireplace": 0.302001953125
+        },
+        "avg_score": 0.2670491536458333,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "clock": 0.260498046875,
+          "wall": 0.2110595703125,
+          "fireplace": 0.29931640625
+        },
+        "avg_score": 0.2569580078125,
+        "passed": false,
+        "iterations": 3
+      },
+      "improvement": -0.010091145833333315
+    },
+    {
+      "id": "spatial_01",
+      "prompt": "a cat sitting under a table",
+      "attributes": [
+        "cat",
+        "table"
+      ],
+      "vanilla": {
+        "scores": {
+          "cat": 0.283203125,
+          "table": 0.251953125
+        },
+        "avg_score": 0.267578125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "cat": 0.28466796875,
+          "table": 0.248046875
+        },
+        "avg_score": 0.266357421875,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.001220703125
+    },
+    {
+      "id": "spatial_02",
+      "prompt": "a dog jumping over a fence",
+      "attributes": [
+        "dog",
+        "fence"
+      ],
+      "vanilla": {
+        "scores": {
+          "dog": 0.2509765625,
+          "fence": 0.252197265625
+        },
+        "avg_score": 0.2515869140625,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "dog": 0.254150390625,
+          "fence": 0.26611328125
+        },
+        "avg_score": 0.2601318359375,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.008544921875
+    },
+    {
+      "id": "spatial_03",
+      "prompt": "a bird flying above the clouds",
+      "attributes": [
+        "bird",
+        "clouds"
+      ],
+      "vanilla": {
+        "scores": {
+          "bird": 0.27197265625,
+          "clouds": 0.2352294921875
+        },
+        "avg_score": 0.25360107421875,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "bird": 0.263427734375,
+          "clouds": 0.23193359375
+        },
+        "avg_score": 0.2476806640625,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.00592041015625
+    },
+    {
+      "id": "spatial_04",
+      "prompt": "a fish swimming below a boat",
+      "attributes": [
+        "fish",
+        "boat"
+      ],
+      "vanilla": {
+        "scores": {
+          "fish": 0.266845703125,
+          "boat": 0.2529296875
+        },
+        "avg_score": 0.2598876953125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "fish": 0.26904296875,
+          "boat": 0.2366943359375
+        },
+        "avg_score": 0.25286865234375,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.00701904296875
+    },
+    {
+      "id": "spatial_05",
+      "prompt": "a ball rolling towards a goal",
+      "attributes": [
+        "ball",
+        "goal"
+      ],
+      "vanilla": {
+        "scores": {
+          "ball": 0.284912109375,
+          "goal": 0.27587890625
+        },
+        "avg_score": 0.2803955078125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "ball": 0.271728515625,
+          "goal": 0.270751953125
+        },
+        "avg_score": 0.271240234375,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": -0.0091552734375
+    },
+    {
+      "id": "spatial_06",
+      "prompt": "a child standing behind a tree",
+      "attributes": [
+        "child",
+        "tree"
+      ],
+      "vanilla": {
+        "scores": {
+          "child": 0.290283203125,
+          "tree": 0.2193603515625
+        },
+        "avg_score": 0.25482177734375,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "child": 0.263671875,
+          "tree": 0.238525390625
+        },
+        "avg_score": 0.2510986328125,
+        "passed": false,
+        "iterations": 2
+      },
+      "improvement": -0.00372314453125
+    },
+    {
+      "id": "spatial_07",
+      "prompt": "a car driving between two buildings",
+      "attributes": [
+        "car",
+        "buildings"
+      ],
+      "vanilla": {
+        "scores": {
+          "car": 0.26416015625,
+          "buildings": 0.19189453125
+        },
+        "avg_score": 0.22802734375,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "car": 0.243408203125,
+          "buildings": 0.1636962890625
+        },
+        "avg_score": 0.20355224609375,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.02447509765625
+    },
+    {
+      "id": "spatial_08",
+      "prompt": "a plane flying through clouds",
+      "attributes": [
+        "plane",
+        "clouds"
+      ],
+      "vanilla": {
+        "scores": {
+          "plane": 0.28125,
+          "clouds": 0.2384033203125
+        },
+        "avg_score": 0.25982666015625,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "plane": 0.29150390625,
+          "clouds": 0.2398681640625
+        },
+        "avg_score": 0.26568603515625,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": 0.005859375
+    },
+    {
+      "id": "spatial_09",
+      "prompt": "a person walking along a beach",
+      "attributes": [
+        "person",
+        "beach"
+      ],
+      "vanilla": {
+        "scores": {
+          "person": 0.2227783203125,
+          "beach": 0.27197265625
+        },
+        "avg_score": 0.24737548828125,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "person": 0.2181396484375,
+          "beach": 0.25341796875
+        },
+        "avg_score": 0.23577880859375,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": -0.0115966796875
+    },
+    {
+      "id": "spatial_10",
+      "prompt": "a boat floating on a river",
+      "attributes": [
+        "boat",
+        "river"
+      ],
+      "vanilla": {
+        "scores": {
+          "boat": 0.27978515625,
+          "river": 0.261474609375
+        },
+        "avg_score": 0.2706298828125,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "boat": 0.283447265625,
+          "river": 0.252197265625
+        },
+        "avg_score": 0.267822265625,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.0028076171875
+    },
+    {
+      "id": "spatial_11",
+      "prompt": "a mountain rising behind a lake",
+      "attributes": [
+        "mountain",
+        "lake"
+      ],
+      "vanilla": {
+        "scores": {
+          "mountain": 0.281982421875,
+          "lake": 0.268310546875
+        },
+        "avg_score": 0.275146484375,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "mountain": 0.2861328125,
+          "lake": 0.2705078125
+        },
+        "avg_score": 0.2783203125,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": 0.003173828125
+    },
+    {
+      "id": "spatial_12",
+      "prompt": "a rainbow arching over a waterfall",
+      "attributes": [
+        "rainbow",
+        "waterfall"
+      ],
+      "vanilla": {
+        "scores": {
+          "rainbow": 0.2783203125,
+          "waterfall": 0.27392578125
+        },
+        "avg_score": 0.276123046875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "rainbow": 0.283935546875,
+          "waterfall": 0.28173828125
+        },
+        "avg_score": 0.2828369140625,
+        "passed": true,
+        "iterations": 1
+      },
+      "improvement": 0.0067138671875
+    },
+    {
+      "id": "spatial_13",
+      "prompt": "a moon shining above a castle",
+      "attributes": [
+        "moon",
+        "castle"
+      ],
+      "vanilla": {
+        "scores": {
+          "moon": 0.253173828125,
+          "castle": 0.251708984375
+        },
+        "avg_score": 0.25244140625,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "moon": 0.2408447265625,
+          "castle": 0.2469482421875
+        },
+        "avg_score": 0.243896484375,
+        "passed": false,
+        "iterations": 2
+      },
+      "improvement": -0.008544921875
+    },
+    {
+      "id": "spatial_14",
+      "prompt": "a bridge crossing over a canyon",
+      "attributes": [
+        "bridge",
+        "canyon"
+      ],
+      "vanilla": {
+        "scores": {
+          "bridge": 0.2841796875,
+          "canyon": 0.27734375
+        },
+        "avg_score": 0.28076171875,
+        "passed": true
+      },
+      "dynaprompt": {
+        "scores": {
+          "bridge": 0.273681640625,
+          "canyon": 0.263671875
+        },
+        "avg_score": 0.2686767578125,
+        "passed": true,
+        "iterations": 3
+      },
+      "improvement": -0.0120849609375
+    },
+    {
+      "id": "spatial_15",
+      "prompt": "a tunnel going through a mountain",
+      "attributes": [
+        "tunnel",
+        "mountain"
+      ],
+      "vanilla": {
+        "scores": {
+          "tunnel": 0.29638671875,
+          "mountain": 0.23046875
+        },
+        "avg_score": 0.263427734375,
+        "passed": false
+      },
+      "dynaprompt": {
+        "scores": {
+          "tunnel": 0.305908203125,
+          "mountain": 0.2239990234375
+        },
+        "avg_score": 0.26495361328125,
+        "passed": false,
+        "iterations": 1
+      },
+      "improvement": 0.00152587890625
+    }
+  ],
+  "summary": {
+    "total_prompts": 50,
+    "successful_generations": 50,
+    "vanilla": {
+      "avg_clip_score": 0.275364990234375,
+      "pass_rate": 62.0,
+      "total_passed": 31
+    },
+    "dynaprompt": {
+      "avg_clip_score": 0.27478108723958333,
+      "pass_rate": 54.0,
+      "total_passed": 27
+    },
+    "improvement": {
+      "avg_clip_improvement": -0.0005839029947916658,
+      "prompts_improved": 24,
+      "prompts_regressed": 26
+    },
+    "category_scores": {
+      "color_binding": {
+        "vanilla_avg": 0.2920379638671875,
+        "dynaprompt_avg": 0.2943206787109375,
+        "count": 20
+      },
+      "multi_object": {
+        "vanilla_avg": 0.26705729166666664,
+        "dynaprompt_avg": 0.26611599392361107,
+        "count": 15
+      },
+      "spatial": {
+        "vanilla_avg": 0.26144205729166664,
+        "dynaprompt_avg": 0.2573933919270833,
+        "count": 15
+      }
+    },
+    "elapsed_time_seconds": 1343.9844076633453
+  }
+}
